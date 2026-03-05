@@ -48,6 +48,23 @@ export const routes: Routes = [
       import('./about/about.component').then((m) => m.AboutComponent),
   },
   {
+    path: 'alumni',
+    loadComponent: () =>
+      import('./alumni/alumni.component').then((m) => m.AlumniComponent),
+  },
+  {
+    path: 'alumni/:id',
+    loadComponent: () =>
+      import('./alumni/profile/alumni-profile.component').then(
+        (m) => m.AlumniProfileComponent,
+      ),
+  },
+  {
+    path: 'events',
+    loadComponent: () =>
+      import('./events/events.component').then((m) => m.EventsComponent),
+  },
+  {
     path: 'contact',
     loadComponent: () =>
       import('./contact/contact.component').then((m) => m.ContactComponent),
@@ -89,6 +106,37 @@ export const routes: Routes = [
       import('./legal/cookie-policy/cookie-policy.component').then(
         (m) => m.CookiePolicyComponent,
       ),
+  },
+  {
+    path: 'jobs',
+    loadComponent: () =>
+      import('./jobs/jobs.component').then((m) => m.JobsComponent),
+  },
+  {
+    path: 'scholarships',
+    loadComponent: () =>
+      import('./scholarships/scholarships.component').then(
+        (m) => m.ScholarshipsComponent,
+      ),
+  },
+  {
+    path: 'mentorship',
+    loadComponent: () =>
+      import('./mentorship/mentorship.component').then(
+        (m) => m.MentorshipComponent,
+      ),
+  },
+  {
+    path: 'research',
+    loadComponent: () =>
+      import('./research/research.component').then(
+        (m) => m.ResearchComponent,
+      ),
+  },
+  {
+    path: 'news',
+    loadComponent: () =>
+      import('./news/news.component').then((m) => m.NewsComponent),
   },
   {
     path: '**',

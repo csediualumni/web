@@ -1,0 +1,133 @@
+<!-- Hero -->
+<section class="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-zinc-300 mb-6">
+      <i class="fa-solid fa-file-lines text-sky-400"></i> Research Repository
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">Alumni Research Papers</h1>
+    <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+      A curated collection of peer-reviewed publications, conference papers, and preprints authored by CSE DIU alumni worldwide.
+    </p>
+  </div>
+</section>
+
+<!-- Filters -->
+<section class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-zinc-200 shadow-sm py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-3">
+    <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <!-- Search -->
+      <div class="relative flex-1">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+        <input
+          type="text"
+          placeholder="Search by title or author…"
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+          class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-sky-400 text-sm"
+        />
+      </div>
+      <!-- Year -->
+      <select
+        class="rounded-lg border border-zinc-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400"
+        [value]="activeYear()"
+        (change)="setYear($any($event.target).value)"
+      >
+        @for (y of years; track y) {
+          <option [value]="y">{{ y === 'All' ? 'All Years' : y }}</option>
+        }
+      </select>
+    </div>
+    <!-- Topic pills -->
+    <div class="flex flex-wrap gap-2">
+      @for (tag of allTags; track tag) {
+        <button
+          (click)="setTag(tag)"
+          class="text-xs px-3.5 py-1.5 rounded-full border transition-colors"
+          [class]="activeTag() === tag
+            ? 'bg-zinc-900 text-white border-zinc-900'
+            : 'bg-white text-zinc-600 border-zinc-300 hover:border-zinc-500'"
+        >{{ tag }}</button>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Paper Listings -->
+<section class="py-12 bg-zinc-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <p class="text-zinc-500 text-sm mb-6">
+      <span class="font-semibold text-zinc-800">{{ filteredPapers().length }}</span> paper{{ filteredPapers().length === 1 ? '' : 's' }} found
+    </p>
+
+    @if (filteredPapers().length === 0) {
+      <div class="text-center py-20 text-zinc-400">
+        <i class="fa-solid fa-file-lines text-5xl mb-4"></i>
+        <p class="text-lg font-medium text-zinc-600">No papers match your search.</p>
+      </div>
+    }
+
+    <div class="space-y-5">
+      @for (paper of filteredPapers(); track paper.id) {
+        <div class="shad-card rounded-2xl p-6 flex flex-col gap-4 hover:shadow-md transition-shadow"
+             [class.ring-2]="paper.featured" [class.ring-sky-400]="paper.featured">
+          @if (paper.featured) {
+            <span class="inline-flex items-center gap-1 text-xs font-semibold text-sky-600 bg-sky-50 border border-sky-200 rounded-full px-3 py-0.5 self-start">
+              <i class="fa-solid fa-star"></i> Highlighted
+            </span>
+          }
+
+          <div>
+            <h2 class="text-base font-bold text-zinc-900 leading-snug mb-2">{{ paper.title }}</h2>
+            <p class="text-sm text-zinc-500">
+              <i class="fa-solid fa-users mr-1.5 text-zinc-300"></i>
+              @for (author of paper.authors; track author; let last = $last) {
+                {{ author }}@if (!last) {, }
+              }
+              &nbsp;&bull;&nbsp; {{ paper.year }}
+            </p>
+          </div>
+
+          <p class="text-sm text-zinc-600 leading-relaxed">{{ paper.abstract }}</p>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-zinc-100">
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <span [class]="'inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-2.5 py-1 ' + venueColor(paper.venueType)">
+                <i [class]="'fa-solid ' + venueIcon(paper.venueType)"></i>{{ paper.venueType.charAt(0).toUpperCase() + paper.venueType.slice(1) }}
+              </span>
+              <span class="text-zinc-500 text-xs">{{ paper.venue }}</span>
+              @for (tag of paper.tags; track tag) {
+                <span class="text-xs bg-zinc-100 text-zinc-600 rounded-full px-2.5 py-0.5">{{ tag }}</span>
+              }
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-zinc-500"><i class="fa-solid fa-quote-left mr-1 text-zinc-300"></i>{{ paper.citations }} citations</span>
+              @if (paper.doi) {
+                <a [href]="'https://doi.org/' + paper.doi" target="_blank" rel="noopener"
+                   class="shad-btn-outline text-xs px-4 py-2 inline-flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i> DOI
+                </a>
+              }
+              <a [href]="paper.link" class="shad-btn-primary text-xs px-4 py-2 inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-file-pdf"></i> Read Paper
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bg-gradient-to-r from-sky-700 via-sky-600 to-cyan-600 text-white py-16">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <i class="fa-solid fa-book-open text-4xl mb-4 opacity-80"></i>
+    <h2 class="text-3xl font-bold mb-3">Published Something? Share It.</h2>
+    <p class="text-sky-100 text-lg mb-8 max-w-xl mx-auto">
+      If you are a CSE DIU alumnus who has authored or co-authored a research paper, we'd love to feature it in this repository.
+    </p>
+    <a routerLink="/contact" class="inline-flex items-center gap-2 bg-white text-sky-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-sky-50 transition-colors">
+      <i class="fa-solid fa-envelope"></i> Submit Your Paper
+    </a>
+  </div>
+</section>

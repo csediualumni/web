@@ -108,8 +108,7 @@
             {label: 'Scholarships', path: '/scholarships', icon: 'fa-medal'},
             {label: 'Mentorship Program', path: '/mentorship', icon: 'fa-handshake'},
             {label: 'Research Papers', path: '/research', icon: 'fa-file-lines'},
-            {label: 'News & Announcements', path: '/news', icon: 'fa-newspaper'},
-            {label: 'DIU Official Site', path: 'https://diu.edu.bd', icon: 'fa-link'}
+            {label: 'News & Announcements', path: '/news', icon: 'fa-newspaper'}
           ]; track link.path) {
             <li>
               <a [routerLink]="link.path" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
@@ -118,6 +117,14 @@
               </a>
             </li>
           }
+          <li>
+            <a href="https://diu.edu.bd" target="_blank" rel="noopener"
+               class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+              <i class="fa-solid fa-link text-[11px] w-3.5 text-center text-zinc-600"></i>
+              DIU Official Site
+              <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-zinc-600 ml-0.5"></i>
+            </a>
+          </li>
         </ul>
       </div>
 

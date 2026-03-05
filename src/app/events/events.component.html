@@ -1,0 +1,322 @@
+<!-- ── Hero ── -->
+<section class="relative overflow-hidden bg-zinc-900 text-white">
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+  <div class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-zinc-700/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-zinc-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1 rounded-full mb-5">
+        <i class="fa-solid fa-calendar-days text-zinc-400 text-[10px]"></i>
+        Events &amp; Reunions
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+        Where the Community<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-300 to-zinc-500">Comes Alive.</span>
+      </h1>
+      <p class="text-zinc-400 text-lg leading-relaxed mb-8">
+        Reunions, workshops, hackathons, cultural nights, and everything in between. Stay connected with what's happening in the CSE DIU alumni world.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a routerLink="/contact" class="shad-btn-primary bg-white text-zinc-900 hover:bg-zinc-100 px-6 h-11 text-base gap-2">
+          <i class="fa-solid fa-calendar-plus"></i>
+          Propose an Event
+        </a>
+        <a routerLink="/gallery" class="shad-btn-ghost text-zinc-300 hover:text-white hover:bg-zinc-800 px-6 h-11 text-base gap-2">
+          <i class="fa-solid fa-images"></i>
+          Event Gallery
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Featured Event ── -->
+@if (featuredEvent()) {
+  <section class="bg-white border-b border-zinc-100 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-star text-amber-400"></i>
+        Featured Event
+      </p>
+      <div class="rounded-2xl border border-zinc-200 overflow-hidden lg:grid lg:grid-cols-5">
+        <!-- Placeholder image -->
+        <div class="lg:col-span-2 {{ featuredEvent()!.color }} min-h-[200px] flex items-center justify-center">
+          <i class="fa-solid {{ featuredEvent()!.image }} text-7xl text-zinc-400"></i>
+        </div>
+        <!-- Info -->
+        <div class="lg:col-span-3 p-8 flex flex-col justify-center">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="text-xs font-semibold bg-amber-100 text-amber-700 rounded-full px-3 py-0.5">{{ featuredEvent()!.category }}</span>
+            <span class="text-xs bg-emerald-100 text-emerald-700 rounded-full px-3 py-0.5 font-medium">Open</span>
+            <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
+              <i class="fa-solid fa-location-dot text-[10px]"></i>
+              {{ featuredEvent()!.mode }}
+            </span>
+          </div>
+          <h2 class="text-2xl font-bold text-zinc-900 mb-2">{{ featuredEvent()!.title }}</h2>
+          <p class="text-zinc-500 text-sm leading-relaxed mb-5">{{ featuredEvent()!.description }}</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+            <div class="flex items-center gap-2 text-sm text-zinc-600">
+              <i class="fa-regular fa-calendar w-4 text-center text-zinc-400"></i>
+              {{ featuredEvent()!.date }}
+            </div>
+            <div class="flex items-center gap-2 text-sm text-zinc-600">
+              <i class="fa-regular fa-clock w-4 text-center text-zinc-400"></i>
+              {{ featuredEvent()!.time }}
+            </div>
+            <div class="flex items-center gap-2 text-sm text-zinc-600">
+              <i class="fa-solid fa-people-group w-4 text-center text-zinc-400"></i>
+              {{ featuredEvent()!.seatsLeft }} seats left
+            </div>
+          </div>
+          <!-- Occupancy bar -->
+          <div class="mb-6">
+            <div class="flex justify-between text-xs text-zinc-500 mb-1">
+              <span>{{ occupancyPercent(featuredEvent()!) }}% filled</span>
+              <span>{{ featuredEvent()!.seatsLeft }} / {{ featuredEvent()!.seats }} remaining</span>
+            </div>
+            <div class="h-2 bg-zinc-100 rounded-full overflow-hidden">
+              <div class="h-full bg-zinc-900 rounded-full transition-all" [style.width.%]="occupancyPercent(featuredEvent()!)"></div>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button class="shad-btn-primary gap-2">
+              <i class="fa-solid fa-ticket"></i>
+              Register Now
+            </button>
+            <button class="shad-btn-outline gap-2">
+              <i class="fa-regular fa-bookmark"></i>
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- ── Tabs + Filter + Grid ── -->
+<section class="bg-zinc-50 py-12 lg:py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Tab bar -->
+    <div class="flex items-center gap-1 p-1 bg-zinc-200 rounded-xl w-fit mb-8">
+      <button
+        (click)="setTab('upcoming')"
+        class="px-5 h-8 rounded-lg text-sm font-medium transition-all"
+        [class.bg-white]="activeTab() === 'upcoming'"
+        [class.shadow-sm]="activeTab() === 'upcoming'"
+        [class.text-zinc-900]="activeTab() === 'upcoming'"
+        [class.text-zinc-500]="activeTab() !== 'upcoming'"
+      >
+        <i class="fa-solid fa-calendar-check mr-1.5 text-xs"></i>
+        Upcoming <span class="ml-1 text-xs bg-zinc-100 text-zinc-600 rounded-md px-1.5 py-0.5">{{ upcomingCount() }}</span>
+      </button>
+      <button
+        (click)="setTab('past')"
+        class="px-5 h-8 rounded-lg text-sm font-medium transition-all"
+        [class.bg-white]="activeTab() === 'past'"
+        [class.shadow-sm]="activeTab() === 'past'"
+        [class.text-zinc-900]="activeTab() === 'past'"
+        [class.text-zinc-500]="activeTab() !== 'past'"
+      >
+        <i class="fa-regular fa-clock mr-1.5 text-xs"></i>
+        Past <span class="ml-1 text-xs bg-zinc-100 text-zinc-600 rounded-md px-1.5 py-0.5">{{ pastCount() }}</span>
+      </button>
+    </div>
+
+    <!-- Category filter chips -->
+    <div class="flex flex-wrap gap-2 mb-8">
+      @for (cat of categories; track cat) {
+        <button
+          (click)="setCategory(cat)"
+          class="px-4 h-8 rounded-full text-sm font-medium transition-colors flex-shrink-0"
+          [class.bg-zinc-900]="activeCategory() === cat"
+          [class.text-white]="activeCategory() === cat"
+          [class.bg-white]="activeCategory() !== cat"
+          [class.border]="activeCategory() !== cat"
+          [class.border-zinc-200]="activeCategory() !== cat"
+          [class.text-zinc-600]="activeCategory() !== cat"
+          [class.hover:bg-zinc-50]="activeCategory() !== cat"
+        >
+          {{ cat }}
+        </button>
+      }
+    </div>
+
+    <!-- Empty state -->
+    @if (filteredEvents().length === 0) {
+      <div class="text-center py-24">
+        <i class="fa-solid fa-calendar-xmark text-5xl text-zinc-300 mb-4 block"></i>
+        <p class="text-lg font-semibold text-zinc-700 mb-1">No events found</p>
+        <p class="text-sm text-zinc-400">Check back soon or browse a different category.</p>
+      </div>
+    }
+
+    <!-- Events grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (event of filteredEvents(); track event.id) {
+        <!-- Skip featured on upcoming tab since it's already shown above -->
+        @if (!event.featured) {
+          <div class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+
+            <!-- Placeholder image -->
+            <div class="h-40 {{ event.color }} flex items-center justify-center relative">
+              <i class="fa-solid {{ event.image }} text-5xl text-zinc-400"></i>
+              <!-- Status badge -->
+              <span
+                class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{ statusBadge(event).classes }}"
+              >
+                {{ statusBadge(event).label }}
+              </span>
+            </div>
+
+            <div class="p-5 flex flex-col flex-1 gap-3">
+              <!-- Category + mode -->
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-medium bg-zinc-100 text-zinc-600 rounded px-2 py-0.5">{{ event.category }}</span>
+                <span class="inline-flex items-center gap-1 text-[11px] text-zinc-400">
+                  <i class="fa-solid {{ modeIcon(event.mode) }} text-[10px]"></i>
+                  {{ event.mode }}
+                </span>
+              </div>
+
+              <!-- Title + description -->
+              <div>
+                <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
+                <p class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">{{ event.description }}</p>
+              </div>
+
+              <!-- Date / time / location -->
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                  <i class="fa-regular fa-calendar w-3.5 text-center text-zinc-400"></i>
+                  {{ event.date }}
+                </div>
+                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                  <i class="fa-regular fa-clock w-3.5 text-center text-zinc-400"></i>
+                  {{ event.time }}
+                </div>
+                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                  <i class="fa-solid fa-location-dot w-3.5 text-center text-zinc-400"></i>
+                  {{ event.location }}
+                </div>
+              </div>
+
+              <!-- Seats bar (upcoming only) -->
+              @if (event.status === 'upcoming' && event.seats && event.seatsLeft !== undefined) {
+                <div class="mt-auto pt-3 border-t border-zinc-100">
+                  <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
+                    <span>{{ event.seatsLeft }} seats left</span>
+                    <span>{{ occupancyPercent(event) }}% filled</span>
+                  </div>
+                  <div class="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div
+                      class="h-full rounded-full transition-all"
+                      [class.bg-zinc-900]="occupancyPercent(event) < 80"
+                      [class.bg-red-500]="occupancyPercent(event) >= 80"
+                      [style.width.%]="occupancyPercent(event)"
+                    ></div>
+                  </div>
+                </div>
+              }
+
+              <!-- CTA -->
+              <div class="mt-auto pt-3">
+                @if (event.status === 'upcoming') {
+                  <button class="shad-btn-primary w-full gap-2 text-sm h-9">
+                    <i class="fa-solid fa-ticket text-xs"></i>
+                    Register
+                  </button>
+                } @else {
+                  <button class="shad-btn-outline w-full gap-2 text-sm h-9" disabled>
+                    <i class="fa-solid fa-circle-check text-xs"></i>
+                    Completed
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Featured card in grid (styled differently) -->
+      @for (event of filteredEvents(); track event.id) {
+        @if (event.featured) {
+          <div class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col ring-2 ring-amber-300">
+            <div class="h-40 {{ event.color }} flex items-center justify-center relative">
+              <i class="fa-solid {{ event.image }} text-5xl text-zinc-400"></i>
+              <span class="absolute top-3 left-3 text-xs font-semibold bg-amber-400 text-amber-900 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-star text-[9px]"></i> Featured
+              </span>
+              <span class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{ statusBadge(event).classes }}">
+                {{ statusBadge(event).label }}
+              </span>
+            </div>
+            <div class="p-5 flex flex-col flex-1 gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-medium bg-amber-100 text-amber-700 rounded px-2 py-0.5">{{ event.category }}</span>
+                <span class="inline-flex items-center gap-1 text-[11px] text-zinc-400">
+                  <i class="fa-solid {{ modeIcon(event.mode) }} text-[10px]"></i>
+                  {{ event.mode }}
+                </span>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
+                <p class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">{{ event.description }}</p>
+              </div>
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                  <i class="fa-regular fa-calendar w-3.5 text-center text-zinc-400"></i>
+                  {{ event.date }}
+                </div>
+                <div class="flex items-center gap-2 text-xs text-zinc-500">
+                  <i class="fa-solid fa-location-dot w-3.5 text-center text-zinc-400"></i>
+                  {{ event.location }}
+                </div>
+              </div>
+              @if (event.seats && event.seatsLeft !== undefined) {
+                <div class="mt-auto pt-3 border-t border-zinc-100">
+                  <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
+                    <span>{{ event.seatsLeft }} seats left</span>
+                    <span>{{ occupancyPercent(event) }}% filled</span>
+                  </div>
+                  <div class="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-zinc-900 rounded-full" [style.width.%]="occupancyPercent(event)"></div>
+                  </div>
+                </div>
+              }
+              <div class="mt-auto pt-3">
+                <button class="shad-btn-primary w-full gap-2 text-sm h-9">
+                  <i class="fa-solid fa-ticket text-xs"></i>
+                  Register
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ── Propose Event CTA ── -->
+<section class="bg-white py-16">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div class="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-10">
+      <div class="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-4">
+        <i class="fa-solid fa-calendar-plus text-zinc-500 text-2xl"></i>
+      </div>
+      <h3 class="text-xl font-bold text-zinc-900 mb-2">Want to organise an event?</h3>
+      <p class="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
+        Have an idea for a reunion, seminar, or workshop? We'd love to help you make it happen.
+        Reach out and our team will support you.
+      </p>
+      <a routerLink="/contact" class="shad-btn-primary gap-2">
+        <i class="fa-solid fa-paper-plane"></i>
+        Propose an Event
+      </a>
+    </div>
+  </div>
+</section>

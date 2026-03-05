@@ -1,0 +1,233 @@
+<!-- ── Hero ── -->
+<section class="relative overflow-hidden bg-zinc-900 text-white">
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+  <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-zinc-700/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-zinc-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1 rounded-full mb-5">
+        <i class="fa-solid fa-users text-zinc-400 text-[10px]"></i>
+        Alumni Directory
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+        Find, Connect,<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-300 to-zinc-500">Grow Together.</span>
+      </h1>
+      <p class="text-zinc-400 text-lg leading-relaxed mb-8">
+        Browse thousands of CSE DIU graduates from every batch, industry, and country. Reconnect with classmates, find mentors, and grow your professional network.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a routerLink="/auth/register" class="shad-btn-primary bg-white text-zinc-900 hover:bg-zinc-100 px-6 h-11 text-base gap-2">
+          <i class="fa-solid fa-user-plus"></i>
+          Add Your Profile
+        </a>
+        <a routerLink="/dashboard" class="shad-btn-ghost text-zinc-300 hover:text-white hover:bg-zinc-800 px-6 h-11 text-base gap-2">
+          <i class="fa-solid fa-gauge-high"></i>
+          My Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<section class="bg-white border-b border-zinc-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+      @for (stat of stats; track stat.label) {
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center">
+            <i class="fa-solid {{ stat.icon }} text-zinc-700 text-sm"></i>
+          </div>
+          <p class="text-2xl font-extrabold text-zinc-900 tracking-tight">{{ stat.value }}</p>
+          <p class="text-xs text-zinc-500 font-medium">{{ stat.label }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ── Search & Filter + Grid ── -->
+<section class="bg-zinc-50 py-12 lg:py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Search + filters bar -->
+    <div class="bg-white rounded-2xl border border-zinc-200 p-5 mb-8 shadow-sm">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+        <!-- Search -->
+        <div class="relative lg:col-span-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm pointer-events-none"></i>
+          <input
+            type="text"
+            [ngModel]="searchQuery()"
+            (ngModelChange)="searchQuery.set($event)"
+            placeholder="Name, company, or skill…"
+            class="w-full h-9 pl-9 pr-3 rounded-md border border-zinc-300 bg-white text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+          />
+        </div>
+
+        <!-- Batch -->
+        <select
+          [ngModel]="selectedBatch()"
+          (ngModelChange)="selectedBatch.set($event)"
+          class="h-9 rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+        >
+          <option value="">All Batches</option>
+          @for (b of batches; track b) {
+            <option [value]="b">Batch {{ b }}</option>
+          }
+        </select>
+
+        <!-- Industry -->
+        <select
+          [ngModel]="selectedIndustry()"
+          (ngModelChange)="selectedIndustry.set($event)"
+          class="h-9 rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+        >
+          <option value="">All Industries</option>
+          @for (ind of industries; track ind) {
+            <option [value]="ind">{{ ind }}</option>
+          }
+        </select>
+
+        <!-- Country -->
+        <select
+          [ngModel]="selectedCountry()"
+          (ngModelChange)="selectedCountry.set($event)"
+          class="h-9 rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+        >
+          <option value="">All Countries</option>
+          @for (c of countries; track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Active filter bar -->
+      @if (hasFilters()) {
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-zinc-100">
+          <p class="text-xs text-zinc-500">
+            Showing <span class="font-semibold text-zinc-900">{{ filteredMembers().length }}</span> of
+            <span class="font-semibold text-zinc-900">{{ members.length }}</span> alumni
+          </p>
+          <button (click)="clearFilters()" class="text-xs text-zinc-500 hover:text-zinc-900 flex items-center gap-1 transition-colors">
+            <i class="fa-solid fa-xmark text-[10px]"></i>
+            Clear filters
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Empty state -->
+    @if (filteredMembers().length === 0) {
+      <div class="text-center py-24">
+        <i class="fa-solid fa-user-slash text-5xl text-zinc-300 mb-4 block"></i>
+        <p class="text-lg font-semibold text-zinc-700 mb-1">No alumni found</p>
+        <p class="text-sm text-zinc-400 mb-4">Try adjusting your search or filters.</p>
+        <button (click)="clearFilters()" class="shad-btn-outline gap-2 text-sm">
+          <i class="fa-solid fa-rotate-left text-xs"></i>
+          Clear All Filters
+        </button>
+      </div>
+    }
+
+    <!-- Cards grid -->
+    @if (filteredMembers().length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        @for (member of filteredMembers(); track member.id) {
+          <a [routerLink]="['/alumni', member.id]" class="shad-card p-5 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col gap-4 cursor-pointer block">
+
+            <!-- Avatar + name -->
+            <div class="flex items-start gap-3">
+              <div class="w-12 h-12 rounded-full {{ member.color }} flex items-center justify-center text-white font-bold text-base flex-shrink-0">
+                {{ member.initials }}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-zinc-900 leading-tight truncate">{{ member.name }}</p>
+                <p class="text-xs text-zinc-500 truncate mt-0.5">{{ member.role }}</p>
+                <p class="text-xs font-medium text-zinc-700 truncate">{{ member.company }}</p>
+              </div>
+            </div>
+
+            <!-- Meta chips -->
+            <div class="flex flex-wrap gap-1.5">
+              <span class="inline-flex items-center gap-1 text-[11px] bg-zinc-100 text-zinc-600 rounded px-2 py-0.5">
+                <i class="fa-solid fa-layer-group text-[9px]"></i>
+                Batch {{ member.batch }}
+              </span>
+              <span class="inline-flex items-center gap-1 text-[11px] bg-zinc-100 text-zinc-600 rounded px-2 py-0.5">
+                <i class="fa-solid fa-globe text-[9px]"></i>
+                {{ member.city }}, {{ member.country }}
+              </span>
+              <span class="inline-flex items-center gap-1 text-[11px] bg-zinc-100 text-zinc-600 rounded px-2 py-0.5 truncate max-w-full">
+                <i class="fa-solid fa-briefcase text-[9px]"></i>
+                {{ member.industry }}
+              </span>
+            </div>
+
+            <!-- Skills -->
+            <div class="flex flex-wrap gap-1">
+              @for (skill of member.skills; track skill) {
+                <span class="text-[11px] border border-zinc-200 text-zinc-500 rounded px-1.5 py-0.5">{{ skill }}</span>
+              }
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2 mt-auto pt-2 border-t border-zinc-100" (click)="$event.stopPropagation(); $event.preventDefault()">
+              <button class="flex-1 shad-btn-outline text-xs h-7 gap-1" (click)="$event.stopPropagation()">
+                <i class="fa-solid fa-envelope text-[10px]"></i>
+                Connect
+              </button>
+              @if (member.linkedin) {
+                <a [href]="member.linkedin" target="_blank" rel="noopener"
+                  (click)="$event.stopPropagation()"
+                  class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:border-zinc-400 transition-colors">
+                  <i class="fa-brands fa-linkedin-in text-xs"></i>
+                </a>
+              } @else {
+                <button
+                  (click)="$event.stopPropagation()"
+                  class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:border-zinc-400 transition-colors"
+                  title="LinkedIn not added">
+                  <i class="fa-brands fa-linkedin-in text-xs"></i>
+                </button>
+              }
+            </div>
+          </a>
+        }
+      </div>
+    }
+
+    <!-- Show count when no filters active -->
+    @if (!hasFilters()) {
+      <p class="text-center text-sm text-zinc-400 mt-10">
+        Showing {{ members.length }} sample profiles &mdash;
+        <a routerLink="/auth/register" class="text-zinc-600 hover:text-zinc-900 font-medium underline underline-offset-2 transition-colors">
+          register to see all 5,000+ alumni
+        </a>
+      </p>
+    }
+  </div>
+</section>
+
+<!-- ── Join CTA ── -->
+<section class="bg-zinc-900 py-16">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-3xl font-bold text-white tracking-tight mb-4">Don't see yourself here?</h2>
+    <p class="text-zinc-400 text-base mb-8">
+      Create your free profile and join the directory. Let former classmates and recruiters find you.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a routerLink="/auth/register" class="shad-btn-primary bg-white text-zinc-900 hover:bg-zinc-100 px-6 h-11 text-base gap-2">
+        <i class="fa-solid fa-user-plus"></i>
+        Join the Directory
+      </a>
+      <a routerLink="/about" class="shad-btn-ghost text-zinc-400 hover:text-white hover:bg-zinc-800 h-11 px-6 text-base gap-2">
+        <i class="fa-solid fa-circle-info"></i>
+        About the Network
+      </a>
+    </div>
+  </div>
+</section>
