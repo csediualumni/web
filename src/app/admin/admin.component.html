@@ -1,0 +1,286 @@
+<div class="min-h-screen bg-gray-100">
+
+  <!-- Top bar -->
+  <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button (click)="goBack()" class="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" aria-label="Go back">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+      </button>
+      <h1 class="text-lg font-semibold text-gray-900">Admin Panel</h1>
+    </div>
+    <!-- Current user roles -->
+    <div class="flex gap-1.5">
+      @for (role of (auth.currentUser()?.roles ?? []); track role.id) {
+        <span class="text-xs font-medium px-2 py-1 rounded-full bg-indigo-100 text-indigo-700 uppercase">{{ role.name }}</span>
+      }
+    </div>
+  </header>
+
+  <!-- Tab bar -->
+  <div class="bg-white border-b border-gray-200 px-6">
+    <nav class="flex gap-0">
+      <button (click)="setTab('users')"
+        class="px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer"
+        [class.border-indigo-600]="activeTab() === 'users'"
+        [class.text-indigo-600]="activeTab() === 'users'"
+        [class.border-transparent]="activeTab() !== 'users'"
+        [class.text-gray-500]="activeTab() !== 'users'">
+        Users
+      </button>
+      <button (click)="setTab('roles')"
+        class="px-4 py-3 text-sm font-medium border-b-2 transition-colors cursor-pointer"
+        [class.border-indigo-600]="activeTab() === 'roles'"
+        [class.text-indigo-600]="activeTab() === 'roles'"
+        [class.border-transparent]="activeTab() !== 'roles'"
+        [class.text-gray-500]="activeTab() !== 'roles'">
+        Roles &amp; Permissions
+      </button>
+    </nav>
+  </div>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- Error banner -->
+    @if (error()) {
+      <div class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-center justify-between">
+        <p class="text-sm text-red-600">{{ error() }}</p>
+        <button (click)="error.set('')" class="text-red-400 hover:text-red-600 cursor-pointer">✕</button>
+      </div>
+    }
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="flex justify-center items-center py-20">
+        <svg class="animate-spin h-8 w-8 text-indigo-500" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+        </svg>
+      </div>
+    }
+
+    <!-- ═══════════════════════ USERS TAB ═══════════════════════ -->
+    @if (!loading() && activeTab() === 'users') {
+      <div class="bg-white rounded-2xl shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+          <h2 class="font-medium text-gray-800">All Users <span class="ml-2 text-sm font-normal text-gray-400">({{ users().length }})</span></h2>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                <th class="px-6 py-3 font-medium">User</th>
+                <th class="px-6 py-3 font-medium">Auth</th>
+                <th class="px-6 py-3 font-medium">Joined</th>
+                <th class="px-6 py-3 font-medium">Roles</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              @for (user of users(); track user.id) {
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <!-- User -->
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                      @if (user.avatar) {
+                        <img [src]="user.avatar" [alt]="user.displayName ?? user.email"
+                             class="w-8 h-8 rounded-full object-cover"/>
+                      } @else {
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xs uppercase">
+                          {{ user.displayName ? user.displayName[0] : user.email[0] }}
+                        </div>
+                      }
+                      <div>
+                        <p class="font-medium text-gray-800">{{ user.displayName ?? '—' }}</p>
+                        <p class="text-gray-400 text-xs">{{ user.email }}</p>
+                        @if (user.id === auth.currentUser()?.id) {
+                          <span class="text-xs text-indigo-400">(you)</span>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                  <!-- Auth type -->
+                  <td class="px-6 py-4">
+                    @if (user.googleId) {
+                      <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Google</span>
+                    } @else {
+                      <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Email</span>
+                    }
+                  </td>
+                  <!-- Joined -->
+                  <td class="px-6 py-4 text-gray-400 text-xs">
+                    {{ user.createdAt | date: 'mediumDate' }}
+                  </td>
+                  <!-- Roles — toggle chips -->
+                  <td class="px-6 py-4">
+                    <div class="flex flex-wrap gap-1.5">
+                      @for (role of allRoles(); track role.id) {
+                        <button
+                          (click)="toggleUserRole(user, role.id)"
+                          [disabled]="isTogglingRole(user.id, role.id) || !auth.hasPermission('users:assign_role')"
+                          class="text-xs px-2.5 py-1 rounded-full border transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          [class.bg-indigo-600]="hasRole(user, role.id)"
+                          [class.text-white]="hasRole(user, role.id)"
+                          [class.border-indigo-600]="hasRole(user, role.id)"
+                          [class.bg-white]="!hasRole(user, role.id)"
+                          [class.text-gray-500]="!hasRole(user, role.id)"
+                          [class.border-gray-200]="!hasRole(user, role.id)"
+                          [title]="(hasRole(user, role.id) ? 'Remove ' : 'Add ') + role.name"
+                        >
+                          @if (isTogglingRole(user.id, role.id)) {
+                            <span class="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                          } @else {
+                            {{ role.name }}
+                          }
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    <!-- ═══════════════════════ ROLES TAB ═══════════════════════ -->
+    @if (!loading() && activeTab() === 'roles') {
+      <div class="flex gap-6">
+
+        <!-- Left: roles list + create form -->
+        <div class="w-72 flex-shrink-0 flex flex-col gap-4">
+
+          <!-- Create new role -->
+          @if (auth.hasPermission('roles:write')) {
+            <div class="bg-white rounded-2xl shadow p-4">
+              <h3 class="text-sm font-semibold text-gray-700 mb-3">New Role</h3>
+              <input
+                [(ngModel)]="newRoleName"
+                placeholder="Role name"
+                class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+              <input
+                [(ngModel)]="newRoleDesc"
+                placeholder="Description (optional)"
+                class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+              <button
+                (click)="createRole()"
+                [disabled]="creatingRole() || !newRoleName().trim()"
+                class="w-full py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                @if (creatingRole()) { Creating… } @else { Create Role }
+              </button>
+            </div>
+          }
+
+          <!-- Roles list -->
+          <div class="bg-white rounded-2xl shadow overflow-hidden">
+            <div class="px-4 py-3 border-b border-gray-100">
+              <h3 class="text-sm font-semibold text-gray-700">Roles <span class="text-gray-400 font-normal">({{ roles().length }})</span></h3>
+            </div>
+            <ul class="divide-y divide-gray-50">
+              @for (role of roles(); track role.id) {
+                <li>
+                  <button
+                    (click)="selectRole(role)"
+                    class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between gap-2"
+                    [class.bg-indigo-50]="selectedRole()?.id === role.id"
+                  >
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium text-gray-800 truncate">{{ role.name }}</p>
+                      @if (role.description) {
+                        <p class="text-xs text-gray-400 mt-0.5 truncate">{{ role.description }}</p>
+                      }
+                      <p class="text-xs text-gray-400 mt-0.5">{{ role.permissions.length }} permission(s)</p>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                      @if (role.isSystem) {
+                        <span class="text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-600">system</span>
+                      }
+                      @if (!role.isSystem && auth.hasPermission('roles:delete')) {
+                        <button
+                          (click)="$event.stopPropagation(); deleteRole(role)"
+                          [disabled]="deletingRoleId() === role.id"
+                          class="text-xs text-red-400 hover:text-red-600 cursor-pointer disabled:opacity-50"
+                          title="Delete role"
+                        >
+                          @if (deletingRoleId() === role.id) { … } @else { delete }
+                        </button>
+                      }
+                    </div>
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right: permission editor for selectedRole -->
+        @if (selectedRole()) {
+          <div class="flex-1 bg-white rounded-2xl shadow p-6">
+            <div class="flex items-start justify-between mb-5">
+              <div>
+                <h2 class="text-base font-semibold text-gray-900">{{ selectedRole()!.name }}</h2>
+                @if (selectedRole()!.description) {
+                  <p class="text-sm text-gray-400 mt-0.5">{{ selectedRole()!.description }}</p>
+                }
+              </div>
+              <button (click)="selectedRole.set(null)" class="text-gray-300 hover:text-gray-500 cursor-pointer text-xl leading-none">✕</button>
+            </div>
+
+            @if (!auth.hasPermission('permissions:assign')) {
+              <p class="text-sm text-gray-400">You don't have permission to modify role permissions.</p>
+            }
+
+            @for (group of groupedPermissions(); track group.group) {
+              <div class="mb-5">
+                <span class="inline-block text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded mb-2"
+                      [class]="permBadgeGroup(group.group)">
+                  {{ group.group }}
+                </span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  @for (perm of group.permissions; track perm.id) {
+                    <label
+                      class="flex items-start gap-3 p-3 rounded-xl border transition-colors"
+                      [class.border-indigo-300]="hasPermissionOnRole(selectedRole()!, perm.id)"
+                      [class.bg-indigo-50]="hasPermissionOnRole(selectedRole()!, perm.id)"
+                      [class.border-gray-200]="!hasPermissionOnRole(selectedRole()!, perm.id)"
+                      [class.cursor-pointer]="auth.hasPermission('permissions:assign')"
+                      [class.opacity-60]="!auth.hasPermission('permissions:assign')"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="hasPermissionOnRole(selectedRole()!, perm.id)"
+                        [disabled]="isTogglingPerm(selectedRole()!.id, perm.id) || !auth.hasPermission('permissions:assign')"
+                        (change)="toggleRolePermission(selectedRole()!, perm.id)"
+                        class="mt-0.5 rounded accent-indigo-600 cursor-pointer"
+                      />
+                      <div>
+                        <p class="text-sm font-medium text-gray-800">{{ perm.key }}</p>
+                        @if (perm.description) {
+                          <p class="text-xs text-gray-400 mt-0.5">{{ perm.description }}</p>
+                        }
+                        @if (isTogglingPerm(selectedRole()!.id, perm.id)) {
+                          <p class="text-xs text-indigo-400 mt-0.5">Saving…</p>
+                        }
+                      </div>
+                    </label>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="flex-1 flex items-center justify-center text-gray-300 text-sm select-none">
+            ← Select a role to manage its permissions
+          </div>
+        }
+
+      </div>
+    }
+
+  </main>
+</div>
