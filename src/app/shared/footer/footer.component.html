@@ -1,0 +1,169 @@
+<footer class="bg-zinc-900 text-zinc-300">
+
+  <!-- ── Newsletter banner ──────────────────────────────────────── -->
+  <div class="border-b border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <h3 class="text-lg font-semibold text-white">Stay in the loop</h3>
+          <p class="mt-1 text-sm text-zinc-400">Get the latest alumni news, events, and opportunities straight to your inbox.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2 md:min-w-[380px]">
+          @if (!subscribed()) {
+            <input
+              type="email"
+              [value]="newsletterEmail()"
+              (input)="newsletterEmail.set($any($event.target).value)"
+              placeholder="you@example.com"
+              class="flex-1 h-9 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-1 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-400 transition-colors"
+            />
+            <button
+              (click)="subscribeNewsletter()"
+              [disabled]="subscribing()"
+              class="shad-btn-primary bg-white text-zinc-900 hover:bg-zinc-100 flex-shrink-0 disabled:opacity-60"
+            >
+              @if (subscribing()) {
+                <i class="fa-solid fa-spinner fa-spin mr-1.5"></i>
+              }
+              Subscribe
+            </button>
+          } @else {
+            <div class="flex items-center gap-2 text-sm text-emerald-400 font-medium">
+              <i class="fa-solid fa-circle-check"></i>
+              You're subscribed! Thank you.
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main footer columns ────────────────────────────────────── -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+      <!-- Col 1: Brand + about -->
+      <div class="lg:col-span-1">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-graduation-cap text-zinc-900 text-base"></i>
+          </div>
+          <div class="leading-tight">
+            <span class="block text-sm font-bold text-white tracking-tight">CSE DIU</span>
+            <span class="block text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Alumni Network</span>
+          </div>
+        </div>
+        <p class="text-sm text-zinc-400 leading-relaxed mb-5">
+          Connecting Computer Science & Engineering graduates of Daffodil International University — building community, creating opportunity.
+        </p>
+        <!-- Socials -->
+        <div class="flex items-center gap-3">
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+            <i class="fa-brands fa-facebook-f text-xs"></i>
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+            <i class="fa-brands fa-linkedin-in text-xs"></i>
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter / X"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+            <i class="fa-brands fa-x-twitter text-xs"></i>
+          </a>
+          <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+            <i class="fa-brands fa-youtube text-xs"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Col 2: Quick links -->
+      <div>
+        <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Quick Links</h4>
+        <ul class="space-y-2.5">
+          @for (link of [
+            {label: 'Home', path: '/', icon: 'fa-house'},
+            {label: 'About Us', path: '/about', icon: 'fa-circle-info'},
+            {label: 'Alumni Directory', path: '/alumni', icon: 'fa-users'},
+            {label: 'Events', path: '/events', icon: 'fa-calendar-days'},
+            {label: 'Gallery', path: '/gallery', icon: 'fa-images'},
+            {label: 'Contact', path: '/contact', icon: 'fa-envelope'}
+          ]; track link.path) {
+            <li>
+              <a [routerLink]="link.path" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                <i class="fa-solid {{ link.icon }} text-[11px] w-3.5 text-center text-zinc-600"></i>
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Col 3: Resources -->
+      <div>
+        <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Resources</h4>
+        <ul class="space-y-2.5">
+          @for (link of [
+            {label: 'Job Board', path: '/jobs', icon: 'fa-briefcase'},
+            {label: 'Scholarships', path: '/scholarships', icon: 'fa-medal'},
+            {label: 'Mentorship Program', path: '/mentorship', icon: 'fa-handshake'},
+            {label: 'Research Papers', path: '/research', icon: 'fa-file-lines'},
+            {label: 'News & Announcements', path: '/news', icon: 'fa-newspaper'},
+            {label: 'DIU Official Site', path: 'https://diu.edu.bd', icon: 'fa-link'}
+          ]; track link.path) {
+            <li>
+              <a [routerLink]="link.path" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                <i class="fa-solid {{ link.icon }} text-[11px] w-3.5 text-center text-zinc-600"></i>
+                {{ link.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Col 4: Contact -->
+      <div>
+        <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Contact Us</h4>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-2.5">
+            <i class="fa-solid fa-location-dot text-zinc-500 text-sm mt-0.5 flex-shrink-0 w-3.5 text-center"></i>
+            <span class="text-sm text-zinc-400">
+              Dept. of CSE, Daffodil International University<br>
+              Daffodil Smart City, Birulia, Savar, Dhaka-1216
+            </span>
+          </li>
+          <li class="flex items-center gap-2.5">
+            <i class="fa-solid fa-phone text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
+            <a href="tel:+88017XXXXXXXX" class="text-sm text-zinc-400 hover:text-white transition-colors">+880 17XX-XXXXXX</a>
+          </li>
+          <li class="flex items-center gap-2.5">
+            <i class="fa-regular fa-envelope text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
+            <a href="mailto:alumni@cse.diu.edu.bd" class="text-sm text-zinc-400 hover:text-white transition-colors">alumni&#64;cse.diu.edu.bd</a>
+          </li>
+          <li class="flex items-center gap-2.5">
+            <i class="fa-regular fa-clock text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
+            <span class="text-sm text-zinc-400">Sun – Thu: 9:00 AM – 5:00 PM</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Bottom bar ─────────────────────────────────────────────── -->
+  <div class="border-t border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-xs text-zinc-500 text-center sm:text-left">
+        &copy; {{ currentYear }} CSE DIU Alumni Network. All rights reserved.
+      </p>
+      <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+        <a routerLink="/sitemap" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Sitemap</a>
+        <a routerLink="/privacy-policy" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Privacy Policy</a>
+        <a routerLink="/terms" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Terms &amp; Conditions</a>
+        <a routerLink="/accessibility" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Accessibility</a>
+        <a routerLink="/cookie-policy" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Cookie Policy</a>
+      </nav>
+    </div>
+  </div>
+
+</footer>

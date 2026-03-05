@@ -1,40 +1,205 @@
-<div class="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
-  <div class="shad-card p-6 w-full max-w-sm">
+<div class="min-h-screen bg-zinc-50">
 
-    <!-- Avatar & identity -->
-    <div class="flex flex-col items-center text-center mb-5">
-      <div class="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-white text-lg font-semibold mb-3 uppercase">
-        {{ (auth.currentUser()?.email ?? '?')[0] }}
+  <!-- ── Page header ──────────────────────────────────────────── -->
+  <div class="bg-white border-b border-zinc-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+        <!-- Greeting + identity -->
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-zinc-900 flex items-center justify-center text-white text-xl font-bold flex-shrink-0 shadow-sm">
+            {{ userInitial() }}
+          </div>
+          <div>
+            <p class="text-xs text-zinc-500 font-medium mb-0.5">Welcome back</p>
+            <h1 class="text-xl font-bold text-zinc-900 tracking-tight capitalize">{{ displayName() }}</h1>
+            <p class="text-xs text-zinc-400 mt-0.5">{{ userEmail() }}</p>
+          </div>
+        </div>
+
+        <!-- Header actions -->
+        <div class="flex items-center gap-2">
+          @if (isAdmin()) {
+            <button (click)="goToAdmin()" class="shad-btn-primary gap-2 text-sm">
+              <i class="fa-solid fa-gear"></i>
+              Admin Panel
+            </button>
+          }
+          <button (click)="logout()" class="shad-btn-outline gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sign out
+          </button>
+        </div>
+
       </div>
-      <p class="text-xs text-zinc-500 mt-0.5">{{ auth.currentUser()?.email }}</p>
     </div>
-
-    <!-- Role badges -->
-    <div class="flex flex-wrap justify-center gap-1.5 mb-5">
-      @for (role of (auth.currentUser()?.roles ?? []); track role.id) {
-        <span class="shad-badge-secondary uppercase tracking-wide text-[11px]">{{ role.name }}</span>
-      }
-      @if (!(auth.currentUser()?.roles?.length)) {
-        <span class="shad-badge-outline text-[11px]">No role assigned</span>
-      }
-    </div>
-
-    <!-- Separator -->
-    <div class="border-t border-zinc-100 mb-5"></div>
-
-    <!-- Actions -->
-    <div class="flex flex-col gap-2">
-      @if (isAdmin()) {
-        <button (click)="goToAdmin()" class="shad-btn-primary w-full">
-          <i class="fa-solid fa-gear mr-2"></i>
-          Admin Panel
-        </button>
-      }
-      <button (click)="logout()" class="shad-btn-outline w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
-        <i class="fa-solid fa-right-from-bracket mr-2"></i>
-        Sign out
-      </button>
-    </div>
-
   </div>
+
+  <!-- ── Main content ──────────────────────────────────────────── -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- ── Left / main column ─────────────────────────────── -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Stats cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          @for (stat of stats; track stat.label) {
+            <div class="shad-card p-4 flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-medium text-zinc-500">{{ stat.label }}</p>
+                <span class="w-7 h-7 rounded-lg {{ stat.iconBg }} flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid {{ stat.icon }} text-xs {{ stat.iconColor }}"></i>
+                </span>
+              </div>
+              <p class="text-2xl font-bold text-zinc-900">{{ stat.value }}</p>
+            </div>
+          }
+        </div>
+
+        <!-- Profile completion banner -->
+        <div class="shad-card p-5 flex flex-col sm:flex-row sm:items-center gap-4 bg-gradient-to-r from-zinc-900 to-zinc-700 text-white border-0">
+          <div class="flex-1">
+            <p class="text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Complete your profile</p>
+            <h3 class="text-base font-semibold mb-1">Let the community know who you are</h3>
+            <p class="text-xs text-zinc-400">Add your graduation batch, workplace, and bio so fellow alumni can find and connect with you.</p>
+          </div>
+          <div class="flex flex-col items-start sm:items-end gap-2 flex-shrink-0">
+            <!-- progress ring placeholder -->
+            <div class="relative w-14 h-14">
+              <svg class="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
+                <circle cx="28" cy="28" r="22" fill="none" stroke="white" stroke-width="5"
+                  stroke-dasharray="138.23" stroke-dashoffset="97" stroke-linecap="round"/>
+              </svg>
+              <span class="absolute inset-0 flex items-center justify-center text-xs font-bold">30%</span>
+            </div>
+            <a routerLink="/profile" class="text-xs font-medium text-white underline underline-offset-2 hover:no-underline">Edit profile →</a>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="shad-card overflow-hidden">
+          <div class="px-5 py-4 border-b border-zinc-100 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-zinc-900">Recent Activity</h2>
+            <button class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">View all</button>
+          </div>
+          <ul class="divide-y divide-zinc-50">
+            @for (item of recentActivity; track item.title) {
+              <li class="flex items-start gap-3 px-5 py-4">
+                <span class="w-8 h-8 rounded-full {{ item.iconBg }} flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fa-solid {{ item.icon }} text-xs"></i>
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-sm text-zinc-700">{{ item.title }}</p>
+                  <p class="text-xs text-zinc-400 mt-0.5">{{ item.time }}</p>
+                </div>
+              </li>
+            }
+            @if (!recentActivity.length) {
+              <li class="px-5 py-8 text-center text-sm text-zinc-400">No activity yet.</li>
+            }
+          </ul>
+        </div>
+
+        <!-- Upcoming events -->
+        <div class="shad-card overflow-hidden">
+          <div class="px-5 py-4 border-b border-zinc-100 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-zinc-900">Upcoming Events</h2>
+            <a routerLink="/events" class="text-xs text-zinc-400 hover:text-zinc-600 transition-colors">See all</a>
+          </div>
+          <ul class="divide-y divide-zinc-50">
+            @for (ev of upcomingEvents; track ev.title) {
+              <li class="flex items-start gap-4 px-5 py-4 hover:bg-zinc-50 transition-colors cursor-pointer">
+                <!-- Date pill -->
+                <div class="flex-shrink-0 w-10 text-center">
+                  <p class="text-[10px] font-semibold text-zinc-400 uppercase leading-none">
+                    {{ ev.date.split(' ')[0] }}
+                  </p>
+                  <p class="text-xl font-extrabold text-zinc-900 leading-tight">
+                    {{ ev.date.split(' ')[1].replace(',','') }}
+                  </p>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-start justify-between gap-2">
+                    <p class="text-sm font-medium text-zinc-800">{{ ev.title }}</p>
+                    <span class="shad-badge-secondary text-[10px] flex-shrink-0">{{ ev.badge }}</span>
+                  </div>
+                  <p class="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
+                    <i class="fa-solid fa-location-dot text-[10px]"></i>
+                    {{ ev.location }}
+                  </p>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+
+      </div><!-- /main col -->
+
+      <!-- ── Right / sidebar column ──────────────────────────── -->
+      <div class="space-y-6">
+
+        <!-- Profile card -->
+        <div class="shad-card p-5 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-zinc-900 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3 shadow-sm">
+            {{ userInitial() }}
+          </div>
+          <p class="text-sm font-semibold text-zinc-900 capitalize">{{ displayName() }}</p>
+          <p class="text-xs text-zinc-500 mt-0.5 mb-3">{{ userEmail() }}</p>
+
+          <!-- Role badges -->
+          <div class="flex flex-wrap justify-center gap-1.5 mb-4">
+            @for (role of roles(); track role.id) {
+              <span class="shad-badge-secondary uppercase tracking-wide text-[10px]">{{ role.name }}</span>
+            }
+            @if (!roles().length) {
+              <span class="shad-badge-outline text-[10px]">No role assigned</span>
+            }
+          </div>
+
+          <div class="border-t border-zinc-100 pt-4 text-xs text-zinc-400 flex items-center justify-center gap-1">
+            <i class="fa-regular fa-calendar text-[11px]"></i>
+            Member since {{ memberSince() }}
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="shad-card overflow-hidden">
+          <div class="px-4 py-3 border-b border-zinc-100">
+            <h2 class="text-sm font-semibold text-zinc-900">Quick Links</h2>
+          </div>
+          <nav class="p-2">
+            @for (link of quickLinks; track link.path) {
+              <a
+                [routerLink]="link.path"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors"
+              >
+                <span class="w-7 h-7 rounded-md bg-zinc-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid {{ link.icon }} text-xs text-zinc-500"></i>
+                </span>
+                {{ link.label }}
+                <i class="fa-solid fa-chevron-right text-[10px] text-zinc-300 ml-auto"></i>
+              </a>
+            }
+          </nav>
+        </div>
+
+        <!-- Need help -->
+        <div class="shad-card p-5 bg-zinc-50 border-zinc-100">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fa-solid fa-circle-question text-zinc-400"></i>
+            <p class="text-sm font-semibold text-zinc-700">Need help?</p>
+          </div>
+          <p class="text-xs text-zinc-500 leading-relaxed mb-3">
+            Questions about your account or the alumni network? We're here for you.
+          </p>
+          <a routerLink="/contact" class="shad-btn-outline w-full text-sm">Contact Support</a>
+        </div>
+
+      </div><!-- /sidebar -->
+
+    </div><!-- /grid -->
+  </div><!-- /max-w -->
+
 </div>
