@@ -43,6 +43,39 @@ export const routes: Routes = [
       import('./admin/admin.component').then((m) => m.AdminComponent),
   },
   {
+    path: 'sitemap',
+    loadComponent: () =>
+      import('./legal/sitemap/sitemap.component').then(
+        (m) => m.SitemapComponent,
+      ),
+  },
+  {
+    path: 'privacy-policy',
+    loadComponent: () =>
+      import('./legal/privacy-policy/privacy-policy.component').then(
+        (m) => m.PrivacyPolicyComponent,
+      ),
+  },
+  {
+    path: 'terms',
+    loadComponent: () =>
+      import('./legal/terms/terms.component').then((m) => m.TermsComponent),
+  },
+  {
+    path: 'accessibility',
+    loadComponent: () =>
+      import('./legal/accessibility/accessibility.component').then(
+        (m) => m.AccessibilityComponent,
+      ),
+  },
+  {
+    path: 'cookie-policy',
+    loadComponent: () =>
+      import('./legal/cookie-policy/cookie-policy.component').then(
+        (m) => m.CookiePolicyComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
