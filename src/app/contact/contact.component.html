@@ -1,0 +1,237 @@
+<!-- ── Hero ── -->
+<section class="relative overflow-hidden bg-zinc-900 text-white">
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+  <div class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-zinc-700/20 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
+    <span class="inline-flex items-center gap-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1 rounded-full mb-5">
+      <i class="fa-solid fa-envelope text-zinc-400 text-[10px]"></i>
+      Get in Touch
+    </span>
+    <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">Contact Us</h1>
+    <p class="max-w-xl mx-auto text-zinc-400 text-lg">
+      Have a question, suggestion, or just want to say hello? We'd love to hear from you.
+    </p>
+  </div>
+</section>
+
+<!-- ── Contact Info + Form ── -->
+<section class="bg-white py-16 lg:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="lg:grid lg:grid-cols-5 lg:gap-16">
+
+      <!-- Left: info cards -->
+      <div class="lg:col-span-2 mb-12 lg:mb-0">
+        <h2 class="text-xl font-bold text-zinc-900 mb-6">Contact Information</h2>
+        <div class="space-y-4">
+          @for (info of contactInfo; track info.label) {
+            <div class="flex items-start gap-4 p-4 rounded-xl border border-zinc-100 bg-zinc-50">
+              <div class="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i class="fa-solid {{ info.icon }} text-white text-sm"></i>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">{{ info.label }}</p>
+                @if (info.link) {
+                  <a [href]="info.link" class="text-sm text-zinc-700 hover:text-zinc-900 transition-colors font-medium">{{ info.lines[0] }}</a>
+                } @else {
+                  @for (line of info.lines; track line) {
+                    <p class="text-sm text-zinc-700">{{ line }}</p>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Social -->
+        <div class="mt-8">
+          <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Follow Us</p>
+          <div class="flex items-center gap-3">
+            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-900 hover:text-white transition-colors">
+              <i class="fa-brands fa-facebook-f text-sm"></i>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-900 hover:text-white transition-colors">
+              <i class="fa-brands fa-linkedin-in text-sm"></i>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter / X"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-900 hover:text-white transition-colors">
+              <i class="fa-brands fa-x-twitter text-sm"></i>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-900 hover:text-white transition-colors">
+              <i class="fa-brands fa-youtube text-sm"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: contact form -->
+      <div class="lg:col-span-3">
+        @if (!submitted()) {
+          <div class="shad-card p-8">
+            <h2 class="text-xl font-bold text-zinc-900 mb-6">Send Us a Message</h2>
+
+            <!-- Error -->
+            @if (error()) {
+              <div class="mb-5 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+                {{ error() }}
+              </div>
+            }
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <!-- Name -->
+              <div>
+                <label for="contact-name" class="block text-sm font-medium text-zinc-700 mb-1.5">Full Name <span class="text-red-500">*</span></label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  [(ngModel)]="form.name"
+                  placeholder="Your full name"
+                  class="w-full h-9 rounded-md border border-zinc-300 bg-white px-3 py-1 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+                />
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="contact-email" class="block text-sm font-medium text-zinc-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  [(ngModel)]="form.email"
+                  placeholder="you@example.com"
+                  class="w-full h-9 rounded-md border border-zinc-300 bg-white px-3 py-1 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+                />
+              </div>
+
+              <!-- Subject (full width) -->
+              <div class="sm:col-span-2">
+                <label for="contact-subject" class="block text-sm font-medium text-zinc-700 mb-1.5">Subject <span class="text-red-500">*</span></label>
+                <select
+                  id="contact-subject"
+                  [(ngModel)]="form.subject"
+                  class="w-full h-9 rounded-md border border-zinc-300 bg-white px-3 py-1 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow"
+                >
+                  <option value="" disabled>Select a subject…</option>
+                  @for (s of subjects; track s) {
+                    <option [value]="s">{{ s }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Message (full width) -->
+              <div class="sm:col-span-2">
+                <label for="contact-message" class="block text-sm font-medium text-zinc-700 mb-1.5">Message <span class="text-red-500">*</span></label>
+                <textarea
+                  id="contact-message"
+                  [(ngModel)]="form.message"
+                  rows="5"
+                  placeholder="Tell us how we can help…"
+                  class="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 transition-shadow resize-none"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <button
+                (click)="submitForm()"
+                [disabled]="submitting()"
+                class="shad-btn-primary gap-2 disabled:opacity-60"
+              >
+                @if (submitting()) {
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                  Sending…
+                } @else {
+                  <i class="fa-solid fa-paper-plane"></i>
+                  Send Message
+                }
+              </button>
+            </div>
+          </div>
+        } @else {
+          <!-- Success state -->
+          <div class="shad-card p-12 flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-5">
+              <i class="fa-solid fa-circle-check text-emerald-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-zinc-900 mb-2">Message Sent!</h3>
+            <p class="text-zinc-500 text-sm mb-6 max-w-sm">
+              Thank you for reaching out. We'll get back to you within 2 business days.
+            </p>
+            <button
+              (click)="submitted.set(false)"
+              class="shad-btn-outline gap-2"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+              Send Another Message
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Map placeholder ── -->
+<section class="bg-zinc-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="rounded-2xl border border-zinc-200 bg-white overflow-hidden">
+      <div class="h-72 flex flex-col items-center justify-center gap-3 bg-zinc-100 text-zinc-400">
+        <i class="fa-solid fa-map-location-dot text-5xl text-zinc-300"></i>
+        <p class="text-sm font-medium">Daffodil Smart City, Birulia, Savar, Dhaka-1216</p>
+        <a
+          href="https://maps.google.com/?q=Daffodil+Smart+City+Birulia+Savar+Dhaka"
+          target="_blank"
+          rel="noopener"
+          class="shad-btn-outline text-xs gap-1.5 mt-1"
+        >
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+          Open in Google Maps
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section class="bg-white py-16 lg:py-24">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Self-service</p>
+      <h2 class="text-3xl font-bold text-zinc-900 tracking-tight">Frequently Asked Questions</h2>
+      <p class="mt-2 text-zinc-500 text-base">Quick answers to common questions.</p>
+    </div>
+
+    <div class="space-y-3">
+      @for (faq of faqs; track faq.q; let i = $index) {
+        <div class="rounded-xl border border-zinc-200 overflow-hidden">
+          <button
+            (click)="toggleFaq(i)"
+            class="w-full flex items-center justify-between px-5 py-4 text-left text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition-colors"
+            [attr.aria-expanded]="isFaqOpen(i)"
+          >
+            <span>{{ faq.q }}</span>
+            <i
+              class="fa-solid fa-chevron-down text-zinc-400 text-xs flex-shrink-0 ml-3 transition-transform duration-200"
+              [class.rotate-180]="isFaqOpen(i)"
+            ></i>
+          </button>
+          @if (isFaqOpen(i)) {
+            <div class="px-5 pb-4 text-sm text-zinc-500 leading-relaxed border-t border-zinc-100 pt-3">
+              {{ faq.a }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <p class="text-center mt-8 text-sm text-zinc-500">
+      Still have questions?
+      <a routerLink="/contact" class="text-zinc-900 font-semibold hover:underline underline-offset-4 ml-1">
+        Drop us a message
+      </a>
+    </p>
+  </div>
+</section>

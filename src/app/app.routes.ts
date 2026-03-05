@@ -43,6 +43,21 @@ export const routes: Routes = [
       import('./admin/admin.component').then((m) => m.AdminComponent),
   },
   {
+    path: 'about',
+    loadComponent: () =>
+      import('./about/about.component').then((m) => m.AboutComponent),
+  },
+  {
+    path: 'contact',
+    loadComponent: () =>
+      import('./contact/contact.component').then((m) => m.ContactComponent),
+  },
+  {
+    path: 'gallery',
+    loadComponent: () =>
+      import('./gallery/gallery.component').then((m) => m.GalleryComponent),
+  },
+  {
     path: 'sitemap',
     loadComponent: () =>
       import('./legal/sitemap/sitemap.component').then(
