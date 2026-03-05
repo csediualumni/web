@@ -1,5 +1,5 @@
 <!-- ── Hero ── -->
-<section class="relative overflow-hidden bg-zinc-900 text-white">
+<section class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
   <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
   <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-zinc-700/20 rounded-full blur-3xl pointer-events-none"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
@@ -21,7 +21,7 @@
       @for (section of sections; track section.title) {
         <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-6 hover:shadow-sm transition-shadow">
           <div class="flex items-center gap-3 mb-5">
-            <div class="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center flex-shrink-0">
+            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
               <i class="fa-solid {{ section.icon }} text-white text-sm"></i>
             </div>
             <h2 class="text-sm font-bold text-zinc-800 uppercase tracking-wider">{{ section.title }}</h2>
