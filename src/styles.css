@@ -1,3 +1,91 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* ── shadcn/ui design tokens ─────────────────────────────────── */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ── Reusable utility classes (shadcn conventions) ────────────── */
+@layer components {
+  .shad-card {
+    @apply bg-white border border-zinc-200 rounded-lg shadow-sm;
+  }
+  .shad-input {
+    @apply flex h-9 w-full rounded-md border border-zinc-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-zinc-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .shad-input-error {
+    @apply border-red-500 focus-visible:ring-red-500;
+  }
+  .shad-label {
+    @apply block text-sm font-medium leading-none text-zinc-700 mb-1.5;
+  }
+  .shad-btn-primary {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium bg-zinc-900 text-white shadow hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 transition-colors cursor-pointer;
+  }
+  .shad-btn-outline {
+    @apply inline-flex items-center justify-center rounded-md border border-zinc-200 bg-white text-sm font-medium shadow-sm hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 transition-colors cursor-pointer;
+  }
+  .shad-btn-ghost {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 h-8 px-3 transition-colors cursor-pointer;
+  }
+  .shad-btn-destructive {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium bg-red-500 text-white shadow-sm hover:bg-red-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-600 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 transition-colors cursor-pointer;
+  }
+  .shad-muted {
+    @apply text-zinc-500 text-sm;
+  }
+  .shad-badge {
+    @apply inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors;
+  }
+  .shad-badge-secondary {
+    @apply inline-flex items-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors bg-zinc-100 text-zinc-800;
+  }
+  .shad-badge-outline {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors border border-zinc-200 text-zinc-700;
+  }
+  .shad-separator {
+    @apply relative my-4;
+  }
+  .shad-separator::before {
+    content: "";
+    @apply absolute inset-0 flex items-center;
+  }
+}
+

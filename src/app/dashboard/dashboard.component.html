@@ -1,40 +1,40 @@
-<div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow p-8 w-full max-w-md text-center">
+<div class="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
+  <div class="shad-card p-6 w-full max-w-sm">
 
-    <!-- Role badge(s) -->
-    <div class="mb-4 flex justify-center flex-wrap gap-2">
+    <!-- Avatar & identity -->
+    <div class="flex flex-col items-center text-center mb-5">
+      <div class="w-12 h-12 rounded-full bg-zinc-900 flex items-center justify-center text-white text-lg font-semibold mb-3 uppercase">
+        {{ (auth.currentUser()?.email ?? '?')[0] }}
+      </div>
+      <p class="text-xs text-zinc-500 mt-0.5">{{ auth.currentUser()?.email }}</p>
+    </div>
+
+    <!-- Role badges -->
+    <div class="flex flex-wrap justify-center gap-1.5 mb-5">
       @for (role of (auth.currentUser()?.roles ?? []); track role.id) {
-        <span class="text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide bg-indigo-100 text-indigo-700">
-          {{ role.name }}
-        </span>
+        <span class="shad-badge-secondary uppercase tracking-wide text-[11px]">{{ role.name }}</span>
       }
       @if (!(auth.currentUser()?.roles?.length)) {
-        <span class="text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide bg-gray-100 text-gray-400">
-          No Role
-        </span>
+        <span class="shad-badge-outline text-[11px]">No role assigned</span>
       }
     </div>
 
-    <h1 class="text-2xl font-bold text-gray-900 mb-2">Welcome! 🎉</h1>
-    <p class="text-gray-500 text-sm mb-6">
-      Signed in as <strong>{{ auth.currentUser()?.email }}</strong>
-    </p>
+    <!-- Separator -->
+    <div class="border-t border-zinc-100 mb-5"></div>
 
-    <!-- Admin panel button (only for SUPER_ADMIN / ADMIN) -->
-    @if (isAdmin()) {
-      <button
-        (click)="goToAdmin()"
-        class="w-full mb-3 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-colors cursor-pointer"
-      >
-        User Management Panel
+    <!-- Actions -->
+    <div class="flex flex-col gap-2">
+      @if (isAdmin()) {
+        <button (click)="goToAdmin()" class="shad-btn-primary w-full">
+          <i class="fa-solid fa-gear mr-2"></i>
+          Admin Panel
+        </button>
+      }
+      <button (click)="logout()" class="shad-btn-outline w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+        <i class="fa-solid fa-right-from-bracket mr-2"></i>
+        Sign out
       </button>
-    }
+    </div>
 
-    <button
-      (click)="logout()"
-      class="w-full py-2.5 px-4 bg-red-50 text-red-700 hover:bg-red-100 rounded-xl text-sm font-medium transition-colors cursor-pointer"
-    >
-      Sign out
-    </button>
   </div>
 </div>
