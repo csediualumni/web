@@ -4,8 +4,13 @@ import { adminGuard } from './core/admin.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/auth/register',
+    redirectTo: '/auth/login',
     pathMatch: 'full',
+  },
+  {
+    path: 'auth/login',
+    loadComponent: () =>
+      import('./auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'auth/register',
@@ -36,6 +41,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/auth/register',
+    redirectTo: '/auth/login',
   },
 ];

@@ -30,7 +30,7 @@ export class AuthCallbackComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       } else {
         this.error = 'Sign-in failed. Please try again.';
-        setTimeout(() => this.router.navigate(['/auth/register']), 2000);
+        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
       }
     });
   }
