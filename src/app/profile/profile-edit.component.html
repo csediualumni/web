@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-zinc-50">
-
   <!-- ── Page header ───────────────────────────────────────────── -->
   <div class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
@@ -12,8 +11,10 @@
 
       <div class="flex items-center gap-5">
         <!-- Avatar initials -->
-        <div class="w-20 h-20 rounded-2xl bg-blue-600 ring-4 ring-white/20 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0 select-none">
-          {{ (form?.get('displayName')?.value || email)?.[0]?.toUpperCase() || '?' }}
+        <div
+          class="w-20 h-20 rounded-2xl bg-blue-600 ring-4 ring-white/20 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0 select-none"
+        >
+          {{ (form.get('displayName')?.value || email)?.[0]?.toUpperCase() || '?' }}
         </div>
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Edit Your Profile</h1>
@@ -21,16 +22,35 @@
         </div>
 
         <!-- Completion ring -->
-        <div class="ml-auto hidden sm:flex flex-col items-center gap-1 flex-shrink-0" title="Profile completion">
+        <div
+          class="ml-auto hidden sm:flex flex-col items-center gap-1 flex-shrink-0"
+          title="Profile completion"
+        >
           <div class="relative w-14 h-14">
             <svg class="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
-              <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
-              <circle cx="28" cy="28" r="22" fill="none" stroke="white" stroke-width="5"
-                      stroke-dasharray="138.23"
-                      [attr.stroke-dashoffset]="138.23 - (profileCompletion / 100) * 138.23"
-                      stroke-linecap="round"/>
+              <circle
+                cx="28"
+                cy="28"
+                r="22"
+                fill="none"
+                stroke="rgba(255,255,255,0.1)"
+                stroke-width="5"
+              />
+              <circle
+                cx="28"
+                cy="28"
+                r="22"
+                fill="none"
+                stroke="white"
+                stroke-width="5"
+                stroke-dasharray="138.23"
+                [attr.stroke-dashoffset]="138.23 - (profileCompletion / 100) * 138.23"
+                stroke-linecap="round"
+              />
             </svg>
-            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold">{{ profileCompletion }}%</span>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold"
+              >{{ profileCompletion }}%</span
+            >
           </div>
           <p class="text-[10px] text-zinc-400">Complete</p>
         </div>
@@ -41,7 +61,9 @@
   <!-- ── Toast notifications ───────────────────────────────────── -->
   @if (saveSuccess()) {
     <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5">
-      <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm">
+      <div
+        class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm"
+      >
         <i class="fa-solid fa-circle-check text-emerald-500"></i>
         Profile saved successfully!
       </div>
@@ -49,7 +71,9 @@
   }
   @if (saveError()) {
     <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5">
-      <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
+      <div
+        class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm"
+      >
         <i class="fa-solid fa-circle-exclamation text-red-500"></i>
         {{ saveError() }}
       </div>
@@ -59,7 +83,7 @@
   <!-- ── Loading skeleton ──────────────────────────────────────── -->
   @if (loading()) {
     <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-6">
-      @for (_ of [1,2,3]; track $index) {
+      @for (_ of [1, 2, 3]; track $index) {
         <div class="shad-card rounded-2xl p-6 animate-pulse">
           <div class="h-5 w-40 bg-zinc-200 rounded mb-5"></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -73,8 +97,11 @@
 
   <!-- ── Form ──────────────────────────────────────────────────── -->
   @if (!loading()) {
-    <form [formGroup]="form" (ngSubmit)="save()" class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6"
+    >
       <!-- ── 1. Basic Information ──────────────────────────────── -->
       <div class="shad-card rounded-2xl p-6">
         <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
@@ -82,14 +109,15 @@
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
           <!-- Full name -->
           <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
-              Full Name
-            </label>
-            <input formControlName="displayName" type="text" placeholder="e.g. Ariful Islam"
-                   class="shad-input w-full" />
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5"> Full Name </label>
+            <input
+              formControlName="displayName"
+              type="text"
+              placeholder="e.g. Ariful Islam"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Email (read-only) -->
@@ -97,15 +125,23 @@
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">
               Email <span class="text-zinc-400 text-xs font-normal">(cannot change)</span>
             </label>
-            <input [value]="email" type="email" readonly
-                   class="shad-input w-full bg-zinc-50 text-zinc-400 cursor-not-allowed" />
+            <input
+              [value]="email"
+              type="email"
+              readonly
+              class="shad-input w-full bg-zinc-50 text-zinc-400 cursor-not-allowed"
+            />
           </div>
 
           <!-- Phone -->
           <div>
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">Phone</label>
-            <input formControlName="phone" type="tel" placeholder="+880 1xxx xxxxxx"
-                   class="shad-input w-full" />
+            <input
+              formControlName="phone"
+              type="tel"
+              placeholder="+880 1xxx xxxxxx"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Graduation batch -->
@@ -113,10 +149,15 @@
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">
               Graduation Batch <span class="text-zinc-400 text-xs font-normal">(year)</span>
             </label>
-            <input formControlName="batch" type="number" placeholder="e.g. 2020" min="2000" max="2099"
-                   class="shad-input w-full" />
+            <input
+              formControlName="batch"
+              type="number"
+              placeholder="e.g. 2020"
+              min="2000"
+              max="2099"
+              class="shad-input w-full"
+            />
           </div>
-
         </div>
       </div>
 
@@ -127,19 +168,28 @@
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
           <!-- Job title -->
           <div>
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">Job Title / Role</label>
-            <input formControlName="jobTitle" type="text" placeholder="e.g. Senior Software Engineer"
-                   class="shad-input w-full" />
+            <input
+              formControlName="jobTitle"
+              type="text"
+              placeholder="e.g. Senior Software Engineer"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Company -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Company / Organisation</label>
-            <input formControlName="company" type="text" placeholder="e.g. Google"
-                   class="shad-input w-full" />
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5"
+              >Company / Organisation</label
+            >
+            <input
+              formControlName="company"
+              type="text"
+              placeholder="e.g. Google"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Industry -->
@@ -156,8 +206,12 @@
           <!-- City -->
           <div>
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">City</label>
-            <input formControlName="city" type="text" placeholder="e.g. Dhaka"
-                   class="shad-input w-full" />
+            <input
+              formControlName="city"
+              type="text"
+              placeholder="e.g. Dhaka"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Country -->
@@ -170,7 +224,6 @@
               }
             </select>
           </div>
-
         </div>
       </div>
 
@@ -183,9 +236,12 @@
           <label class="block text-sm font-medium text-zinc-700 mb-1.5">
             Bio <span class="text-zinc-400 text-xs font-normal">(max 1000 characters)</span>
           </label>
-          <textarea formControlName="bio" rows="5"
-                    placeholder="Tell fellow alumni a bit about yourself — your journey, interests, and what you're working on…"
-                    class="shad-input w-full resize-none leading-relaxed"></textarea>
+          <textarea
+            formControlName="bio"
+            rows="5"
+            placeholder="Tell fellow alumni a bit about yourself — your journey, interests, and what you're working on…"
+            class="shad-input w-full resize-none leading-relaxed"
+          ></textarea>
           <p class="text-xs text-zinc-400 mt-1.5 text-right">
             {{ form.get('bio')?.value?.length ?? 0 }} / 1000
           </p>
@@ -202,10 +258,15 @@
         @if (skills().length > 0) {
           <div class="flex flex-wrap gap-2 mb-4">
             @for (skill of skills(); track skill) {
-              <span class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm font-medium">
+              <span
+                class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm font-medium"
+              >
                 {{ skill }}
-                <button type="button" (click)="removeSkill(skill)"
-                        class="text-blue-400 hover:text-blue-700 transition-colors leading-none">
+                <button
+                  type="button"
+                  (click)="removeSkill(skill)"
+                  class="text-blue-400 hover:text-blue-700 transition-colors leading-none"
+                >
                   <i class="fa-solid fa-xmark text-[11px]"></i>
                 </button>
               </span>
@@ -221,9 +282,13 @@
             (input)="skillInput.set($any($event.target).value)"
             (keydown)="onSkillKeydown($event)"
             placeholder="Type a skill and press Enter or comma to add…"
-            class="shad-input flex-1" />
-          <button type="button" (click)="addSkill()"
-                  class="shad-btn-outline px-4 text-sm flex-shrink-0">
+            class="shad-input flex-1"
+          />
+          <button
+            type="button"
+            (click)="addSkill()"
+            class="shad-btn-outline px-4 text-sm flex-shrink-0"
+          >
             Add
           </button>
         </div>
@@ -237,8 +302,11 @@
             <i class="fa-solid fa-briefcase text-zinc-400"></i> Experience
           </h2>
           @if (!expDraft()) {
-            <button type="button" (click)="openAddExp()"
-                    class="shad-btn-outline text-xs px-3 h-7 gap-1.5">
+            <button
+              type="button"
+              (click)="openAddExp()"
+              class="shad-btn-outline text-xs px-3 h-7 gap-1.5"
+            >
               <i class="fa-solid fa-plus text-[10px]"></i> Add
             </button>
           }
@@ -252,19 +320,27 @@
         @if (experiences().length > 0) {
           <div class="space-y-3 mb-4">
             @for (exp of experiences(); track exp.id) {
-              <div class="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
+              <div
+                class="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3"
+              >
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-semibold text-zinc-900 leading-tight">{{ exp.title }}</p>
                   <p class="text-xs text-zinc-600 mt-0.5">{{ exp.company }}</p>
                   <p class="text-xs text-zinc-400 mt-0.5">{{ exp.from }} – {{ exp.to }}</p>
                 </div>
                 <div class="flex gap-1.5 flex-shrink-0">
-                  <button type="button" (click)="openEditExp(exp)"
-                          class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors">
+                  <button
+                    type="button"
+                    (click)="openEditExp(exp)"
+                    class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors"
+                  >
                     <i class="fa-solid fa-pen text-[10px]"></i>
                   </button>
-                  <button type="button" (click)="deleteExp(exp.id)"
-                          class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors">
+                  <button
+                    type="button"
+                    (click)="deleteExp(exp.id)"
+                    class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors"
+                  >
                     <i class="fa-solid fa-trash text-[10px]"></i>
                   </button>
                 </div>
@@ -283,34 +359,69 @@
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1">Job Title / Role <span class="text-red-500">*</span></label>
-                <input type="text" [value]="d.title" (input)="setExpField('title', $any($event.target).value)"
-                       placeholder="e.g. Senior Software Engineer" class="shad-input w-full text-sm" />
+                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                  >Job Title / Role <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  [value]="d.title"
+                  (input)="setExpField('title', $any($event.target).value)"
+                  placeholder="e.g. Senior Software Engineer"
+                  class="shad-input w-full text-sm"
+                />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1">Company <span class="text-red-500">*</span></label>
-                <input type="text" [value]="d.company" (input)="setExpField('company', $any($event.target).value)"
-                       placeholder="e.g. Google" class="shad-input w-full text-sm" />
+                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                  >Company <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  [value]="d.company"
+                  (input)="setExpField('company', $any($event.target).value)"
+                  placeholder="e.g. Google"
+                  class="shad-input w-full text-sm"
+                />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1">From <span class="text-red-500">*</span></label>
-                <input type="text" [value]="d.from" (input)="setExpField('from', $any($event.target).value)"
-                       placeholder="e.g. 2021" class="shad-input w-full text-sm" />
+                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                  >From <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  [value]="d.from"
+                  (input)="setExpField('from', $any($event.target).value)"
+                  placeholder="e.g. 2021"
+                  class="shad-input w-full text-sm"
+                />
               </div>
               <div>
                 <label class="block text-xs font-medium text-zinc-700 mb-1">To</label>
-                <input type="text" [value]="d.to" (input)="setExpField('to', $any($event.target).value)"
-                       placeholder="e.g. Present or 2023" class="shad-input w-full text-sm" />
+                <input
+                  type="text"
+                  [value]="d.to"
+                  (input)="setExpField('to', $any($event.target).value)"
+                  placeholder="e.g. Present or 2023"
+                  class="shad-input w-full text-sm"
+                />
               </div>
             </div>
             <div class="flex gap-2 pt-1">
-              <button type="button" (click)="saveExp()" [disabled]="expSaving()"
-                      class="shad-btn-primary text-xs px-4 h-8 gap-1.5 disabled:opacity-60">
-                @if (expSaving()) { <i class="fa-solid fa-spinner animate-spin"></i> } @else { <i class="fa-solid fa-check"></i> }
+              <button
+                type="button"
+                (click)="saveExp()"
+                [disabled]="expSaving()"
+                class="shad-btn-primary text-xs px-4 h-8 gap-1.5 disabled:opacity-60"
+              >
+                @if (expSaving()) {
+                  <i class="fa-solid fa-spinner animate-spin"></i>
+                } @else {
+                  <i class="fa-solid fa-check"></i>
+                }
                 Save
               </button>
-              <button type="button" (click)="cancelExp()"
-                      class="shad-btn-outline text-xs px-4 h-8">Cancel</button>
+              <button type="button" (click)="cancelExp()" class="shad-btn-outline text-xs px-4 h-8">
+                Cancel
+              </button>
             </div>
           </div>
         }
@@ -323,8 +434,11 @@
             <i class="fa-solid fa-graduation-cap text-zinc-400"></i> Education
           </h2>
           @if (!eduDraft()) {
-            <button type="button" (click)="openAddEdu()"
-                    class="shad-btn-outline text-xs px-3 h-7 gap-1.5">
+            <button
+              type="button"
+              (click)="openAddEdu()"
+              class="shad-btn-outline text-xs px-3 h-7 gap-1.5"
+            >
               <i class="fa-solid fa-plus text-[10px]"></i> Add
             </button>
           }
@@ -337,19 +451,29 @@
         @if (educations().length > 0) {
           <div class="space-y-3 mb-4">
             @for (edu of educations(); track edu.id) {
-              <div class="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">
+              <div
+                class="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3"
+              >
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-semibold text-zinc-900 leading-tight">{{ edu.degree }}</p>
                   <p class="text-xs text-zinc-600 mt-0.5">{{ edu.institution }}</p>
-                  @if (edu.year) { <p class="text-xs text-zinc-400 mt-0.5">{{ edu.year }}</p> }
+                  @if (edu.year) {
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ edu.year }}</p>
+                  }
                 </div>
                 <div class="flex gap-1.5 flex-shrink-0">
-                  <button type="button" (click)="openEditEdu(edu)"
-                          class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors">
+                  <button
+                    type="button"
+                    (click)="openEditEdu(edu)"
+                    class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors"
+                  >
                     <i class="fa-solid fa-pen text-[10px]"></i>
                   </button>
-                  <button type="button" (click)="deleteEdu(edu.id)"
-                          class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors">
+                  <button
+                    type="button"
+                    (click)="deleteEdu(edu.id)"
+                    class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors"
+                  >
                     <i class="fa-solid fa-trash text-[10px]"></i>
                   </button>
                 </div>
@@ -367,29 +491,59 @@
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-zinc-700 mb-1">Degree / Qualification <span class="text-red-500">*</span></label>
-                <input type="text" [value]="d.degree" (input)="setEduField('degree', $any($event.target).value)"
-                       placeholder="e.g. B.Sc. in CSE" class="shad-input w-full text-sm" />
+                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                  >Degree / Qualification <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  [value]="d.degree"
+                  (input)="setEduField('degree', $any($event.target).value)"
+                  placeholder="e.g. B.Sc. in CSE"
+                  class="shad-input w-full text-sm"
+                />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1">Institution <span class="text-red-500">*</span></label>
-                <input type="text" [value]="d.institution" (input)="setEduField('institution', $any($event.target).value)"
-                       placeholder="e.g. Dhaka International University" class="shad-input w-full text-sm" />
+                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                  >Institution <span class="text-red-500">*</span></label
+                >
+                <input
+                  type="text"
+                  [value]="d.institution"
+                  (input)="setEduField('institution', $any($event.target).value)"
+                  placeholder="e.g. Dhaka International University"
+                  class="shad-input w-full text-sm"
+                />
               </div>
               <div>
                 <label class="block text-xs font-medium text-zinc-700 mb-1">Graduation Year</label>
-                <input type="number" [value]="d.year ?? ''" (input)="setEduField('year', +$any($event.target).value || null)"
-                       placeholder="e.g. 2022" min="1990" max="2099" class="shad-input w-full text-sm" />
+                <input
+                  type="number"
+                  [value]="d.year ?? ''"
+                  (input)="setEduField('year', +$any($event.target).value || null)"
+                  placeholder="e.g. 2022"
+                  min="1990"
+                  max="2099"
+                  class="shad-input w-full text-sm"
+                />
               </div>
             </div>
             <div class="flex gap-2 pt-1">
-              <button type="button" (click)="saveEdu()" [disabled]="eduSaving()"
-                      class="shad-btn-primary text-xs px-4 h-8 gap-1.5 disabled:opacity-60">
-                @if (eduSaving()) { <i class="fa-solid fa-spinner animate-spin"></i> } @else { <i class="fa-solid fa-check"></i> }
+              <button
+                type="button"
+                (click)="saveEdu()"
+                [disabled]="eduSaving()"
+                class="shad-btn-primary text-xs px-4 h-8 gap-1.5 disabled:opacity-60"
+              >
+                @if (eduSaving()) {
+                  <i class="fa-solid fa-spinner animate-spin"></i>
+                } @else {
+                  <i class="fa-solid fa-check"></i>
+                }
                 Save
               </button>
-              <button type="button" (click)="cancelEdu()"
-                      class="shad-btn-outline text-xs px-4 h-8">Cancel</button>
+              <button type="button" (click)="cancelEdu()" class="shad-btn-outline text-xs px-4 h-8">
+                Cancel
+              </button>
             </div>
           </div>
         }
@@ -402,8 +556,11 @@
             <i class="fa-solid fa-trophy text-zinc-400"></i> Achievements
           </h2>
           @if (!achDraft()) {
-            <button type="button" (click)="openAddAch()"
-                    class="shad-btn-outline text-xs px-3 h-7 gap-1.5">
+            <button
+              type="button"
+              (click)="openAddAch()"
+              class="shad-btn-outline text-xs px-3 h-7 gap-1.5"
+            >
               <i class="fa-solid fa-plus text-[10px]"></i> Add
             </button>
           }
@@ -416,16 +573,24 @@
         @if (achievements().length > 0) {
           <div class="space-y-2 mb-4">
             @for (ach of achievements(); track ach.id) {
-              <div class="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5">
+              <div
+                class="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5"
+              >
                 <i class="fa-solid fa-star text-amber-400 text-xs flex-shrink-0"></i>
                 <p class="text-sm text-zinc-800 flex-1 leading-snug">{{ ach.title }}</p>
                 <div class="flex gap-1.5 flex-shrink-0">
-                  <button type="button" (click)="openEditAch(ach)"
-                          class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors">
+                  <button
+                    type="button"
+                    (click)="openEditAch(ach)"
+                    class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors"
+                  >
                     <i class="fa-solid fa-pen text-[10px]"></i>
                   </button>
-                  <button type="button" (click)="deleteAch(ach.id)"
-                          class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors">
+                  <button
+                    type="button"
+                    (click)="deleteAch(ach.id)"
+                    class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors"
+                  >
                     <i class="fa-solid fa-trash text-[10px]"></i>
                   </button>
                 </div>
@@ -442,18 +607,34 @@
               {{ editingAchId() ? 'Edit Achievement' : 'New Achievement' }}
             </p>
             <div>
-              <label class="block text-xs font-medium text-zinc-700 mb-1">Achievement <span class="text-red-500">*</span></label>
-              <input type="text" [value]="d.title" (input)="setAchField('title', $any($event.target).value)"
-                     placeholder="e.g. Speaker at DevFest Dhaka 2024" class="shad-input w-full text-sm" />
+              <label class="block text-xs font-medium text-zinc-700 mb-1"
+                >Achievement <span class="text-red-500">*</span></label
+              >
+              <input
+                type="text"
+                [value]="d.title"
+                (input)="setAchField('title', $any($event.target).value)"
+                placeholder="e.g. Speaker at DevFest Dhaka 2024"
+                class="shad-input w-full text-sm"
+              />
             </div>
             <div class="flex gap-2 pt-1">
-              <button type="button" (click)="saveAch()" [disabled]="achSaving()"
-                      class="shad-btn-primary text-xs px-4 h-8 gap-1.5 disabled:opacity-60">
-                @if (achSaving()) { <i class="fa-solid fa-spinner animate-spin"></i> } @else { <i class="fa-solid fa-check"></i> }
+              <button
+                type="button"
+                (click)="saveAch()"
+                [disabled]="achSaving()"
+                class="shad-btn-primary text-xs px-4 h-8 gap-1.5 disabled:opacity-60"
+              >
+                @if (achSaving()) {
+                  <i class="fa-solid fa-spinner animate-spin"></i>
+                } @else {
+                  <i class="fa-solid fa-check"></i>
+                }
                 Save
               </button>
-              <button type="button" (click)="cancelAch()"
-                      class="shad-btn-outline text-xs px-4 h-8">Cancel</button>
+              <button type="button" (click)="cancelAch()" class="shad-btn-outline text-xs px-4 h-8">
+                Cancel
+              </button>
             </div>
           </div>
         }
@@ -466,14 +647,17 @@
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
           <!-- LinkedIn -->
           <div>
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-brands fa-linkedin-in text-blue-600 mr-1"></i> LinkedIn URL
             </label>
-            <input formControlName="linkedin" type="url" placeholder="https://linkedin.com/in/your-profile"
-                   class="shad-input w-full" />
+            <input
+              formControlName="linkedin"
+              type="url"
+              placeholder="https://linkedin.com/in/your-profile"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- GitHub -->
@@ -481,8 +665,12 @@
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-brands fa-github text-zinc-700 mr-1"></i> GitHub URL
             </label>
-            <input formControlName="github" type="url" placeholder="https://github.com/your-handle"
-                   class="shad-input w-full" />
+            <input
+              formControlName="github"
+              type="url"
+              placeholder="https://github.com/your-handle"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Twitter / X -->
@@ -490,8 +678,12 @@
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-brands fa-x-twitter text-zinc-700 mr-1"></i> X / Twitter URL
             </label>
-            <input formControlName="twitter" type="url" placeholder="https://twitter.com/your-handle"
-                   class="shad-input w-full" />
+            <input
+              formControlName="twitter"
+              type="url"
+              placeholder="https://twitter.com/your-handle"
+              class="shad-input w-full"
+            />
           </div>
 
           <!-- Website -->
@@ -499,10 +691,13 @@
             <label class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-solid fa-globe text-zinc-500 mr-1"></i> Personal Website
             </label>
-            <input formControlName="website" type="url" placeholder="https://yourwebsite.com"
-                   class="shad-input w-full" />
+            <input
+              formControlName="website"
+              type="url"
+              placeholder="https://yourwebsite.com"
+              class="shad-input w-full"
+            />
           </div>
-
         </div>
       </div>
 
@@ -516,15 +711,22 @@
         <label class="flex items-start gap-4 cursor-pointer group">
           <div class="relative mt-0.5 flex-shrink-0">
             <input formControlName="openToMentoring" type="checkbox" class="sr-only peer" />
-            <div class="w-11 h-6 bg-zinc-200 peer-checked:bg-blue-600 rounded-full transition-colors"></div>
-            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+            <div
+              class="w-11 h-6 bg-zinc-200 peer-checked:bg-blue-600 rounded-full transition-colors"
+            ></div>
+            <div
+              class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"
+            ></div>
           </div>
           <div>
-            <p class="text-sm font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors">
+            <p
+              class="text-sm font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors"
+            >
               Open to Mentoring
             </p>
             <p class="text-xs text-zinc-500 mt-0.5 leading-relaxed">
-              Let junior students and recent graduates know you're available for career guidance, code reviews, or general advice.
+              Let junior students and recent graduates know you're available for career guidance,
+              code reviews, or general advice.
             </p>
           </div>
         </label>
@@ -532,13 +734,14 @@
 
       <!-- ── Action bar ────────────────────────────────────────── -->
       <div class="flex items-center justify-between gap-4 py-2">
-        <a routerLink="/dashboard"
-           class="shad-btn-outline text-sm px-5">
+        <a routerLink="/dashboard" class="shad-btn-outline text-sm px-5">
           <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
         </a>
-        <button type="submit"
-                [disabled]="form.invalid || saving()"
-                class="shad-btn-primary text-sm px-8 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+        <button
+          type="submit"
+          [disabled]="form.invalid || saving()"
+          class="shad-btn-primary text-sm px-8 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
           @if (saving()) {
             <i class="fa-solid fa-spinner animate-spin"></i> Saving…
           } @else {
@@ -546,8 +749,6 @@
           }
         </button>
       </div>
-
     </form>
   }
-
 </div>

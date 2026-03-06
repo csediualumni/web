@@ -1,9 +1,17 @@
 <!-- ── Hero ── -->
-<section class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
-  <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-zinc-700/20 rounded-full blur-3xl pointer-events-none"></div>
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white"
+>
+  <div
+    class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"
+  ></div>
+  <div
+    class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-zinc-700/20 rounded-full blur-3xl pointer-events-none"
+  ></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
-    <span class="inline-flex items-center gap-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1 rounded-full mb-5">
+    <span
+      class="inline-flex items-center gap-1.5 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-medium px-3 py-1 rounded-full mb-5"
+    >
       <i class="fa-solid fa-sitemap text-zinc-400 text-[10px]"></i>
       Site Navigation
     </span>
@@ -19,19 +27,29 @@
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       @for (section of sections; track section.title) {
-        <div class="rounded-xl border border-zinc-100 bg-zinc-50 p-6 hover:shadow-sm transition-shadow">
+        <div
+          class="rounded-xl border border-zinc-100 bg-zinc-50 p-6 hover:shadow-sm transition-shadow"
+        >
           <div class="flex items-center gap-3 mb-5">
-            <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+            <div
+              class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0"
+            >
               <i class="fa-solid {{ section.icon }} text-white text-sm"></i>
             </div>
-            <h2 class="text-sm font-bold text-zinc-800 uppercase tracking-wider">{{ section.title }}</h2>
+            <h2 class="text-sm font-bold text-zinc-800 uppercase tracking-wider">
+              {{ section.title }}
+            </h2>
           </div>
           <ul class="space-y-2">
             @for (link of section.links; track link.path) {
               <li>
-                <a [routerLink]="link.path"
-                  class="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors group">
-                  <i class="fa-solid fa-arrow-right text-[10px] text-zinc-300 group-hover:text-zinc-900 transition-colors"></i>
+                <a
+                  [routerLink]="link.path"
+                  class="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors group"
+                >
+                  <i
+                    class="fa-solid fa-arrow-right text-[10px] text-zinc-300 group-hover:text-zinc-900 transition-colors"
+                  ></i>
                   {{ link.label }}
                 </a>
               </li>
@@ -44,7 +62,11 @@
     <div class="mt-12 rounded-xl border border-zinc-200 bg-zinc-50 p-6 text-center">
       <p class="text-sm text-zinc-500">
         Can't find what you're looking for?
-        <a routerLink="/contact" class="text-zinc-900 font-semibold hover:underline underline-offset-4 ml-1">Contact us</a>
+        <a
+          routerLink="/contact"
+          class="text-zinc-900 font-semibold hover:underline underline-offset-4 ml-1"
+          >Contact us</a
+        >
         and we'll be happy to help.
       </p>
     </div>

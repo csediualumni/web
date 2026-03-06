@@ -26,7 +26,9 @@ export class CommitteeComponent {
   private readonly committeeService = inject(CommitteeService);
   private readonly alumniService = inject(AlumniService);
 
-  private readonly allMembers = toSignal(this.alumniService.members$, { initialValue: [] as AlumnusMember[] });
+  private readonly allMembers = toSignal(this.alumniService.members$, {
+    initialValue: [] as AlumnusMember[],
+  });
 
   /** IDs of expanded past‑committee panels */
   expandedIds = signal<Set<number>>(new Set());
@@ -38,7 +40,7 @@ export class CommitteeComponent {
   });
 
   readonly past = computed<ResolvedCommittee[]>(() =>
-    this.committeeService.getPast().map((c) => this.resolve(c))
+    this.committeeService.getPast().map((c) => this.resolve(c)),
   );
 
   private resolve(committee: Committee): ResolvedCommittee {
@@ -70,19 +72,18 @@ export class CommitteeComponent {
 
   /** Designation display order map for sorting */
   private readonly order: Record<string, number> = {
-    'President': 0,
+    President: 0,
     'Vice President': 1,
     'General Secretary': 2,
     'Joint Secretary': 3,
-    'Treasurer': 4,
+    Treasurer: 4,
     'Assistant Treasurer': 5,
     'Executive Member': 6,
   };
 
   sortedMembers(members: ResolvedMember[]): ResolvedMember[] {
     return [...members].sort(
-      (a, b) =>
-        (this.order[a.designation] ?? 99) - (this.order[b.designation] ?? 99)
+      (a, b) => (this.order[a.designation] ?? 99) - (this.order[b.designation] ?? 99),
     );
   }
 }

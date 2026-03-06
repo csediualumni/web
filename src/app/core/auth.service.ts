@@ -151,17 +151,15 @@ export class AuthService {
   // ──────────────────────────────────────────────
 
   loadProfile(): Observable<UserProfile & { id: string; email: string }> {
-    return this.http
-      .get<UserProfile & { id: string; email: string }>(`${this.base}/me`)
-      .pipe(
-        tap((data) => {
-          const current = this.currentUser();
-          if (current) {
-            this.currentUser.set({ ...current, profile: data });
-            localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
-          }
-        }),
-      );
+    return this.http.get<UserProfile & { id: string; email: string }>(`${this.base}/me`).pipe(
+      tap((data) => {
+        const current = this.currentUser();
+        if (current) {
+          this.currentUser.set({ ...current, profile: data });
+          localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+        }
+      }),
+    );
   }
 
   updateProfile(dto: UpdateProfileDto): Observable<UserProfile & { id: string; email: string }> {
@@ -226,7 +224,9 @@ export class AuthService {
     return this.http.delete<void>(`${this.base}/me/achievements/${id}`);
   }
 
-  private decodeJwt(token: string): { permissions?: string[]; roles?: { id: string; name: string }[] } | null {
+  private decodeJwt(
+    token: string,
+  ): { permissions?: string[]; roles?: { id: string; name: string }[] } | null {
     try {
       const payload = token.split('.')[1];
       return JSON.parse(atob(payload));

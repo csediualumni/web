@@ -11,10 +11,10 @@ import { forkJoin } from 'rxjs';
   templateUrl: './admin-users.component.html',
 })
 export class AdminUsersComponent implements OnInit {
-  loading    = signal(true);
-  error      = signal('');
-  users      = signal<AdminUser[]>([]);
-  allRoles   = signal<Role[]>([]);
+  loading = signal(true);
+  error = signal('');
+  users = signal<AdminUser[]>([]);
+  allRoles = signal<Role[]>([]);
   togglingRole = signal<Map<string, Set<string>>>(new Map());
 
   constructor(

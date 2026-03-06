@@ -3,6 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+export interface NewsletterSubscription {
+  id: string;
+  email: string;
+  isActive: boolean;
+  subscribedAt: string;
+}
+
 export interface AdminUser {
   id: string;
   email: string;
@@ -20,7 +27,9 @@ export interface Role {
   description: string | null;
   isSystem: boolean;
   createdAt: string;
-  permissions: { permission: { id: string; key: string; description: string | null; group: string | null } }[];
+  permissions: {
+    permission: { id: string; key: string; description: string | null; group: string | null };
+  }[];
   _count?: { userRoles: number };
 }
 
@@ -36,6 +45,7 @@ export class AdminService {
   private readonly adminBase = `${environment.apiUrl}/admin`;
   private readonly rolesBase = `${environment.apiUrl}/roles`;
   private readonly permsBase = `${environment.apiUrl}/permissions`;
+  private readonly newsletterBase = `${environment.apiUrl}/newsletter`;
 
   constructor(private http: HttpClient) {}
 
@@ -92,5 +102,27 @@ export class AdminService {
   // ── Permissions ────────────────────────────────────────
   listPermissions(): Observable<Permission[]> {
     return this.http.get<Permission[]>(this.permsBase);
+  }
+
+  // ── Newsletter (public subscribe) ───────────────────────
+  subscribeNewsletter(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.newsletterBase}/subscribe`, { email });
+  }
+
+  // ── Newsletter (admin) ─────────────────────────────────
+  listNewsletterSubscriptions(): Observable<NewsletterSubscription[]> {
+    return this.http.get<NewsletterSubscription[]>(`${this.adminBase}/newsletter/subscriptions`);
+  }
+
+  toggleNewsletterSubscription(id: string): Observable<NewsletterSubscription> {
+    return this.http.patch<NewsletterSubscription>(`${this.adminBase}/newsletter/subscriptions/${id}/toggle`, {});
+  }
+
+  deleteNewsletterSubscription(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/newsletter/subscriptions/${id}`);
+  }
+
+  sendNewsletter(subject: string, htmlBody: string): Observable<{ sent: number }> {
+    return this.http.post<{ sent: number }>(`${this.adminBase}/newsletter/send`, { subject, htmlBody });
   }
 }

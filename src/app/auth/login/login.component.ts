@@ -1,10 +1,5 @@
 import { Component, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
@@ -61,9 +56,7 @@ export class LoginComponent {
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.loading.set(false);
-        this.serverError.set(
-          err.error?.message ?? 'Invalid email or password. Please try again.',
-        );
+        this.serverError.set(err.error?.message ?? 'Invalid email or password. Please try again.');
       },
     });
   }
@@ -91,4 +84,5 @@ export class LoginComponent {
         this.forgotError.set('Something went wrong. Please try again.');
       },
     });
-  }}
+  }
+}

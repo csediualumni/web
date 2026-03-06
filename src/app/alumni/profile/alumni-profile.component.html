@@ -27,27 +27,40 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6">
       <div class="flex flex-col sm:flex-row items-start sm:items-end gap-6 pb-8">
         <!-- Avatar -->
-        <div [class]="'w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex items-center justify-center text-white font-bold text-4xl flex-shrink-0 ring-4 ring-white/20 ' + m.color">
+        <div
+          [class]="
+            'w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex items-center justify-center text-white font-bold text-4xl flex-shrink-0 ring-4 ring-white/20 ' +
+            m.color
+          "
+        >
           {{ m.initials }}
         </div>
 
         <!-- Primary info -->
         <div class="flex-1 min-w-0">
           <div class="flex flex-wrap items-center gap-2 mb-2">
-            <span class="inline-flex items-center gap-1 text-xs bg-white/10 border border-white/20 text-zinc-300 rounded-full px-3 py-0.5">
+            <span
+              class="inline-flex items-center gap-1 text-xs bg-white/10 border border-white/20 text-zinc-300 rounded-full px-3 py-0.5"
+            >
               <i class="fa-solid fa-layer-group text-[9px]"></i> Batch {{ m.batch }}
             </span>
-            <span class="inline-flex items-center gap-1 text-xs bg-white/10 border border-white/20 text-zinc-300 rounded-full px-3 py-0.5">
+            <span
+              class="inline-flex items-center gap-1 text-xs bg-white/10 border border-white/20 text-zinc-300 rounded-full px-3 py-0.5"
+            >
               <i class="fa-solid fa-briefcase text-[9px]"></i> {{ m.industry }}
             </span>
             @if (m.openToMentoring) {
-              <span class="inline-flex items-center gap-1 text-xs bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-full px-3 py-0.5 font-semibold">
+              <span
+                class="inline-flex items-center gap-1 text-xs bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-full px-3 py-0.5 font-semibold"
+              >
                 <i class="fa-solid fa-handshake text-[9px]"></i> Open to Mentoring
               </span>
             }
           </div>
           <h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-tight">{{ m.name }}</h1>
-          <p class="text-zinc-300 text-lg mt-1">{{ m.role }} <span class="text-zinc-500">at</span> {{ m.company }}</p>
+          <p class="text-zinc-300 text-lg mt-1">
+            {{ m.role }} <span class="text-zinc-500">at</span> {{ m.company }}
+          </p>
           <p class="text-zinc-500 text-sm mt-1 flex items-center gap-1.5">
             <i class="fa-solid fa-location-dot text-[11px]"></i>
             {{ m.city }}, {{ m.country }}
@@ -57,26 +70,46 @@
         <!-- Social links -->
         <div class="flex items-center gap-2 flex-shrink-0 pb-1">
           @if (m.linkedin) {
-            <a [href]="m.linkedin" target="_blank" rel="noopener" title="LinkedIn"
-               class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors">
+            <a
+              [href]="m.linkedin"
+              target="_blank"
+              rel="noopener"
+              title="LinkedIn"
+              class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-linkedin-in text-sm"></i>
             </a>
           }
           @if (m.github) {
-            <a [href]="m.github" target="_blank" rel="noopener" title="GitHub"
-               class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors">
+            <a
+              [href]="m.github"
+              target="_blank"
+              rel="noopener"
+              title="GitHub"
+              class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-github text-sm"></i>
             </a>
           }
           @if (m.twitter) {
-            <a [href]="m.twitter" target="_blank" rel="noopener" title="X / Twitter"
-               class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors">
+            <a
+              [href]="m.twitter"
+              target="_blank"
+              rel="noopener"
+              title="X / Twitter"
+              class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-x-twitter text-sm"></i>
             </a>
           }
           @if (m.website) {
-            <a [href]="m.website" target="_blank" rel="noopener" title="Website"
-               class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors">
+            <a
+              [href]="m.website"
+              target="_blank"
+              rel="noopener"
+              title="Website"
+              class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white transition-colors"
+            >
               <i class="fa-solid fa-globe text-sm"></i>
             </a>
           }
@@ -85,11 +118,31 @@
 
       <!-- Tab-like section links (visual divider) -->
       <div class="flex gap-1 border-b border-white/10 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
-        <a href="#about"       class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap">About</a>
-        <a href="#experience"  class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap">Experience</a>
-        <a href="#education"   class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap">Education</a>
-        <a href="#achievements" class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap">Achievements</a>
-        <a href="#skills"      class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap">Skills</a>
+        <a
+          href="#about"
+          class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
+          >About</a
+        >
+        <a
+          href="#experience"
+          class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
+          >Experience</a
+        >
+        <a
+          href="#education"
+          class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
+          >Education</a
+        >
+        <a
+          href="#achievements"
+          class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
+          >Achievements</a
+        >
+        <a
+          href="#skills"
+          class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
+          >Skills</a
+        >
       </div>
     </div>
   </section>
@@ -98,10 +151,8 @@
   <section class="bg-zinc-50 py-12">
     <div class="max-w-5xl mx-auto px-4 sm:px-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
         <!-- Left column -->
         <div class="lg:col-span-2 space-y-8">
-
           <!-- About -->
           <div id="about" class="shad-card rounded-2xl p-6">
             <h2 class="text-lg font-bold text-zinc-900 mb-3 flex items-center gap-2">
@@ -122,7 +173,9 @@
                 @for (exp of m.experience; track exp.role + exp.company) {
                   <div class="relative">
                     <!-- Dot -->
-                    <div class="absolute -left-[34px] top-0.5 w-3.5 h-3.5 rounded-full bg-white border-2 border-zinc-400 flex-shrink-0"></div>
+                    <div
+                      class="absolute -left-[34px] top-0.5 w-3.5 h-3.5 rounded-full bg-white border-2 border-zinc-400 flex-shrink-0"
+                    ></div>
                     <p class="font-semibold text-zinc-900 leading-tight">{{ exp.role }}</p>
                     <p class="text-sm text-zinc-600 mt-0.5">{{ exp.company }}</p>
                     <p class="text-xs text-zinc-400 mt-0.5">{{ exp.from }} – {{ exp.to }}</p>
@@ -140,7 +193,9 @@
             <div class="space-y-4">
               @for (edu of m.education; track edu.degree) {
                 <div class="flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center flex-shrink-0">
+                  <div
+                    class="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center flex-shrink-0"
+                  >
                     <i class="fa-solid fa-school text-zinc-500 text-sm"></i>
                   </div>
                   <div>
@@ -171,7 +226,6 @@
 
         <!-- Right column / Sidebar -->
         <div class="space-y-6">
-
           <!-- Skills -->
           <div id="skills" class="shad-card rounded-2xl p-6">
             <h2 class="text-base font-bold text-zinc-900 mb-4 flex items-center gap-2">
@@ -179,7 +233,9 @@
             </h2>
             <div class="flex flex-wrap gap-2">
               @for (skill of m.skills; track skill) {
-                <span class="text-xs bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg px-3 py-1.5 font-medium">
+                <span
+                  class="text-xs bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-lg px-3 py-1.5 font-medium"
+                >
                   {{ skill }}
                 </span>
               }
@@ -192,7 +248,9 @@
             <div class="text-sm text-zinc-600 space-y-2.5">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-layer-group text-zinc-400 w-4 text-center"></i>
-                <span>Batch <strong class="text-zinc-800">{{ m.batch }}</strong></span>
+                <span
+                  >Batch <strong class="text-zinc-800">{{ m.batch }}</strong></span
+                >
               </div>
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-location-dot text-zinc-400 w-4 text-center"></i>
@@ -217,16 +275,26 @@
 
           <!-- Connect card -->
           <div class="shad-card rounded-2xl p-6 text-center">
-            <div [class]="'w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3 ' + m.color">
+            <div
+              [class]="
+                'w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3 ' +
+                m.color
+              "
+            >
               {{ m.initials }}
             </div>
             <p class="font-semibold text-zinc-900 mb-1">Want to connect?</p>
-            <p class="text-xs text-zinc-400 mb-4">Send {{ m.name.split(' ')[0] }} a message through the platform.</p>
+            <p class="text-xs text-zinc-400 mb-4">
+              Send {{ m.name.split(' ')[0] }} a message through the platform.
+            </p>
             <button class="w-full shad-btn-primary py-2.5 text-sm font-semibold">
               <i class="fa-solid fa-envelope mr-2"></i> Send Message
             </button>
             @if (m.openToMentoring) {
-              <a routerLink="/mentorship" class="w-full mt-2 shad-btn-outline py-2.5 text-sm font-semibold flex items-center justify-center gap-2">
+              <a
+                routerLink="/mentorship"
+                class="w-full mt-2 shad-btn-outline py-2.5 text-sm font-semibold flex items-center justify-center gap-2"
+              >
                 <i class="fa-solid fa-handshake"></i> Request Mentorship
               </a>
             }
@@ -243,16 +311,30 @@
         <h2 class="text-xl font-bold text-zinc-900 mb-6">Alumni You May Also Know</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
           @for (rel of related(); track rel.id) {
-            <a [routerLink]="['/alumni', rel.id]" class="shad-card rounded-2xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow group">
-              <div [class]="'w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0 ' + rel.color">
+            <a
+              [routerLink]="['/alumni', rel.id]"
+              class="shad-card rounded-2xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow group"
+            >
+              <div
+                [class]="
+                  'w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0 ' +
+                  rel.color
+                "
+              >
                 {{ rel.initials }}
               </div>
               <div class="min-w-0">
-                <p class="font-semibold text-zinc-900 leading-tight group-hover:text-sky-600 transition-colors truncate">{{ rel.name }}</p>
+                <p
+                  class="font-semibold text-zinc-900 leading-tight group-hover:text-sky-600 transition-colors truncate"
+                >
+                  {{ rel.name }}
+                </p>
                 <p class="text-xs text-zinc-500 truncate mt-0.5">{{ rel.role }}</p>
                 <p class="text-xs text-zinc-400 truncate">{{ rel.company }}</p>
               </div>
-              <i class="fa-solid fa-chevron-right text-zinc-300 group-hover:text-sky-400 transition-colors text-xs ml-auto flex-shrink-0"></i>
+              <i
+                class="fa-solid fa-chevron-right text-zinc-300 group-hover:text-sky-400 transition-colors text-xs ml-auto flex-shrink-0"
+              ></i>
             </a>
           }
         </div>

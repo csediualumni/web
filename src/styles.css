@@ -37,7 +37,9 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -85,8 +87,7 @@
     @apply relative my-4;
   }
   .shad-separator::before {
-    content: "";
+    content: '';
     @apply absolute inset-0 flex items-center;
   }
 }
-

@@ -1,18 +1,27 @@
 <!-- Hero -->
 <section class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-24">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-zinc-300 mb-6">
+    <div
+      class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-zinc-300 mb-6"
+    >
       <i class="fa-solid fa-handshake text-emerald-400"></i> Mentorship Programme
     </div>
     <h1 class="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">Grow With a Guide</h1>
     <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
-      Connect with experienced CSE DIU alumni mentors who have been where you are and can guide you forward — in your career, research, or entrepreneurial journey.
+      Connect with experienced CSE DIU alumni mentors who have been where you are and can guide you
+      forward — in your career, research, or entrepreneurial journey.
     </p>
     <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-      <button (click)="activeTab.set('apply')" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors">
+      <button
+        (click)="activeTab.set('apply')"
+        class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors"
+      >
         <i class="fa-solid fa-file-signature"></i> Apply as Mentee
       </button>
-      <button (click)="activeTab.set('mentors')" class="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-3.5 rounded-xl transition-colors">
+      <button
+        (click)="activeTab.set('mentors')"
+        class="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-3.5 rounded-xl transition-colors"
+      >
         <i class="fa-solid fa-users"></i> Browse Mentors
       </button>
     </div>
@@ -23,11 +32,15 @@
 <section class="py-16 bg-zinc-50">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
     <h2 class="text-2xl sm:text-3xl font-bold text-zinc-900 mb-2">How It Works</h2>
-    <p class="text-zinc-500 mb-10">A simple, structured process to get you matched with the right mentor.</p>
+    <p class="text-zinc-500 mb-10">
+      A simple, structured process to get you matched with the right mentor.
+    </p>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       @for (step of steps; track step.title; let i = $index) {
         <div class="shad-card rounded-2xl p-6 text-center relative">
-          <div class="w-10 h-10 rounded-full bg-emerald-50 border-2 border-emerald-300 flex items-center justify-center text-emerald-600 font-bold text-sm mx-auto mb-4">
+          <div
+            class="w-10 h-10 rounded-full bg-emerald-50 border-2 border-emerald-300 flex items-center justify-center text-emerald-600 font-bold text-sm mx-auto mb-4"
+          >
             {{ i + 1 }}
           </div>
           <i [class]="'fa-solid ' + step.icon + ' text-2xl text-zinc-400 mb-3 block'"></i>
@@ -46,14 +59,22 @@
       <button
         (click)="activeTab.set('mentors')"
         class="px-6 py-4 text-sm font-semibold border-b-2 transition-colors"
-        [class]="activeTab() === 'mentors' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-zinc-500 hover:text-zinc-800'"
+        [class]="
+          activeTab() === 'mentors'
+            ? 'border-emerald-500 text-emerald-600'
+            : 'border-transparent text-zinc-500 hover:text-zinc-800'
+        "
       >
         <i class="fa-solid fa-users mr-2"></i>Our Mentors
       </button>
       <button
         (click)="activeTab.set('apply')"
         class="px-6 py-4 text-sm font-semibold border-b-2 transition-colors"
-        [class]="activeTab() === 'apply' ? 'border-emerald-500 text-emerald-600' : 'border-transparent text-zinc-500 hover:text-zinc-800'"
+        [class]="
+          activeTab() === 'apply'
+            ? 'border-emerald-500 text-emerald-600'
+            : 'border-transparent text-zinc-500 hover:text-zinc-800'
+        "
       >
         <i class="fa-solid fa-file-signature mr-2"></i>Apply for Mentorship
       </button>
@@ -67,15 +88,24 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for (mentor of mentors; track mentor.id) {
-          <div class="shad-card rounded-2xl p-6 flex flex-col gap-4 hover:shadow-md transition-shadow">
+          <div
+            class="shad-card rounded-2xl p-6 flex flex-col gap-4 hover:shadow-md transition-shadow"
+          >
             <div class="flex items-center gap-4">
-              <div [class]="'w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ' + mentor.color">
+              <div
+                [class]="
+                  'w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ' +
+                  mentor.color
+                "
+              >
                 {{ mentor.initials }}
               </div>
               <div>
                 <h3 class="font-bold text-zinc-900">{{ mentor.name }}</h3>
                 <p class="text-sm text-zinc-500">{{ mentor.role }}</p>
-                <p class="text-xs text-zinc-400">{{ mentor.company }} &bull; {{ mentor.city }}, {{ mentor.country }}</p>
+                <p class="text-xs text-zinc-400">
+                  {{ mentor.company }} &bull; {{ mentor.city }}, {{ mentor.country }}
+                </p>
               </div>
             </div>
 
@@ -83,19 +113,36 @@
 
             <div class="flex flex-wrap gap-2">
               @for (exp of mentor.expertise; track exp) {
-                <span class="text-xs bg-zinc-100 text-zinc-700 rounded-full px-2.5 py-1 font-medium">{{ exp }}</span>
+                <span
+                  class="text-xs bg-zinc-100 text-zinc-700 rounded-full px-2.5 py-1 font-medium"
+                  >{{ exp }}</span
+                >
               }
             </div>
 
-            <div class="flex items-center justify-between pt-2 border-t border-zinc-100 text-sm text-zinc-500">
-              <span><i class="fa-solid fa-clock mr-1 text-zinc-300"></i>{{ mentor.availability }}</span>
-              <span><i class="fa-solid fa-users mr-1 text-zinc-300"></i>{{ mentor.mentees }} mentees</span>
-              <span class="text-amber-500 font-semibold"><i class="fa-solid fa-star mr-0.5"></i>{{ mentor.rating }}</span>
+            <div
+              class="flex items-center justify-between pt-2 border-t border-zinc-100 text-sm text-zinc-500"
+            >
+              <span
+                ><i class="fa-solid fa-clock mr-1 text-zinc-300"></i>{{ mentor.availability }}</span
+              >
+              <span
+                ><i class="fa-solid fa-users mr-1 text-zinc-300"></i
+                >{{ mentor.mentees }} mentees</span
+              >
+              <span class="text-amber-500 font-semibold"
+                ><i class="fa-solid fa-star mr-0.5"></i>{{ mentor.rating }}</span
+              >
             </div>
 
             <div class="flex gap-2">
               <span class="text-xs text-zinc-400">Batch '{{ mentor.batch }}</span>
-              <button (click)="activeTab.set('apply')" class="ml-auto shad-btn-primary text-xs px-4 py-2">Apply to Connect</button>
+              <button
+                (click)="activeTab.set('apply')"
+                class="ml-auto shad-btn-primary text-xs px-4 py-2"
+              >
+                Apply to Connect
+              </button>
             </div>
           </div>
         }
@@ -110,20 +157,33 @@
     <div class="max-w-2xl mx-auto px-4 sm:px-6">
       @if (submitted()) {
         <div class="shad-card rounded-2xl p-12 text-center">
-          <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <i class="fa-solid fa-check text-emerald-600 text-2xl"></i>
           </div>
           <h2 class="text-2xl font-bold text-zinc-900 mb-2">Application Submitted!</h2>
-          <p class="text-zinc-500">Thank you! We'll review your application and match you with a suitable mentor within 5–7 working days. Check your email for updates.</p>
-          <button (click)="activeTab.set('mentors')" class="mt-6 shad-btn-outline px-8 py-3">Browse Mentors</button>
+          <p class="text-zinc-500">
+            Thank you! We'll review your application and match you with a suitable mentor within 5–7
+            working days. Check your email for updates.
+          </p>
+          <button (click)="activeTab.set('mentors')" class="mt-6 shad-btn-outline px-8 py-3">
+            Browse Mentors
+          </button>
         </div>
       } @else {
         <div class="shad-card rounded-2xl p-8">
           <h2 class="text-2xl font-bold text-zinc-900 mb-1">Mentorship Application</h2>
-          <p class="text-zinc-500 text-sm mb-6">Fill in the form below. We'll match you with the best-fit mentor for your goals.</p>
+          <p class="text-zinc-500 text-sm mb-6">
+            Fill in the form below. We'll match you with the best-fit mentor for your goals.
+          </p>
 
           @if (formError()) {
-            <div class="bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-lg px-4 py-3 mb-5">{{ formError() }}</div>
+            <div
+              class="bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-lg px-4 py-3 mb-5"
+            >
+              {{ formError() }}
+            </div>
           }
 
           <form (ngSubmit)="submitForm()" #f="ngForm" class="space-y-5">
@@ -131,10 +191,24 @@
               <label class="block text-sm font-semibold text-zinc-700 mb-1">I want to be a *</label>
               <div class="flex gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" [(ngModel)]="form.type" name="type" value="mentee" class="accent-emerald-500" /> <span class="text-sm">Mentee (looking for guidance)</span>
+                  <input
+                    type="radio"
+                    [(ngModel)]="form.type"
+                    name="type"
+                    value="mentee"
+                    class="accent-emerald-500"
+                  />
+                  <span class="text-sm">Mentee (looking for guidance)</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" [(ngModel)]="form.type" name="type" value="mentor" class="accent-emerald-500" /> <span class="text-sm">Mentor (willing to guide)</span>
+                  <input
+                    type="radio"
+                    [(ngModel)]="form.type"
+                    name="type"
+                    value="mentor"
+                    class="accent-emerald-500"
+                  />
+                  <span class="text-sm">Mentor (willing to guide)</span>
                 </label>
               </div>
             </div>
@@ -142,26 +216,48 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-1">Full Name *</label>
-                <input type="text" [(ngModel)]="form.name" name="name" placeholder="Mehedi Hasan"
-                  class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                <input
+                  type="text"
+                  [(ngModel)]="form.name"
+                  name="name"
+                  placeholder="Mehedi Hasan"
+                  class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                />
               </div>
               <div>
                 <label class="block text-sm font-semibold text-zinc-700 mb-1">Email *</label>
-                <input type="email" [(ngModel)]="form.email" name="email" placeholder="you@example.com"
-                  class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                <input
+                  type="email"
+                  [(ngModel)]="form.email"
+                  name="email"
+                  placeholder="you@example.com"
+                  class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-zinc-700 mb-1">Graduation Batch / Year *</label>
-              <input type="text" [(ngModel)]="form.batch" name="batch" placeholder="e.g. 2022 or currently enrolled (Semester 8)"
-                class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+              <label class="block text-sm font-semibold text-zinc-700 mb-1"
+                >Graduation Batch / Year *</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="form.batch"
+                name="batch"
+                placeholder="e.g. 2022 or currently enrolled (Semester 8)"
+                class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              />
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-zinc-700 mb-1">Area of Interest *</label>
-              <select [(ngModel)]="form.area" name="area"
-                class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
+              <label class="block text-sm font-semibold text-zinc-700 mb-1"
+                >Area of Interest *</label
+              >
+              <select
+                [(ngModel)]="form.area"
+                name="area"
+                class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              >
                 <option value="" disabled>Select an area…</option>
                 @for (a of areas; track a) {
                   <option [value]="a">{{ a }}</option>
@@ -171,12 +267,20 @@
 
             <div>
               <label class="block text-sm font-semibold text-zinc-700 mb-1">Your Goals *</label>
-              <textarea [(ngModel)]="form.goals" name="goals" rows="4"
+              <textarea
+                [(ngModel)]="form.goals"
+                name="goals"
+                rows="4"
                 placeholder="Describe what you hope to achieve through mentorship — e.g., landing your first tech job, transitioning to PM, applying for a PhD…"
-                class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"></textarea>
+                class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
+              ></textarea>
             </div>
 
-            <button type="submit" [disabled]="submitting()" class="w-full shad-btn-primary py-3 font-semibold">
+            <button
+              type="submit"
+              [disabled]="submitting()"
+              class="w-full shad-btn-primary py-3 font-semibold"
+            >
               @if (submitting()) {
                 <i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting…
               } @else {
@@ -196,10 +300,13 @@
     <i class="fa-solid fa-users text-4xl mb-4 opacity-80"></i>
     <h2 class="text-3xl font-bold mb-3">Experienced? Give Back.</h2>
     <p class="text-emerald-100 text-lg mb-8 max-w-xl mx-auto">
-      Become a mentor and invest an hour a week in the next generation of CSE DIU engineers, researchers, and leaders.
+      Become a mentor and invest an hour a week in the next generation of CSE DIU engineers,
+      researchers, and leaders.
     </p>
-    <button (click)="form.type = 'mentor'; activeTab.set('apply')"
-      class="inline-flex items-center gap-2 bg-white text-emerald-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-emerald-50 transition-colors">
+    <button
+      (click)="form.type = 'mentor'; activeTab.set('apply')"
+      class="inline-flex items-center gap-2 bg-white text-emerald-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-emerald-50 transition-colors"
+    >
       <i class="fa-solid fa-hand-holding-heart"></i> Become a Mentor
     </button>
   </div>

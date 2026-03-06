@@ -15,17 +15,17 @@ type DonateTab = 'active' | 'completed' | 'upcoming';
   templateUrl: './donations.component.html',
 })
 export class DonationsComponent {
-  readonly svc         = inject(DonationsService);
+  readonly svc = inject(DonationsService);
   private readonly inv = inject(InvoiceService);
-  readonly auth        = inject(AuthService);
+  readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   // ── Tabs ──────────────────────────────────────────────────
   activeTab = signal<DonateTab>('active');
   readonly tabs: { key: DonateTab; label: string; icon: string }[] = [
-    { key: 'active',    label: 'Active Campaigns',    icon: 'fa-bolt' },
-    { key: 'completed', label: 'Completed',           icon: 'fa-circle-check' },
-    { key: 'upcoming',  label: 'Coming Soon',         icon: 'fa-clock' },
+    { key: 'active', label: 'Active Campaigns', icon: 'fa-bolt' },
+    { key: 'completed', label: 'Completed', icon: 'fa-circle-check' },
+    { key: 'upcoming', label: 'Coming Soon', icon: 'fa-clock' },
   ];
 
   // ── Expanded campaign details ──────────────────────────────
@@ -56,7 +56,9 @@ export class DonationsComponent {
     this.isAnonymous.set(!this.auth.isLoggedIn());
     // Scroll to form after tick
     setTimeout(() => {
-      document.getElementById(`donation-form-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document
+        .getElementById(`donation-form-${id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 50);
   }
 
@@ -97,35 +99,37 @@ export class DonationsComponent {
     const user = this.auth.currentUser();
     const isAnon = this.isAnonymous();
 
-    this.inv.create({
-      type: 'donation',
-      description: `Donation to: ${campaign.title}`,
-      campaignTitle: campaign.title,
-      totalAmount: amount,
-      donorName: isAnon ? undefined : (user?.email?.trim() || undefined),
-      isAnonymous: isAnon,
-      metadata: { campaignId: campaign.id, campaignCategory: campaign.category },
-    }).subscribe({
-      next: (invoice) => {
-        this.submitting.set(false);
-        this.router.navigate(['/payment'], { queryParams: { invoiceId: invoice.id } });
-      },
-      error: (err) => {
-        this.submitting.set(false);
-        this.formError.set(err?.error?.message ?? 'Could not create invoice. Please try again.');
-      },
-    });
+    this.inv
+      .create({
+        type: 'donation',
+        description: `Donation to: ${campaign.title}`,
+        campaignTitle: campaign.title,
+        totalAmount: amount,
+        donorName: isAnon ? undefined : user?.email?.trim() || undefined,
+        isAnonymous: isAnon,
+        metadata: { campaignId: campaign.id, campaignCategory: campaign.category },
+      })
+      .subscribe({
+        next: (invoice) => {
+          this.submitting.set(false);
+          this.router.navigate(['/payment'], { queryParams: { invoiceId: invoice.id } });
+        },
+        error: (err) => {
+          this.submitting.set(false);
+          this.formError.set(err?.error?.message ?? 'Could not create invoice. Please try again.');
+        },
+      });
   }
 
   // ── Computed lists ─────────────────────────────────────────
-  readonly activeCampaigns  = computed(() => this.svc.getActive());
-  readonly pastCampaigns    = computed(() => this.svc.getPast());
+  readonly activeCampaigns = computed(() => this.svc.getActive());
+  readonly pastCampaigns = computed(() => this.svc.getPast());
   readonly upcomingCampaigns = computed(() => this.svc.getUpcoming());
   readonly featuredCampaigns = computed(() => this.svc.getFeatured());
 
   readonly visibleCampaigns = computed<Campaign[]>(() => {
     const t = this.activeTab();
-    if (t === 'active')    return this.activeCampaigns();
+    if (t === 'active') return this.activeCampaigns();
     if (t === 'completed') return this.pastCampaigns();
     return this.upcomingCampaigns();
   });
@@ -137,10 +141,18 @@ export class DonationsComponent {
     const totalDonors = all.reduce((s, c) => s + c.donors, 0);
     const completedCount = all.filter((c) => c.status === 'completed').length;
     return [
-      { label: 'Total Raised',       value: this.svc.formatBDT(totalRaised), icon: 'fa-bangladeshi-taka-sign' },
-      { label: 'Unique Donors',      value: totalDonors.toLocaleString(),     icon: 'fa-users' },
-      { label: 'Campaigns Funded',   value: completedCount.toString(),        icon: 'fa-circle-check' },
-      { label: 'Active Campaigns',   value: this.activeCampaigns().length.toString(), icon: 'fa-bolt' },
+      {
+        label: 'Total Raised',
+        value: this.svc.formatBDT(totalRaised),
+        icon: 'fa-bangladeshi-taka-sign',
+      },
+      { label: 'Unique Donors', value: totalDonors.toLocaleString(), icon: 'fa-users' },
+      { label: 'Campaigns Funded', value: completedCount.toString(), icon: 'fa-circle-check' },
+      {
+        label: 'Active Campaigns',
+        value: this.activeCampaigns().length.toString(),
+        icon: 'fa-bolt',
+      },
     ];
   });
 }

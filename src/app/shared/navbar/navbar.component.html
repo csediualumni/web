@@ -3,7 +3,10 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-9">
     <!-- Quick contact -->
     <div class="flex items-center gap-5">
-      <a href="mailto:support@csediualumni.com" class="flex items-center gap-1.5 hover:text-white transition-colors">
+      <a
+        href="mailto:support@csediualumni.com"
+        class="flex items-center gap-1.5 hover:text-white transition-colors"
+      >
         <i class="fa-regular fa-envelope text-[11px]"></i>
         support&#64;csediualumni.com
       </a>
@@ -14,13 +17,31 @@
     </div>
     <!-- Social quick links -->
     <div class="flex items-center gap-3">
-      <a href="https://facebook.com" target="_blank" rel="noopener" class="hover:text-white transition-colors" aria-label="Facebook">
+      <a
+        href="https://facebook.com"
+        target="_blank"
+        rel="noopener"
+        class="hover:text-white transition-colors"
+        aria-label="Facebook"
+      >
         <i class="fa-brands fa-facebook-f text-[11px]"></i>
       </a>
-      <a href="https://linkedin.com" target="_blank" rel="noopener" class="hover:text-white transition-colors" aria-label="LinkedIn">
+      <a
+        href="https://linkedin.com"
+        target="_blank"
+        rel="noopener"
+        class="hover:text-white transition-colors"
+        aria-label="LinkedIn"
+      >
         <i class="fa-brands fa-linkedin-in text-[11px]"></i>
       </a>
-      <a href="https://youtube.com" target="_blank" rel="noopener" class="hover:text-white transition-colors" aria-label="YouTube">
+      <a
+        href="https://youtube.com"
+        target="_blank"
+        rel="noopener"
+        class="hover:text-white transition-colors"
+        aria-label="YouTube"
+      >
         <i class="fa-brands fa-youtube text-[11px]"></i>
       </a>
     </div>
@@ -36,15 +57,21 @@
 >
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
-
       <!-- Logo -->
       <a routerLink="/" class="flex items-center gap-2.5 flex-shrink-0 group">
-        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm flex-shrink-0">
+        <div
+          class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm flex-shrink-0"
+        >
           <i class="fa-solid fa-graduation-cap text-white text-base"></i>
         </div>
         <div class="leading-tight">
-          <span class="block text-sm font-bold text-zinc-900 tracking-tight group-hover:text-zinc-700 transition-colors">CSE DIU</span>
-          <span class="block text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Alumni Network</span>
+          <span
+            class="block text-sm font-bold text-zinc-900 tracking-tight group-hover:text-zinc-700 transition-colors"
+            >CSE DIU</span
+          >
+          <span class="block text-[10px] font-medium text-zinc-500 uppercase tracking-widest"
+            >Alumni Network</span
+          >
         </div>
       </a>
 
@@ -77,11 +104,18 @@
               aria-haspopup="true"
               [attr.aria-expanded]="userDropdownOpen()"
             >
-              <span class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+              <span
+                class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0"
+              >
                 {{ userInitial }}
               </span>
-              <span class="text-sm text-zinc-700 font-medium max-w-[140px] truncate">{{ userEmail }}</span>
-              <i class="fa-solid fa-chevron-down text-zinc-400 text-[10px] transition-transform duration-200" [class.rotate-180]="userDropdownOpen()"></i>
+              <span class="text-sm text-zinc-700 font-medium max-w-[140px] truncate">{{
+                userEmail
+              }}</span>
+              <i
+                class="fa-solid fa-chevron-down text-zinc-400 text-[10px] transition-transform duration-200"
+                [class.rotate-180]="userDropdownOpen()"
+              ></i>
             </button>
 
             <!-- Dropdown menu -->
@@ -94,18 +128,29 @@
                   <p class="text-xs text-zinc-500 truncate">Signed in as</p>
                   <p class="text-sm font-medium text-zinc-800 truncate">{{ userEmail }}</p>
                 </div>
-                <a routerLink="/dashboard" (click)="userDropdownOpen.set(false)" class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">
+                <a
+                  routerLink="/dashboard"
+                  (click)="userDropdownOpen.set(false)"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+                >
                   <i class="fa-solid fa-gauge-high w-4 text-center text-zinc-400"></i>
                   Dashboard
                 </a>
                 @if (isAdmin()) {
-                  <a routerLink="/admin" (click)="userDropdownOpen.set(false)" class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">
+                  <a
+                    routerLink="/admin"
+                    (click)="userDropdownOpen.set(false)"
+                    class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+                  >
                     <i class="fa-solid fa-gear w-4 text-center text-zinc-400"></i>
                     Admin Panel
                   </a>
                 }
                 <div class="border-t border-zinc-100 mt-1 pt-1">
-                  <button (click)="logout()" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                  <button
+                    (click)="logout()"
+                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
                     <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
                     Sign out
                   </button>
@@ -113,15 +158,10 @@
               </div>
             }
           </div>
-
         } @else {
           <!-- Not logged in -->
-          <a routerLink="/auth/login" class="shad-btn-ghost text-sm text-zinc-700">
-            Sign in
-          </a>
-          <a routerLink="/auth/register" class="shad-btn-primary text-sm">
-            Register
-          </a>
+          <a routerLink="/auth/login" class="shad-btn-ghost text-sm text-zinc-700"> Sign in </a>
+          <a routerLink="/auth/register" class="shad-btn-primary text-sm"> Register </a>
         }
       </div>
 
@@ -138,8 +178,8 @@
           <i class="fa-solid fa-bars text-lg w-5 text-center"></i>
         }
       </button>
-
-    </div><!-- /flex row -->
+    </div>
+    <!-- /flex row -->
   </nav>
 
   <!-- Mobile menu panel -->
@@ -164,7 +204,9 @@
       <div class="border-t border-zinc-100 px-4 py-3">
         @if (auth.currentUser()) {
           <div class="flex items-center gap-3 mb-3 px-3 py-2 bg-zinc-50 rounded-md">
-            <span class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+            <span
+              class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0"
+            >
               {{ userInitial }}
             </span>
             <div class="min-w-0">
@@ -173,25 +215,43 @@
             </div>
           </div>
           <div class="space-y-1">
-            <a routerLink="/dashboard" (click)="closeMobileMenu()" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">
+            <a
+              routerLink="/dashboard"
+              (click)="closeMobileMenu()"
+              class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+            >
               <i class="fa-solid fa-gauge-high w-4 text-center text-zinc-400"></i>
               Dashboard
             </a>
             @if (isAdmin()) {
-              <a routerLink="/admin" (click)="closeMobileMenu()" class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors">
+              <a
+                routerLink="/admin"
+                (click)="closeMobileMenu()"
+                class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+              >
                 <i class="fa-solid fa-gear w-4 text-center text-zinc-400"></i>
                 Admin Panel
               </a>
             }
-            <button (click)="logout()" class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-red-600 hover:bg-red-50 transition-colors">
+            <button
+              (click)="logout()"
+              class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-red-600 hover:bg-red-50 transition-colors"
+            >
               <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
               Sign out
             </button>
           </div>
         } @else {
           <div class="flex flex-col gap-2">
-            <a routerLink="/auth/login" (click)="closeMobileMenu()" class="shad-btn-outline w-full">Sign in</a>
-            <a routerLink="/auth/register" (click)="closeMobileMenu()" class="shad-btn-primary w-full">Register</a>
+            <a routerLink="/auth/login" (click)="closeMobileMenu()" class="shad-btn-outline w-full"
+              >Sign in</a
+            >
+            <a
+              routerLink="/auth/register"
+              (click)="closeMobileMenu()"
+              class="shad-btn-primary w-full"
+              >Register</a
+            >
           </div>
         }
       </div>

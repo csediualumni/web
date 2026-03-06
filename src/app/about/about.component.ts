@@ -80,7 +80,7 @@ export class AboutComponent {
     {
       icon: 'fa-lightbulb',
       title: 'Innovation',
-      desc: "We celebrate the engineering spirit. The platform itself is built and improved by our own alumni.",
+      desc: 'We celebrate the engineering spirit. The platform itself is built and improved by our own alumni.',
     },
     {
       icon: 'fa-seedling',

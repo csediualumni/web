@@ -14,9 +14,10 @@ export class AdminComponent {
   sidebarOpen = signal(false);
 
   navItems = [
-    { label: 'Users',               path: 'users',    icon: 'fa-users' },
-    { label: 'Roles & Permissions', path: 'roles',    icon: 'fa-shield-halved' },
-    { label: 'Invoices',            path: 'invoices', icon: 'fa-file-invoice-dollar' },
+    { label: 'Users', path: 'users', icon: 'fa-users' },
+    { label: 'Roles & Permissions', path: 'roles', icon: 'fa-shield-halved' },
+    { label: 'Invoices', path: 'invoices', icon: 'fa-file-invoice-dollar' },
+    { label: 'Newsletter', path: 'newsletter', icon: 'fa-envelope' },
   ];
 
   constructor(

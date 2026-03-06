@@ -9,10 +9,10 @@ export interface CommitteeMemberEntry {
 
 export interface Committee {
   id: number;
-  term: string;          // e.g. "2024–2025"
-  sessionLabel: string;  // e.g. "Session 2024–25"
+  term: string; // e.g. "2024–2025"
+  sessionLabel: string; // e.g. "Session 2024–25"
   isCurrent: boolean;
-  theme: string;         // Optional theme / motto for the term
+  theme: string; // Optional theme / motto for the term
   members: CommitteeMemberEntry[];
 }
 
@@ -27,15 +27,15 @@ export class CommitteeService {
       isCurrent: true,
       theme: '"Connecting Futures, Celebrating Roots"',
       members: [
-        { alumniId: 7,  designation: 'President' },
-        { alumniId: 1,  designation: 'Vice President' },
-        { alumniId: 3,  designation: 'General Secretary' },
-        { alumniId: 9,  designation: 'Joint Secretary' },
+        { alumniId: 7, designation: 'President' },
+        { alumniId: 1, designation: 'Vice President' },
+        { alumniId: 3, designation: 'General Secretary' },
+        { alumniId: 9, designation: 'Joint Secretary' },
         { alumniId: 11, designation: 'Treasurer' },
-        { alumniId: 5,  designation: 'Assistant Treasurer' },
-        { alumniId: 4,  designation: 'Executive Member' },
-        { alumniId: 6,  designation: 'Executive Member' },
-        { alumniId: 2,  designation: 'Executive Member' },
+        { alumniId: 5, designation: 'Assistant Treasurer' },
+        { alumniId: 4, designation: 'Executive Member' },
+        { alumniId: 6, designation: 'Executive Member' },
+        { alumniId: 2, designation: 'Executive Member' },
       ],
     },
 
@@ -47,14 +47,14 @@ export class CommitteeService {
       isCurrent: false,
       theme: '"Growing Together, Giving Back"',
       members: [
-        { alumniId: 9,  designation: 'President' },
-        { alumniId: 7,  designation: 'Vice President' },
-        { alumniId: 5,  designation: 'General Secretary' },
+        { alumniId: 9, designation: 'President' },
+        { alumniId: 7, designation: 'Vice President' },
+        { alumniId: 5, designation: 'General Secretary' },
         { alumniId: 11, designation: 'Joint Secretary' },
-        { alumniId: 3,  designation: 'Treasurer' },
-        { alumniId: 1,  designation: 'Executive Member' },
+        { alumniId: 3, designation: 'Treasurer' },
+        { alumniId: 1, designation: 'Executive Member' },
         { alumniId: 12, designation: 'Executive Member' },
-        { alumniId: 8,  designation: 'Executive Member' },
+        { alumniId: 8, designation: 'Executive Member' },
       ],
     },
     {
@@ -64,13 +64,13 @@ export class CommitteeService {
       isCurrent: false,
       theme: '"Bridging Knowledge Across Generations"',
       members: [
-        { alumniId: 3,  designation: 'President' },
-        { alumniId: 9,  designation: 'Vice President' },
-        { alumniId: 7,  designation: 'General Secretary' },
-        { alumniId: 1,  designation: 'Joint Secretary' },
+        { alumniId: 3, designation: 'President' },
+        { alumniId: 9, designation: 'Vice President' },
+        { alumniId: 7, designation: 'General Secretary' },
+        { alumniId: 1, designation: 'Joint Secretary' },
         { alumniId: 12, designation: 'Treasurer' },
-        { alumniId: 5,  designation: 'Assistant Treasurer' },
-        { alumniId: 4,  designation: 'Executive Member' },
+        { alumniId: 5, designation: 'Assistant Treasurer' },
+        { alumniId: 4, designation: 'Executive Member' },
         { alumniId: 10, designation: 'Executive Member' },
       ],
     },
@@ -81,13 +81,13 @@ export class CommitteeService {
       isCurrent: false,
       theme: '"Alumni First, Always"',
       members: [
-        { alumniId: 5,  designation: 'President' },
-        { alumniId: 3,  designation: 'Vice President' },
-        { alumniId: 9,  designation: 'General Secretary' },
-        { alumniId: 7,  designation: 'Joint Secretary' },
+        { alumniId: 5, designation: 'President' },
+        { alumniId: 3, designation: 'Vice President' },
+        { alumniId: 9, designation: 'General Secretary' },
+        { alumniId: 7, designation: 'Joint Secretary' },
         { alumniId: 11, designation: 'Treasurer' },
-        { alumniId: 6,  designation: 'Executive Member' },
-        { alumniId: 8,  designation: 'Executive Member' },
+        { alumniId: 6, designation: 'Executive Member' },
+        { alumniId: 8, designation: 'Executive Member' },
       ],
     },
   ];

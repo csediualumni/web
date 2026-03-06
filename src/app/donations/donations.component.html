@@ -1,28 +1,48 @@
 <!-- ── Hero ─────────────────────────────────────────────────────── -->
-<section class="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-green-900 to-teal-950 text-white">
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
-  <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-teal-400/15 rounded-full blur-3xl pointer-events-none"></div>
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-green-900 to-teal-950 text-white"
+>
+  <div
+    class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"
+  ></div>
+  <div
+    class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"
+  ></div>
+  <div
+    class="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-teal-400/15 rounded-full blur-3xl pointer-events-none"
+  ></div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
     <div class="max-w-2xl">
-      <span class="inline-flex items-center gap-1.5 bg-emerald-400/15 border border-emerald-400/40 text-emerald-300 text-xs font-medium px-3 py-1 rounded-full mb-5">
+      <span
+        class="inline-flex items-center gap-1.5 bg-emerald-400/15 border border-emerald-400/40 text-emerald-300 text-xs font-medium px-3 py-1 rounded-full mb-5"
+      >
         <i class="fa-solid fa-hand-holding-heart text-[10px]"></i>
         Fundraising &amp; Donations
       </span>
       <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-5">
-        Give Back to the<br>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300">Community That Built You.</span>
+        Give Back to the<br />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300"
+          >Community That Built You.</span
+        >
       </h1>
       <p class="text-zinc-300 text-lg leading-relaxed mb-8">
-        Every donation — big or small — shapes the future of CSE DIU students and alumni. Fund scholarships, upgrade labs, sponsor events, or support disaster relief. See exactly where your money goes.
+        Every donation — big or small — shapes the future of CSE DIU students and alumni. Fund
+        scholarships, upgrade labs, sponsor events, or support disaster relief. See exactly where
+        your money goes.
       </p>
       <div class="flex flex-col sm:flex-row gap-3">
-        <a href="#campaigns" class="inline-flex items-center justify-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 font-semibold px-7 py-3 rounded-lg transition-colors text-sm shadow">
+        <a
+          href="#campaigns"
+          class="inline-flex items-center justify-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 font-semibold px-7 py-3 rounded-lg transition-colors text-sm shadow"
+        >
           <i class="fa-solid fa-bolt"></i>
           Donate Now
         </a>
-        <a href="#transparency" class="inline-flex items-center justify-center gap-2 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-100 font-semibold px-7 py-3 rounded-lg transition-colors text-sm">
+        <a
+          href="#transparency"
+          class="inline-flex items-center justify-center gap-2 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-100 font-semibold px-7 py-3 rounded-lg transition-colors text-sm"
+        >
           <i class="fa-solid fa-chart-pie"></i>
           How We Use Funds
         </a>
@@ -37,7 +57,9 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
       @for (stat of stats(); track stat.label) {
         <div class="flex flex-col items-center gap-2">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+          <div
+            class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center"
+          >
             <i class="fa-solid {{ stat.icon }} text-emerald-600 text-sm"></i>
           </div>
           <p class="text-2xl font-extrabold text-zinc-900 tracking-tight">{{ stat.value }}</p>
@@ -51,7 +73,6 @@
 <!-- ── Featured / Active Campaigns ────────────────────────────── -->
 <section id="campaigns" class="bg-zinc-50 py-14 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
     <!-- Tabs -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
       <h2 class="text-2xl font-extrabold text-zinc-900 tracking-tight">Campaigns</h2>
@@ -77,36 +98,49 @@
     <!-- Campaign cards -->
     <div class="space-y-6">
       @for (campaign of visibleCampaigns(); track campaign.id) {
-
         <!-- Main card -->
-        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden transition-shadow hover:shadow-md"
-             [class.ring-2]="activeDonationId() === campaign.id"
-             [class.ring-emerald-400]="activeDonationId() === campaign.id">
-
+        <div
+          class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden transition-shadow hover:shadow-md"
+          [class.ring-2]="activeDonationId() === campaign.id"
+          [class.ring-emerald-400]="activeDonationId() === campaign.id"
+        >
           <div class="p-6 sm:p-7">
             <div class="flex flex-col sm:flex-row sm:items-start gap-5">
-
               <!-- Icon -->
-              <div [class]="'flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-sm ' + campaign.color">
+              <div
+                [class]="
+                  'flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-sm ' +
+                  campaign.color
+                "
+              >
                 <i class="fa-solid {{ campaign.icon }} text-2xl"></i>
               </div>
 
               <!-- Content -->
               <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-2">
-                  <span class="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">{{ campaign.category }}</span>
+                  <span
+                    class="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5"
+                    >{{ campaign.category }}</span
+                  >
                   @if (campaign.status === 'active') {
-                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-white bg-emerald-500 rounded-full px-2.5 py-0.5">
+                    <span
+                      class="inline-flex items-center gap-1 text-[11px] font-semibold text-white bg-emerald-500 rounded-full px-2.5 py-0.5"
+                    >
                       <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Active
                     </span>
                   }
                   @if (campaign.status === 'completed') {
-                    <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-100 rounded-full px-2.5 py-0.5">
+                    <span
+                      class="text-[11px] font-semibold text-emerald-700 bg-emerald-100 rounded-full px-2.5 py-0.5"
+                    >
                       <i class="fa-solid fa-circle-check mr-1"></i>Goal Reached
                     </span>
                   }
                   @if (campaign.status === 'upcoming') {
-                    <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-0.5">
+                    <span
+                      class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-0.5"
+                    >
                       <i class="fa-solid fa-clock mr-1"></i>Coming Soon
                     </span>
                   }
@@ -119,21 +153,26 @@
 
                 <h3 class="text-lg font-bold text-zinc-900 leading-snug">{{ campaign.title }}</h3>
                 <p class="text-sm text-zinc-500 mt-1 italic">{{ campaign.tagline }}</p>
-                <p class="text-sm text-zinc-600 mt-2 leading-relaxed line-clamp-3">{{ campaign.description }}</p>
+                <p class="text-sm text-zinc-600 mt-2 leading-relaxed line-clamp-3">
+                  {{ campaign.description }}
+                </p>
 
                 <!-- Progress bar -->
                 @if (campaign.status !== 'upcoming') {
                   <div class="mt-4">
                     <div class="flex items-center justify-between text-xs text-zinc-500 mb-1.5">
-                      <span class="font-semibold text-zinc-900 text-sm">{{ svc.formatBDT(campaign.raised) }} raised</span>
+                      <span class="font-semibold text-zinc-900 text-sm"
+                        >{{ svc.formatBDT(campaign.raised) }} raised</span
+                      >
                       <span>of {{ svc.formatBDT(campaign.goal) }} goal</span>
                     </div>
                     <div class="h-2.5 w-full rounded-full bg-zinc-100 overflow-hidden">
-                      <div class="h-full rounded-full transition-all duration-700"
-                           [class.bg-emerald-500]="campaign.status === 'active'"
-                           [class.bg-zinc-400]="campaign.status === 'completed'"
-                           [style.width.%]="svc.progressPercent(campaign)">
-                      </div>
+                      <div
+                        class="h-full rounded-full transition-all duration-700"
+                        [class.bg-emerald-500]="campaign.status === 'active'"
+                        [class.bg-zinc-400]="campaign.status === 'completed'"
+                        [style.width.%]="svc.progressPercent(campaign)"
+                      ></div>
                     </div>
                     <div class="flex items-center justify-between mt-1.5 text-xs text-zinc-400">
                       <span>{{ svc.progressPercent(campaign) }}% funded</span>
@@ -149,20 +188,26 @@
                   <button
                     type="button"
                     (click)="openDonationForm(campaign.id)"
-                    class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm w-full">
+                    class="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm w-full"
+                  >
                     <i class="fa-solid fa-heart text-xs"></i>
                     Donate
                   </button>
                 }
                 @if (campaign.status === 'upcoming') {
-                  <button type="button" disabled
-                    class="inline-flex items-center justify-center gap-2 bg-zinc-100 text-zinc-400 text-sm font-semibold px-5 py-2.5 rounded-lg cursor-not-allowed w-full">
+                  <button
+                    type="button"
+                    disabled
+                    class="inline-flex items-center justify-center gap-2 bg-zinc-100 text-zinc-400 text-sm font-semibold px-5 py-2.5 rounded-lg cursor-not-allowed w-full"
+                  >
                     <i class="fa-solid fa-clock text-xs"></i>
                     Coming Soon
                   </button>
                 }
                 @if (campaign.status === 'completed') {
-                  <span class="inline-flex items-center justify-center gap-2 bg-zinc-100 text-zinc-500 text-sm font-semibold px-5 py-2.5 rounded-lg w-full">
+                  <span
+                    class="inline-flex items-center justify-center gap-2 bg-zinc-100 text-zinc-500 text-sm font-semibold px-5 py-2.5 rounded-lg w-full"
+                  >
                     <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
                     Funded
                   </span>
@@ -170,10 +215,13 @@
                 <button
                   type="button"
                   (click)="toggleExpand(campaign.id)"
-                  class="inline-flex items-center justify-center gap-1.5 border border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 text-xs font-medium px-4 py-2 rounded-lg transition-colors w-full">
+                  class="inline-flex items-center justify-center gap-1.5 border border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 text-xs font-medium px-4 py-2 rounded-lg transition-colors w-full"
+                >
                   {{ expandedId() === campaign.id ? 'Less info' : 'More info' }}
-                  <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200"
-                     [class.rotate-180]="expandedId() === campaign.id"></i>
+                  <i
+                    class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200"
+                    [class.rotate-180]="expandedId() === campaign.id"
+                  ></i>
                 </button>
               </div>
             </div>
@@ -181,16 +229,22 @@
 
           <!-- Expanded details -->
           @if (expandedId() === campaign.id) {
-            <div class="border-t border-zinc-100 bg-zinc-50/60 px-6 sm:px-7 py-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div
+              class="border-t border-zinc-100 bg-zinc-50/60 px-6 sm:px-7 py-5 grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
               <!-- Impact -->
               <div>
-                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                <p
+                  class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2"
+                >
                   <i class="fa-solid fa-bullseye text-emerald-500"></i> Where Your Money Goes
                 </p>
                 <ul class="space-y-2">
                   @for (point of campaign.impact; track $index) {
                     <li class="flex items-start gap-2 text-sm text-zinc-700">
-                      <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0 text-xs"></i>
+                      <i
+                        class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0 text-xs"
+                      ></i>
                       {{ point }}
                     </li>
                   }
@@ -199,13 +253,17 @@
               <!-- Updates -->
               @if (campaign.updates && campaign.updates.length > 0) {
                 <div>
-                  <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <p
+                    class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-2"
+                  >
                     <i class="fa-solid fa-rss text-blue-500"></i> Latest Updates
                   </p>
                   <ul class="space-y-2">
                     @for (update of campaign.updates; track $index) {
                       <li class="text-sm text-zinc-600 flex items-start gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0"></span>
+                        <span
+                          class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 flex-shrink-0"
+                        ></span>
                         {{ update }}
                       </li>
                     }
@@ -217,120 +275,147 @@
 
           <!-- Donation form (inline) -->
           @if (activeDonationId() === campaign.id) {
-            <div [id]="'donation-form-' + campaign.id"
-                 class="border-t-2 border-emerald-400 bg-emerald-50/40 px-6 sm:px-7 py-6">
-
+            <div
+              [id]="'donation-form-' + campaign.id"
+              class="border-t-2 border-emerald-400 bg-emerald-50/40 px-6 sm:px-7 py-6"
+            >
               <h4 class="text-base font-bold text-zinc-900 mb-4 flex items-center gap-2">
-                  <i class="fa-solid fa-heart text-emerald-500"></i>
-                  Donate to: <span class="text-emerald-700">{{ campaign.title }}</span>
-                </h4>
+                <i class="fa-solid fa-heart text-emerald-500"></i>
+                Donate to: <span class="text-emerald-700">{{ campaign.title }}</span>
+              </h4>
 
-                <!-- Quick amounts -->
-                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Select Amount (BDT)</p>
-                <div class="flex flex-wrap gap-2 mb-3">
-                  @for (amt of quickAmounts; track amt) {
-                    <button
-                      type="button"
-                      (click)="selectQuick(amt)"
-                      class="px-4 py-2 rounded-lg border text-sm font-semibold transition-all"
-                      [class.bg-emerald-600]="selectedAmount() === amt && !customAmount()"
-                      [class.border-emerald-600]="selectedAmount() === amt && !customAmount()"
-                      [class.text-white]="selectedAmount() === amt && !customAmount()"
-                      [class.bg-white]="selectedAmount() !== amt || customAmount()"
-                      [class.border-zinc-300]="selectedAmount() !== amt || customAmount()"
-                      [class.text-zinc-700]="selectedAmount() !== amt || customAmount()"
-                    >
-                      ৳{{ amt.toLocaleString() }}
-                    </button>
-                  }
-                </div>
-
-                <!-- Custom amount -->
-                <div class="mb-4">
-                  <label class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1.5">Or enter custom amount</label>
-                  <div class="relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 font-semibold text-sm">৳</span>
-                    <input
-                      type="number"
-                      min="100"
-                      placeholder="e.g. 3000"
-                      [ngModel]="customAmount()"
-                      (ngModelChange)="onCustomInput($event)"
-                      class="w-full sm:w-60 h-10 pl-7 pr-3 rounded-lg border border-zinc-300 bg-white text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-shadow"
-                    />
-                  </div>
-                </div>
-
-                <!-- Anonymous toggle -->
-                <div class="mb-5">
-                  <label class="flex items-center gap-2 select-none" [class.cursor-pointer]="auth.isLoggedIn()" [class.cursor-default]="!auth.isLoggedIn()">
-                    <input type="checkbox"
-                           [ngModel]="isAnonymous()"
-                           (ngModelChange)="auth.isLoggedIn() && isAnonymous.set($event)"
-                           [disabled]="!auth.isLoggedIn()"
-                           class="w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-400"
-                           [class.cursor-pointer]="auth.isLoggedIn()"
-                           [class.cursor-not-allowed]="!auth.isLoggedIn()" />
-                    <span class="text-sm text-zinc-600">Donate anonymously</span>
-                    @if (!auth.isLoggedIn()) {
-                      <span class="text-xs text-zinc-400 italic">(log in to donate with your name)</span>
-                    }
-                  </label>
-                  @if (isAnonymous()) {
-                    <p class="mt-1.5 ml-6 text-xs text-amber-600 flex items-start gap-1.5">
-                      <i class="fa-solid fa-triangle-exclamation mt-0.5 shrink-0"></i>
-                      Anonymous donations are <strong>non-refundable</strong> — your payment information will not be stored.
-                    </p>
-                  }
-                </div>
-
-                <!-- Form error -->
-                @if (formError()) {
-                  <div class="mb-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2 text-xs text-red-600">
-                    <i class="fa-solid fa-circle-exclamation shrink-0"></i>
-                    {{ formError() }}
-                  </div>
-                }
-
-                <!-- Amount preview + submit -->
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                  @if (effectiveAmount() >= 100) {
-                    <div class="bg-emerald-100 border border-emerald-200 rounded-lg px-4 py-2 text-sm font-semibold text-emerald-800">
-                      You are donating: ৳{{ effectiveAmount().toLocaleString() }}
-                    </div>
-                  }
+              <!-- Quick amounts -->
+              <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                Select Amount (BDT)
+              </p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                @for (amt of quickAmounts; track amt) {
                   <button
                     type="button"
-                    (click)="submitDonation()"
-                    [disabled]="effectiveAmount() < 100 || submitting()"
-                    class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-7 py-2.5 rounded-lg transition-colors shadow-sm">
-                    @if (submitting()) {
-                      <i class="fa-solid fa-spinner fa-spin text-xs"></i>
-                      Processing…
-                    } @else {
-                      <i class="fa-solid fa-lock text-xs"></i>
-                      Confirm Donation
-                    }
+                    (click)="selectQuick(amt)"
+                    class="px-4 py-2 rounded-lg border text-sm font-semibold transition-all"
+                    [class.bg-emerald-600]="selectedAmount() === amt && !customAmount()"
+                    [class.border-emerald-600]="selectedAmount() === amt && !customAmount()"
+                    [class.text-white]="selectedAmount() === amt && !customAmount()"
+                    [class.bg-white]="selectedAmount() !== amt || customAmount()"
+                    [class.border-zinc-300]="selectedAmount() !== amt || customAmount()"
+                    [class.text-zinc-700]="selectedAmount() !== amt || customAmount()"
+                  >
+                    ৳{{ amt.toLocaleString() }}
                   </button>
-                  <button type="button" (click)="closeDonationForm()"
-                    [disabled]="submitting()"
-                    class="text-sm text-zinc-400 hover:text-zinc-600 px-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    Cancel
-                  </button>
+                }
+              </div>
+
+              <!-- Custom amount -->
+              <div class="mb-4">
+                <label
+                  class="text-xs font-semibold text-zinc-500 uppercase tracking-wider block mb-1.5"
+                  >Or enter custom amount</label
+                >
+                <div class="relative">
+                  <span
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 font-semibold text-sm"
+                    >৳</span
+                  >
+                  <input
+                    type="number"
+                    min="100"
+                    placeholder="e.g. 3000"
+                    [ngModel]="customAmount()"
+                    (ngModelChange)="onCustomInput($event)"
+                    class="w-full sm:w-60 h-10 pl-7 pr-3 rounded-lg border border-zinc-300 bg-white text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-shadow"
+                  />
                 </div>
-                <p class="text-[11px] text-zinc-400 mt-3 flex items-center gap-1">
-                  <i class="fa-solid fa-shield-halved"></i>
-                  You will be taken to a payment page to complete your donation via bKash.
-                </p>
+              </div>
+
+              <!-- Anonymous toggle -->
+              <div class="mb-5">
+                <label
+                  class="flex items-center gap-2 select-none"
+                  [class.cursor-pointer]="auth.isLoggedIn()"
+                  [class.cursor-default]="!auth.isLoggedIn()"
+                >
+                  <input
+                    type="checkbox"
+                    [ngModel]="isAnonymous()"
+                    (ngModelChange)="auth.isLoggedIn() && isAnonymous.set($event)"
+                    [disabled]="!auth.isLoggedIn()"
+                    class="w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-400"
+                    [class.cursor-pointer]="auth.isLoggedIn()"
+                    [class.cursor-not-allowed]="!auth.isLoggedIn()"
+                  />
+                  <span class="text-sm text-zinc-600">Donate anonymously</span>
+                  @if (!auth.isLoggedIn()) {
+                    <span class="text-xs text-zinc-400 italic"
+                      >(log in to donate with your name)</span
+                    >
+                  }
+                </label>
+                @if (isAnonymous()) {
+                  <p class="mt-1.5 ml-6 text-xs text-amber-600 flex items-start gap-1.5">
+                    <i class="fa-solid fa-triangle-exclamation mt-0.5 shrink-0"></i>
+                    Anonymous donations are <strong>non-refundable</strong> — your payment
+                    information will not be stored.
+                  </p>
+                }
+              </div>
+
+              <!-- Form error -->
+              @if (formError()) {
+                <div
+                  class="mb-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2 text-xs text-red-600"
+                >
+                  <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+                  {{ formError() }}
+                </div>
+              }
+
+              <!-- Amount preview + submit -->
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                @if (effectiveAmount() >= 100) {
+                  <div
+                    class="bg-emerald-100 border border-emerald-200 rounded-lg px-4 py-2 text-sm font-semibold text-emerald-800"
+                  >
+                    You are donating: ৳{{ effectiveAmount().toLocaleString() }}
+                  </div>
+                }
+                <button
+                  type="button"
+                  (click)="submitDonation()"
+                  [disabled]="effectiveAmount() < 100 || submitting()"
+                  class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-7 py-2.5 rounded-lg transition-colors shadow-sm"
+                >
+                  @if (submitting()) {
+                    <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+                    Processing…
+                  } @else {
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    Confirm Donation
+                  }
+                </button>
+                <button
+                  type="button"
+                  (click)="closeDonationForm()"
+                  [disabled]="submitting()"
+                  class="text-sm text-zinc-400 hover:text-zinc-600 px-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+              </div>
+              <p class="text-[11px] text-zinc-400 mt-3 flex items-center gap-1">
+                <i class="fa-solid fa-shield-halved"></i>
+                You will be taken to a payment page to complete your donation via bKash.
+              </p>
             </div>
           }
-
         </div>
       }
 
       <!-- Empty state -->
       @if (visibleCampaigns().length === 0) {
-        <div class="flex flex-col items-center justify-center gap-4 py-24 text-center bg-white rounded-2xl border border-zinc-200">
+        <div
+          class="flex flex-col items-center justify-center gap-4 py-24 text-center bg-white rounded-2xl border border-zinc-200"
+        >
           <i class="fa-solid fa-inbox text-5xl text-zinc-300"></i>
           <p class="text-zinc-500">No campaigns in this category right now.</p>
         </div>
@@ -348,9 +433,13 @@
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       @for (donor of svc.recentDonors; track $index) {
-        <div class="flex items-start gap-3 p-4 rounded-xl border border-zinc-100 bg-zinc-50 hover:border-emerald-200 transition-colors">
+        <div
+          class="flex items-start gap-3 p-4 rounded-xl border border-zinc-100 bg-zinc-50 hover:border-emerald-200 transition-colors"
+        >
           <!-- Avatar -->
-          <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+          <div
+            class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+          >
             @if (donor.anonymous) {
               <i class="fa-solid fa-user-secret text-sm"></i>
             } @else {
@@ -358,7 +447,9 @@
             }
           </div>
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold text-zinc-900 truncate">{{ donor.anonymous ? 'Anonymous' : donor.name }}</p>
+            <p class="text-sm font-semibold text-zinc-900 truncate">
+              {{ donor.anonymous ? 'Anonymous' : donor.name }}
+            </p>
             @if (!donor.anonymous && donor.batch) {
               <p class="text-xs text-zinc-400">Batch {{ donor.batch }}</p>
             }
@@ -366,7 +457,9 @@
               <p class="text-xs text-zinc-500 mt-1 italic line-clamp-2">"{{ donor.message }}"</p>
             }
             <div class="flex items-center justify-between mt-1.5">
-              <span class="text-sm font-bold text-emerald-600">৳{{ donor.amount.toLocaleString() }}</span>
+              <span class="text-sm font-bold text-emerald-600"
+                >৳{{ donor.amount.toLocaleString() }}</span
+              >
               <span class="text-[10px] text-zinc-400">{{ donor.date }}</span>
             </div>
           </div>
@@ -380,10 +473,11 @@
 <section id="transparency" class="bg-zinc-50 border-t border-zinc-200 py-14 lg:py-20">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
       <!-- Left: Text -->
       <div>
-        <span class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+        <span
+          class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-4"
+        >
           <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
           100% Transparent
         </span>
@@ -391,12 +485,16 @@
           Where Does the Money Go?
         </h2>
         <p class="text-zinc-500 text-base leading-relaxed mb-6">
-          The CSE DIU Alumni Association is committed to full financial transparency. Every taka collected is accounted for, reported to the general members, and independently verified. No administrative deductions are taken from designated campaign funds.
+          The CSE DIU Alumni Association is committed to full financial transparency. Every taka
+          collected is accounted for, reported to the general members, and independently verified.
+          No administrative deductions are taken from designated campaign funds.
         </p>
         <ul class="space-y-3">
           <li class="flex items-start gap-3 text-sm text-zinc-700">
             <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i>
-            <span><strong>100%</strong> of campaign donations go directly to the stated purpose</span>
+            <span
+              ><strong>100%</strong> of campaign donations go directly to the stated purpose</span
+            >
           </li>
           <li class="flex items-start gap-3 text-sm text-zinc-700">
             <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i>
@@ -424,13 +522,16 @@
           How Funds Are Allocated
         </h3>
         <div class="space-y-4">
-          @for (item of [
-            { label: 'Scholarships & Student Aid', pct: 45, color: 'bg-blue-500' },
-            { label: 'Lab & Infrastructure Upgrades', pct: 28, color: 'bg-violet-500' },
-            { label: 'Events & Cultural Activities', pct: 15, color: 'bg-amber-500' },
-            { label: 'Emergency Relief Fund', pct: 8, color: 'bg-rose-500' },
-            { label: 'Research Grants', pct: 4, color: 'bg-teal-500' }
-          ]; track item.label) {
+          @for (
+            item of [
+              { label: 'Scholarships & Student Aid', pct: 45, color: 'bg-blue-500' },
+              { label: 'Lab & Infrastructure Upgrades', pct: 28, color: 'bg-violet-500' },
+              { label: 'Events & Cultural Activities', pct: 15, color: 'bg-amber-500' },
+              { label: 'Emergency Relief Fund', pct: 8, color: 'bg-rose-500' },
+              { label: 'Research Grants', pct: 4, color: 'bg-teal-500' },
+            ];
+            track item.label
+          ) {
             <div>
               <div class="flex items-center justify-between mb-1">
                 <span class="text-sm text-zinc-700">{{ item.label }}</span>
@@ -443,7 +544,8 @@
           }
         </div>
         <p class="text-xs text-zinc-400 mt-5 border-t border-zinc-100 pt-4">
-          Based on total disbursements from 2023–2026. Breakdown is voted on annually by the committee.
+          Based on total disbursements from 2023–2026. Breakdown is voted on annually by the
+          committee.
         </p>
       </div>
     </div>
@@ -453,15 +555,35 @@
 <!-- ── FAQ ─────────────────────────────────────────────────────── -->
 <section class="bg-white border-t border-zinc-100 py-14 lg:py-20">
   <div class="max-w-3xl mx-auto px-4 sm:px-6">
-    <h2 class="text-2xl font-extrabold text-zinc-900 tracking-tight mb-8 text-center">Frequently Asked Questions</h2>
+    <h2 class="text-2xl font-extrabold text-zinc-900 tracking-tight mb-8 text-center">
+      Frequently Asked Questions
+    </h2>
     <div class="space-y-4">
-      @for (faq of [
-        { q: 'Can I donate from outside Bangladesh?', a: 'Yes. International donors can donate via bank wire transfer or SWIFT. Contact us for banking details specific to international transfers.' },
-        { q: 'Will I receive a receipt or acknowledgement?', a: 'Yes. Every donor receives an email acknowledgement within 48 hours of donation verification by the committee treasurer.' },
-        { q: 'Can I designate my donation to a specific campaign?', a: 'Absolutely. Each campaign has a separate donation form. Funds collected are kept in designated accounts and used only for the stated purpose.' },
-        { q: 'What happens if a campaign does not reach its goal?', a: 'If a campaign is discontinued or falls significantly short, donors are notified and given the option to request a refund or redirect to another campaign.' },
-        { q: 'How is the scholarship recipient selected?', a: 'A selection committee of three alumni volunteers reviews applications using academic merit, financial need, and extracurricular engagement criteria. Results are published on the portal.' }
-      ]; track faq.q) {
+      @for (
+        faq of [
+          {
+            q: 'Can I donate from outside Bangladesh?',
+            a: 'Yes. International donors can donate via bank wire transfer or SWIFT. Contact us for banking details specific to international transfers.',
+          },
+          {
+            q: 'Will I receive a receipt or acknowledgement?',
+            a: 'Yes. Every donor receives an email acknowledgement within 48 hours of donation verification by the committee treasurer.',
+          },
+          {
+            q: 'Can I designate my donation to a specific campaign?',
+            a: 'Absolutely. Each campaign has a separate donation form. Funds collected are kept in designated accounts and used only for the stated purpose.',
+          },
+          {
+            q: 'What happens if a campaign does not reach its goal?',
+            a: 'If a campaign is discontinued or falls significantly short, donors are notified and given the option to request a refund or redirect to another campaign.',
+          },
+          {
+            q: 'How is the scholarship recipient selected?',
+            a: 'A selection committee of three alumni volunteers reviews applications using academic merit, financial need, and extracurricular engagement criteria. Results are published on the portal.',
+          },
+        ];
+        track faq.q
+      ) {
         <div class="border border-zinc-200 rounded-xl p-5">
           <p class="text-sm font-bold text-zinc-900 flex items-start gap-2">
             <i class="fa-solid fa-circle-question text-emerald-500 mt-0.5 flex-shrink-0"></i>
@@ -480,16 +602,21 @@
     <i class="fa-solid fa-hand-holding-heart text-3xl text-emerald-400 mb-4"></i>
     <h2 class="text-3xl font-extrabold tracking-tight mb-3">Every Contribution Matters</h2>
     <p class="text-zinc-400 text-base mb-8">
-      Whether you donate ৳500 or ৳50,000, you are directly shaping the future of CSE education and alumni welfare in Bangladesh.
+      Whether you donate ৳500 or ৳50,000, you are directly shaping the future of CSE education and
+      alumni welfare in Bangladesh.
     </p>
     <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="#campaigns"
-         class="inline-flex items-center justify-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 font-semibold px-7 py-3 rounded-lg transition-colors text-sm shadow">
+      <a
+        href="#campaigns"
+        class="inline-flex items-center justify-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 font-semibold px-7 py-3 rounded-lg transition-colors text-sm shadow"
+      >
         <i class="fa-solid fa-heart"></i>
         Donate to a Campaign
       </a>
-      <a routerLink="/contact"
-         class="inline-flex items-center justify-center gap-2 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-100 font-semibold px-7 py-3 rounded-lg transition-colors text-sm">
+      <a
+        routerLink="/contact"
+        class="inline-flex items-center justify-center gap-2 bg-emerald-800/60 hover:bg-emerald-700/60 border border-emerald-700/50 text-emerald-100 font-semibold px-7 py-3 rounded-lg transition-colors text-sm"
+      >
         <i class="fa-solid fa-envelope"></i>
         Contact the Treasurer
       </a>

@@ -1,19 +1,30 @@
 <div class="min-h-screen bg-zinc-50 flex flex-col">
-
   <!-- Top bar -->
-  <header class="bg-white border-b border-zinc-200 h-12 flex items-center px-4 gap-3 flex-shrink-0 z-20 sticky top-0">
-    <button (click)="toggleSidebar()" class="md:hidden flex items-center justify-center w-8 h-8 rounded-md text-zinc-500 hover:bg-zinc-100 transition-colors cursor-pointer" aria-label="Toggle sidebar">
+  <header
+    class="bg-white border-b border-zinc-200 h-12 flex items-center px-4 gap-3 flex-shrink-0 z-20 sticky top-0"
+  >
+    <button
+      (click)="toggleSidebar()"
+      class="md:hidden flex items-center justify-center w-8 h-8 rounded-md text-zinc-500 hover:bg-zinc-100 transition-colors cursor-pointer"
+      aria-label="Toggle sidebar"
+    >
       <i class="fa-solid fa-bars text-sm"></i>
     </button>
     <div class="flex items-center gap-2 flex-1 min-w-0">
-      <button (click)="goBack()" class="hidden md:flex items-center justify-center w-7 h-7 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer" aria-label="Go back">
+      <button
+        (click)="goBack()"
+        class="hidden md:flex items-center justify-center w-7 h-7 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+        aria-label="Go back"
+      >
         <i class="fa-solid fa-arrow-left text-xs"></i>
       </button>
       <span class="text-sm font-semibold text-zinc-900 truncate">Admin Panel</span>
     </div>
     <div class="flex gap-1.5 flex-shrink-0">
-      @for (role of (auth.currentUser()?.roles ?? []); track role.id) {
-        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider border border-zinc-200 text-zinc-500 bg-zinc-50">
+      @for (role of auth.currentUser()?.roles ?? []; track role.id) {
+        <span
+          class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider border border-zinc-200 text-zinc-500 bg-zinc-50"
+        >
           {{ role.name }}
         </span>
       }
@@ -21,20 +32,28 @@
   </header>
 
   <div class="flex flex-1 overflow-hidden">
-
     @if (sidebarOpen()) {
-      <div class="fixed inset-0 bg-black/20 z-20 md:hidden" (click)="closeSidebar()" aria-hidden="true"></div>
+      <div
+        class="fixed inset-0 bg-black/20 z-20 md:hidden"
+        (click)="closeSidebar()"
+        aria-hidden="true"
+      ></div>
     }
 
     <!-- Vertical Sidebar -->
     <aside
       class="fixed top-12 left-0 bottom-0 z-30 w-60 bg-white border-r border-zinc-200 flex flex-col transition-transform duration-200 ease-in-out md:sticky md:top-0 md:translate-x-0 md:h-[calc(100vh-3rem)]"
       [class.-translate-x-full]="!sidebarOpen()"
-      [class.translate-x-0]="sidebarOpen()">
-
-      <div class="md:hidden flex items-center justify-between px-4 h-11 border-b border-zinc-100 flex-shrink-0">
+      [class.translate-x-0]="sidebarOpen()"
+    >
+      <div
+        class="md:hidden flex items-center justify-between px-4 h-11 border-b border-zinc-100 flex-shrink-0"
+      >
         <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Menu</span>
-        <button (click)="closeSidebar()" class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 cursor-pointer transition-colors">
+        <button
+          (click)="closeSidebar()"
+          class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 cursor-pointer transition-colors"
+        >
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
@@ -46,8 +65,13 @@
       <ul class="flex-1 px-2 space-y-0.5 overflow-y-auto">
         @for (item of navItems; track item.path) {
           <li>
-            <a [routerLink]="item.path" routerLinkActive="!bg-zinc-900 !text-white hover:!bg-zinc-800" [routerLinkActiveOptions]="{ exact: false }" (click)="closeSidebar()"
-              class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900">
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="!bg-zinc-900 !text-white hover:!bg-zinc-800"
+              [routerLinkActiveOptions]="{ exact: false }"
+              (click)="closeSidebar()"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+            >
               <i class="fa-solid {{ item.icon }} w-4 text-center text-xs shrink-0"></i>
               <span>{{ item.label }}</span>
             </a>
@@ -56,7 +80,10 @@
       </ul>
 
       <div class="hidden md:block px-2 pb-4 pt-3 border-t border-zinc-100 flex-shrink-0">
-        <button (click)="goBack()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors cursor-pointer">
+        <button
+          (click)="goBack()"
+          class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors cursor-pointer"
+        >
           <i class="fa-solid fa-arrow-left w-4 text-center text-xs"></i>
           <span>Back to Dashboard</span>
         </button>
@@ -68,10 +95,17 @@
       <div class="md:hidden bg-white border-b border-zinc-200 px-2 overflow-x-auto">
         <div class="flex -mb-px whitespace-nowrap min-w-max">
           @for (item of navItems; track item.path) {
-            <a [routerLink]="item.path" routerLinkActive #rla="routerLinkActive" (click)="closeSidebar()"
+            <a
+              [routerLink]="item.path"
+              routerLinkActive
+              #rla="routerLinkActive"
+              (click)="closeSidebar()"
               class="flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors cursor-pointer shrink-0"
-              [class.border-zinc-900]="rla.isActive" [class.text-zinc-900]="rla.isActive"
-              [class.border-transparent]="!rla.isActive" [class.text-zinc-400]="!rla.isActive">
+              [class.border-zinc-900]="rla.isActive"
+              [class.text-zinc-900]="rla.isActive"
+              [class.border-transparent]="!rla.isActive"
+              [class.text-zinc-400]="!rla.isActive"
+            >
               <i class="fa-solid {{ item.icon }} text-[10px]"></i>
               {{ item.label }}
             </a>
@@ -82,6 +116,5 @@
         <router-outlet></router-outlet>
       </div>
     </main>
-
   </div>
 </div>

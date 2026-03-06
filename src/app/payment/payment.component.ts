@@ -12,7 +12,7 @@ import {
   formatBDT,
 } from '../core/invoice.service';
 
-const BKASH_NUMBER = '01712-345678';  // Association's bKash number
+const BKASH_NUMBER = '01712-345678'; // Association's bKash number
 
 @Component({
   selector: 'app-payment',
@@ -21,29 +21,29 @@ const BKASH_NUMBER = '01712-345678';  // Association's bKash number
   templateUrl: './payment.component.html',
 })
 export class PaymentComponent implements OnInit {
-  private readonly route   = inject(ActivatedRoute);
-  private readonly svc     = inject(InvoiceService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly svc = inject(InvoiceService);
 
   readonly bkashNumber = BKASH_NUMBER;
 
-  invoice  = signal<Invoice | null>(null);
-  loading  = signal(true);
+  invoice = signal<Invoice | null>(null);
+  loading = signal(true);
   notFound = signal(false);
-  error    = signal('');
+  error = signal('');
 
   // ── Form ───────────────────────────────────────────────────────
   readonly quickAmounts = [100, 250, 500, 1000, 2000, 5000];
-  formAmount       = signal<number | null>(null);
-  customAmountStr  = signal('');
-  transactionId    = signal('');
-  senderBkash      = signal('');
-  submitting       = signal(false);
-  submitted        = signal(false);
+  formAmount = signal<number | null>(null);
+  customAmountStr = signal('');
+  transactionId = signal('');
+  senderBkash = signal('');
+  submitting = signal(false);
+  submitted = signal(false);
 
   // ── Computed ───────────────────────────────────────────────────
-  readonly paid    = computed(() => this.invoice() ? paidAmount(this.invoice()!)    : 0);
-  readonly pending = computed(() => this.invoice() ? pendingAmount(this.invoice()!) : 0);
-  readonly due     = computed(() => this.invoice() ? dueAmount(this.invoice()!)     : 0);
+  readonly paid = computed(() => (this.invoice() ? paidAmount(this.invoice()!) : 0));
+  readonly pending = computed(() => (this.invoice() ? pendingAmount(this.invoice()!) : 0));
+  readonly due = computed(() => (this.invoice() ? dueAmount(this.invoice()!) : 0));
   readonly progressPct = computed(() => {
     const inv = this.invoice();
     if (!inv || inv.totalAmount === 0) return 0;
@@ -122,9 +122,7 @@ export class PaymentComponent implements OnInit {
         this.submitting.set(false);
       },
       error: (err) => {
-        this.error.set(
-          err?.error?.message ?? 'Failed to submit payment. Please try again.',
-        );
+        this.error.set(err?.error?.message ?? 'Failed to submit payment. Please try again.');
         this.submitting.set(false);
       },
     });
@@ -140,35 +138,45 @@ export class PaymentComponent implements OnInit {
   }
 
   statusLabel(status: Invoice['status']): string {
-    return {
-      pending:   'Pending',
-      partial:   'Partially Paid',
-      paid:      'Fully Paid',
-      cancelled: 'Cancelled',
-      refunded:  'Refunded',
-    }[status] ?? status;
+    return (
+      {
+        pending: 'Pending',
+        partial: 'Partially Paid',
+        paid: 'Fully Paid',
+        cancelled: 'Cancelled',
+        refunded: 'Refunded',
+      }[status] ?? status
+    );
   }
 
   statusColor(status: Invoice['status']): string {
-    return {
-      pending:   'bg-amber-50 text-amber-700 border-amber-200',
-      partial:   'bg-blue-50 text-blue-700 border-blue-200',
-      paid:      'bg-emerald-50 text-emerald-700 border-emerald-200',
-      cancelled: 'bg-zinc-100 text-zinc-500 border-zinc-200',
-      refunded:  'bg-violet-50 text-violet-700 border-violet-200',
-    }[status] ?? '';
+    return (
+      {
+        pending: 'bg-amber-50 text-amber-700 border-amber-200',
+        partial: 'bg-blue-50 text-blue-700 border-blue-200',
+        paid: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        cancelled: 'bg-zinc-100 text-zinc-500 border-zinc-200',
+        refunded: 'bg-violet-50 text-violet-700 border-violet-200',
+      }[status] ?? ''
+    );
   }
 
   paymentStatusLabel(s: string) {
-    return { pending: 'Under Review', verified: 'Verified', rejected: 'Rejected', refunded: 'Refunded' }[s] ?? s;
+    return (
+      { pending: 'Under Review', verified: 'Verified', rejected: 'Rejected', refunded: 'Refunded' }[
+        s
+      ] ?? s
+    );
   }
 
   paymentStatusColor(s: string) {
-    return {
-      pending:  'bg-amber-50 text-amber-700 border-amber-200',
-      verified: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      rejected: 'bg-red-50 text-red-700 border-red-200',
-      refunded: 'bg-violet-50 text-violet-700 border-violet-200',
-    }[s] ?? '';
+    return (
+      {
+        pending: 'bg-amber-50 text-amber-700 border-amber-200',
+        verified: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        rejected: 'bg-red-50 text-red-700 border-red-200',
+        refunded: 'bg-violet-50 text-violet-700 border-violet-200',
+      }[s] ?? ''
+    );
   }
 }

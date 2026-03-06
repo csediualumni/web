@@ -1,32 +1,38 @@
 <footer class="bg-blue-950 text-zinc-300">
-
   <!-- ── Newsletter banner ──────────────────────────────────────── -->
-    <div class="border-b border-blue-900/60">
+  <div class="border-b border-blue-900/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
           <h3 class="text-lg font-semibold text-white">Stay in the loop</h3>
-          <p class="mt-1 text-sm text-zinc-400">Get the latest alumni news, events, and opportunities straight to your inbox.</p>
+          <p class="mt-1 text-sm text-zinc-400">
+            Get the latest alumni news, events, and opportunities straight to your inbox.
+          </p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-2 md:min-w-[380px]">
+        <div class="flex flex-col gap-2 md:min-w-[380px]">
           @if (!subscribed()) {
-            <input
-              type="email"
-              [value]="newsletterEmail()"
-              (input)="newsletterEmail.set($any($event.target).value)"
-              placeholder="you@example.com"
-              class="flex-1 h-9 rounded-md border border-blue-800/60 bg-blue-900/70 px-3 py-1 text-sm text-white placeholder:text-blue-300/50 focus:outline-none focus:ring-1 focus:ring-blue-400 transition-colors"
-            />
-            <button
-              (click)="subscribeNewsletter()"
-              [disabled]="subscribing()"
-              class="shad-btn-primary bg-white text-zinc-900 hover:bg-zinc-100 flex-shrink-0 disabled:opacity-60"
-            >
-              @if (subscribing()) {
-                <i class="fa-solid fa-spinner fa-spin mr-1.5"></i>
-              }
-              Subscribe
-            </button>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input
+                type="email"
+                [value]="newsletterEmail()"
+                (input)="newsletterEmail.set($any($event.target).value)"
+                placeholder="you@example.com"
+                class="flex-1 h-9 rounded-md border border-blue-800/60 bg-blue-900/70 px-3 py-1 text-sm text-white placeholder:text-blue-300/50 focus:outline-none focus:ring-1 focus:ring-blue-400 transition-colors"
+              />
+              <button
+                (click)="subscribeNewsletter()"
+                [disabled]="subscribing()"
+                class="shad-btn-primary bg-white text-zinc-900 hover:bg-zinc-100 flex-shrink-0 disabled:opacity-60"
+              >
+                @if (subscribing()) {
+                  <i class="fa-solid fa-spinner fa-spin mr-1.5"></i>
+                }
+                Subscribe
+              </button>
+            </div>
+            @if (subError()) {
+              <p class="text-xs text-red-400">{{ subError() }}</p>
+            }
           } @else {
             <div class="flex items-center gap-2 text-sm text-emerald-400 font-medium">
               <i class="fa-solid fa-circle-check"></i>
@@ -41,7 +47,6 @@
   <!-- ── Main footer columns ────────────────────────────────────── -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-
       <!-- Col 1: Brand + about -->
       <div class="lg:col-span-1">
         <div class="flex items-center gap-2.5 mb-4">
@@ -50,28 +55,51 @@
           </div>
           <div class="leading-tight">
             <span class="block text-sm font-bold text-white tracking-tight">CSE DIU</span>
-            <span class="block text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Alumni Network</span>
+            <span class="block text-[10px] font-medium text-zinc-500 uppercase tracking-widest"
+              >Alumni Network</span
+            >
           </div>
         </div>
         <p class="text-sm text-zinc-400 leading-relaxed mb-5">
-          Connecting Computer Science & Engineering graduates of Dhaka International University — building community, creating opportunity.
+          Connecting Computer Science & Engineering graduates of Dhaka International University —
+          building community, creating opportunity.
         </p>
         <!-- Socials -->
         <div class="flex items-center gap-3">
-          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener"
+            aria-label="Facebook"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+          >
             <i class="fa-brands fa-facebook-f text-xs"></i>
           </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener"
+            aria-label="LinkedIn"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+          >
             <i class="fa-brands fa-linkedin-in text-xs"></i>
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter / X"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+          <a
+            href="https://twitter.com"
+            target="_blank"
+            rel="noopener"
+            aria-label="Twitter / X"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+          >
             <i class="fa-brands fa-x-twitter text-xs"></i>
           </a>
-          <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors">
+          <a
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener"
+            aria-label="YouTube"
+            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+          >
             <i class="fa-brands fa-youtube text-xs"></i>
           </a>
         </div>
@@ -81,16 +109,22 @@
       <div>
         <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Quick Links</h4>
         <ul class="space-y-2.5">
-          @for (link of [
-            {label: 'Home', path: '/', icon: 'fa-house'},
-            {label: 'About Us', path: '/about', icon: 'fa-circle-info'},
-            {label: 'Alumni Directory', path: '/alumni', icon: 'fa-users'},
-            {label: 'Events', path: '/events', icon: 'fa-calendar-days'},
-            {label: 'Gallery', path: '/gallery', icon: 'fa-images'},
-            {label: 'Contact', path: '/contact', icon: 'fa-envelope'}
-          ]; track link.path) {
+          @for (
+            link of [
+              { label: 'Home', path: '/', icon: 'fa-house' },
+              { label: 'About Us', path: '/about', icon: 'fa-circle-info' },
+              { label: 'Alumni Directory', path: '/alumni', icon: 'fa-users' },
+              { label: 'Events', path: '/events', icon: 'fa-calendar-days' },
+              { label: 'Gallery', path: '/gallery', icon: 'fa-images' },
+              { label: 'Contact', path: '/contact', icon: 'fa-envelope' },
+            ];
+            track link.path
+          ) {
             <li>
-              <a [routerLink]="link.path" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+              <a
+                [routerLink]="link.path"
+                class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+              >
                 <i class="fa-solid {{ link.icon }} text-[11px] w-3.5 text-center text-zinc-600"></i>
                 {{ link.label }}
               </a>
@@ -103,23 +137,33 @@
       <div>
         <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Resources</h4>
         <ul class="space-y-2.5">
-          @for (link of [
-            {label: 'Job Board', path: '/jobs', icon: 'fa-briefcase'},
-            {label: 'Scholarships', path: '/scholarships', icon: 'fa-medal'},
-            {label: 'Mentorship Program', path: '/mentorship', icon: 'fa-handshake'},
-            {label: 'Research Papers', path: '/research', icon: 'fa-file-lines'},
-            {label: 'News & Announcements', path: '/news', icon: 'fa-newspaper'}
-          ]; track link.path) {
+          @for (
+            link of [
+              { label: 'Job Board', path: '/jobs', icon: 'fa-briefcase' },
+              { label: 'Scholarships', path: '/scholarships', icon: 'fa-medal' },
+              { label: 'Mentorship Program', path: '/mentorship', icon: 'fa-handshake' },
+              { label: 'Research Papers', path: '/research', icon: 'fa-file-lines' },
+              { label: 'News & Announcements', path: '/news', icon: 'fa-newspaper' },
+            ];
+            track link.path
+          ) {
             <li>
-              <a [routerLink]="link.path" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+              <a
+                [routerLink]="link.path"
+                class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+              >
                 <i class="fa-solid {{ link.icon }} text-[11px] w-3.5 text-center text-zinc-600"></i>
                 {{ link.label }}
               </a>
             </li>
           }
           <li>
-            <a href="https://diu.edu.bd" target="_blank" rel="noopener"
-               class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+            <a
+              href="https://diu.edu.bd"
+              target="_blank"
+              rel="noopener"
+              class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            >
               <i class="fa-solid fa-link text-[11px] w-3.5 text-center text-zinc-600"></i>
               DIU Official Site
               <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-zinc-600 ml-0.5"></i>
@@ -133,44 +177,74 @@
         <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Contact Us</h4>
         <ul class="space-y-3">
           <li class="flex items-start gap-2.5">
-            <i class="fa-solid fa-location-dot text-zinc-500 text-sm mt-0.5 flex-shrink-0 w-3.5 text-center"></i>
+            <i
+              class="fa-solid fa-location-dot text-zinc-500 text-sm mt-0.5 flex-shrink-0 w-3.5 text-center"
+            ></i>
             <span class="text-sm text-zinc-400">
-              Department of Computer Science & Engineering (CSE), Dhaka International University<br>
+              Department of Computer Science & Engineering (CSE), Dhaka International University<br />
               Satarkul, Badda, Dhaka-1212, Bangladesh
             </span>
           </li>
           <li class="flex items-center gap-2.5">
             <i class="fa-solid fa-phone text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
-            <a href="tel:+8801624350761" class="text-sm text-zinc-400 hover:text-white transition-colors">+880 1624-350761</a>
+            <a
+              href="tel:+8801624350761"
+              class="text-sm text-zinc-400 hover:text-white transition-colors"
+              >+880 1624-350761</a
+            >
           </li>
           <li class="flex items-center gap-2.5">
-            <i class="fa-regular fa-envelope text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
-            <a href="mailto:support@csediualumni.com" class="text-sm text-zinc-400 hover:text-white transition-colors">support&#64;csediualumni.com</a>
+            <i
+              class="fa-regular fa-envelope text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"
+            ></i>
+            <a
+              href="mailto:support@csediualumni.com"
+              class="text-sm text-zinc-400 hover:text-white transition-colors"
+              >support&#64;csediualumni.com</a
+            >
           </li>
           <li class="flex items-center gap-2.5">
-            <i class="fa-regular fa-clock text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
+            <i
+              class="fa-regular fa-clock text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"
+            ></i>
             <span class="text-sm text-zinc-400">Sun – Thu: 9:00 AM – 5:00 PM</span>
           </li>
         </ul>
       </div>
-
     </div>
   </div>
 
   <!-- ── Bottom bar ─────────────────────────────────────────────── -->
   <div class="border-t border-blue-900/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3"
+    >
       <p class="text-xs text-zinc-500 text-center sm:text-left">
         &copy; {{ currentYear }} CSE DIU Alumni Network. All rights reserved.
       </p>
       <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
-        <a routerLink="/sitemap" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Sitemap</a>
-        <a routerLink="/privacy-policy" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Privacy Policy</a>
-        <a routerLink="/terms" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Terms &amp; Conditions</a>
-        <a routerLink="/accessibility" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Accessibility</a>
-        <a routerLink="/cookie-policy" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Cookie Policy</a>
+        <a routerLink="/sitemap" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+          >Sitemap</a
+        >
+        <a
+          routerLink="/privacy-policy"
+          class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+          >Privacy Policy</a
+        >
+        <a routerLink="/terms" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+          >Terms &amp; Conditions</a
+        >
+        <a
+          routerLink="/accessibility"
+          class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+          >Accessibility</a
+        >
+        <a
+          routerLink="/cookie-policy"
+          class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+          >Cookie Policy</a
+        >
       </nav>
     </div>
   </div>
-
 </footer>

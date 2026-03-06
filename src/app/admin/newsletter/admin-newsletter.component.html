@@ -1,0 +1,273 @@
+<div class="max-w-5xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div>
+      <h1 class="text-lg font-semibold text-zinc-900">Newsletter</h1>
+      <p class="text-sm text-zinc-500 mt-0.5">Manage subscriptions and send emails to subscribers.</p>
+    </div>
+    <!-- Stats -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 text-sm">
+        <i class="fa-solid fa-users text-zinc-400 text-xs"></i>
+        <span class="font-medium text-zinc-700">{{ totalCount() }}</span>
+        <span class="text-zinc-400">total</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-sm">
+        <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+        <span class="font-medium text-emerald-700">{{ activeCount() }}</span>
+        <span class="text-emerald-500">active</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 text-sm">
+        <i class="fa-solid fa-circle-xmark text-zinc-400 text-xs"></i>
+        <span class="font-medium text-zinc-600">{{ totalCount() - activeCount() }}</span>
+        <span class="text-zinc-400">inactive</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex border-b border-zinc-200">
+    <button
+      (click)="setTab('subscriptions')"
+      class="px-4 py-2.5 text-sm font-medium border-b-2 transition-colors cursor-pointer"
+      [class.border-zinc-900]="activeTab() === 'subscriptions'"
+      [class.text-zinc-900]="activeTab() === 'subscriptions'"
+      [class.border-transparent]="activeTab() !== 'subscriptions'"
+      [class.text-zinc-400]="activeTab() !== 'subscriptions'"
+    >
+      <i class="fa-solid fa-list-ul mr-1.5 text-xs"></i>
+      Subscriptions
+    </button>
+    <button
+      (click)="setTab('compose')"
+      class="px-4 py-2.5 text-sm font-medium border-b-2 transition-colors cursor-pointer"
+      [class.border-zinc-900]="activeTab() === 'compose'"
+      [class.text-zinc-900]="activeTab() === 'compose'"
+      [class.border-transparent]="activeTab() !== 'compose'"
+      [class.text-zinc-400]="activeTab() !== 'compose'"
+    >
+      <i class="fa-solid fa-paper-plane mr-1.5 text-xs"></i>
+      Compose &amp; Send
+    </button>
+  </div>
+
+  <!-- Alert: error -->
+  @if (error()) {
+    <div class="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+      <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Alert: success -->
+  @if (success()) {
+    <div class="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
+      <i class="fa-solid fa-circle-check mt-0.5 flex-shrink-0"></i>
+      <span>{{ success() }}</span>
+    </div>
+  }
+
+  <!-- ── TAB: Subscriptions ──────────────────────────────────────── -->
+  @if (activeTab() === 'subscriptions') {
+
+    <!-- Toolbar -->
+    <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+      <input
+        type="text"
+        placeholder="Search by email…"
+        [value]="searchText()"
+        (input)="searchText.set($any($event.target).value)"
+        class="h-9 flex-1 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300"
+      />
+      <div class="flex gap-1 flex-shrink-0">
+        @for (opt of [{label:'All',value:'all'},{label:'Active',value:'active'},{label:'Inactive',value:'inactive'}]; track opt.value) {
+          <button
+            (click)="filterStatus.set($any(opt.value))"
+            class="px-3 h-9 rounded-md text-xs font-medium border transition-colors cursor-pointer"
+            [class.bg-zinc-900]="filterStatus() === opt.value"
+            [class.text-white]="filterStatus() === opt.value"
+            [class.border-zinc-900]="filterStatus() === opt.value"
+            [class.bg-white]="filterStatus() !== opt.value"
+            [class.text-zinc-600]="filterStatus() !== opt.value"
+            [class.border-zinc-200]="filterStatus() !== opt.value"
+          >{{ opt.label }}</button>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="flex items-center justify-center py-16 text-zinc-400">
+        <i class="fa-solid fa-spinner fa-spin text-xl mr-3"></i>
+        <span class="text-sm">Loading subscriptions…</span>
+      </div>
+    } @else if (filteredSubs().length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-zinc-400 text-sm">
+        <i class="fa-solid fa-envelope-open text-3xl mb-3"></i>
+        <p>No subscriptions found.</p>
+      </div>
+    } @else {
+      <div class="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-zinc-100 bg-zinc-50">
+              <th class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Email</th>
+              <th class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide hidden sm:table-cell">Subscribed</th>
+              <th class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Status</th>
+              <th class="px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100">
+            @for (sub of filteredSubs(); track sub.id) {
+              <tr class="hover:bg-zinc-50 transition-colors">
+                <td class="px-4 py-3 font-mono text-zinc-800 text-xs sm:text-sm truncate max-w-[220px]">{{ sub.email }}</td>
+                <td class="px-4 py-3 text-zinc-500 text-xs hidden sm:table-cell whitespace-nowrap">
+                  {{ sub.subscribedAt | date:'mediumDate' }}
+                </td>
+                <td class="px-4 py-3">
+                  @if (sub.isActive) {
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700">
+                      <i class="fa-solid fa-circle text-[6px]"></i> Active
+                    </span>
+                  } @else {
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-zinc-100 text-zinc-500">
+                      <i class="fa-solid fa-circle text-[6px]"></i> Inactive
+                    </span>
+                  }
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    @if (auth.hasPermission('newsletter:write')) {
+                      <button
+                        (click)="toggle(sub)"
+                        [disabled]="isToggling(sub.id)"
+                        class="px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer disabled:opacity-50"
+                        [class.bg-emerald-50]="!sub.isActive"
+                        [class.border-emerald-200]="!sub.isActive"
+                        [class.text-emerald-700]="!sub.isActive"
+                        [class.hover:bg-emerald-100]="!sub.isActive"
+                        [class.bg-amber-50]="sub.isActive"
+                        [class.border-amber-200]="sub.isActive"
+                        [class.text-amber-700]="sub.isActive"
+                        [class.hover:bg-amber-100]="sub.isActive"
+                        [title]="sub.isActive ? 'Deactivate' : 'Activate'"
+                      >
+                        @if (isToggling(sub.id)) {
+                          <i class="fa-solid fa-spinner fa-spin"></i>
+                        } @else {
+                          {{ sub.isActive ? 'Deactivate' : 'Activate' }}
+                        }
+                      </button>
+                      <button
+                        (click)="delete(sub)"
+                        [disabled]="isDeleting(sub.id)"
+                        class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 transition-colors cursor-pointer disabled:opacity-50"
+                        title="Delete subscription"
+                      >
+                        @if (isDeleting(sub.id)) {
+                          <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+                        } @else {
+                          <i class="fa-solid fa-trash text-xs"></i>
+                        }
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="px-4 py-2 border-t border-zinc-100 bg-zinc-50 text-xs text-zinc-400">
+          Showing {{ filteredSubs().length }} of {{ totalCount() }} subscriptions
+        </div>
+      </div>
+    }
+
+  }
+
+  <!-- ── TAB: Compose & Send ─────────────────────────────────────── -->
+  @if (activeTab() === 'compose') {
+    <div class="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-zinc-100">
+        <h2 class="text-sm font-semibold text-zinc-900">Compose Newsletter Email</h2>
+        <p class="text-xs text-zinc-500 mt-0.5">
+          This will be sent to all <strong>{{ activeCount() }}</strong> active subscribers.
+        </p>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <!-- Subject -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide">Subject</label>
+          <input
+            type="text"
+            placeholder="e.g. CSE DIU Alumni Newsletter – March 2026"
+            [value]="subject()"
+            (input)="subject.set($any($event.target).value)"
+            class="w-full h-9 rounded-md border border-zinc-200 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300 bg-zinc-50"
+          />
+        </div>
+
+        <!-- Body -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide">Message Body (HTML supported)</label>
+            <button
+              (click)="previewHtml.update(v => !v)"
+              class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <i class="fa-solid" [class.fa-eye]="!previewHtml()" [class.fa-code]="previewHtml()"></i>
+              {{ previewHtml() ? 'Edit' : 'Preview' }}
+            </button>
+          </div>
+
+          @if (!previewHtml()) {
+            <textarea
+              rows="14"
+              placeholder="Write your newsletter content here. You can use plain text or HTML tags."
+              [value]="htmlBody()"
+              (input)="htmlBody.set($any($event.target).value)"
+              class="w-full rounded-md border border-zinc-200 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300 bg-zinc-50 font-mono resize-y leading-relaxed"
+            ></textarea>
+          } @else {
+            <div
+              class="w-full rounded-md border border-zinc-200 px-4 py-4 min-h-[240px] bg-white text-sm prose max-w-none"
+              [innerHTML]="htmlBody()"
+            ></div>
+          }
+        </div>
+
+        <!-- Tips -->
+        <div class="rounded-lg bg-blue-50 border border-blue-100 px-4 py-3 text-xs text-blue-700 space-y-1">
+          <p class="font-semibold">Tips</p>
+          <ul class="list-disc list-inside space-y-0.5 text-blue-600">
+            <li>You can use basic HTML: <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;a href="..."&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;p&gt;</code>.</li>
+            <li>An unsubscribe link is automatically appended to every email.</li>
+            <li>Emails are sent one by one; large lists may take a moment.</li>
+          </ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between pt-2 border-t border-zinc-100">
+          <span class="text-xs text-zinc-400">
+            Sending to <strong class="text-zinc-600">{{ activeCount() }}</strong> active subscriber(s)
+          </span>
+          <button
+            (click)="sendNewsletter()"
+            [disabled]="sending() || activeCount() === 0 || !subject().trim() || !htmlBody().trim()"
+            class="flex items-center gap-2 px-5 py-2 rounded-lg bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            @if (sending()) {
+              <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+              Sending…
+            } @else {
+              <i class="fa-solid fa-paper-plane text-xs"></i>
+              Send Newsletter
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

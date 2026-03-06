@@ -85,8 +85,7 @@ const AVATAR_COLORS = [
 
 function colorFor(id: string): string {
   let hash = 0;
-  for (let i = 0; i < id.length; i++)
-    hash = (hash * 31 + id.charCodeAt(i)) & 0xffffff;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) & 0xffffff;
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 

@@ -61,32 +61,86 @@ export class DashboardComponent implements OnInit {
 
   // ── Static demo data (replace with API calls when ready) ─────
   readonly stats = [
-    { label: 'Profile Views',   value: '—', icon: 'fa-eye',           iconBg: 'bg-blue-50',   iconColor: 'text-blue-600' },
-    { label: 'Connections',     value: '—', icon: 'fa-user-group',    iconBg: 'bg-violet-50', iconColor: 'text-violet-600' },
-    { label: 'Events Attended', value: '—', icon: 'fa-calendar-check',iconBg: 'bg-emerald-50',iconColor: 'text-emerald-600' },
-    { label: 'Posts Shared',    value: '—', icon: 'fa-paper-plane',   iconBg: 'bg-amber-50',  iconColor: 'text-amber-600' },
+    {
+      label: 'Profile Views',
+      value: '—',
+      icon: 'fa-eye',
+      iconBg: 'bg-blue-50',
+      iconColor: 'text-blue-600',
+    },
+    {
+      label: 'Connections',
+      value: '—',
+      icon: 'fa-user-group',
+      iconBg: 'bg-violet-50',
+      iconColor: 'text-violet-600',
+    },
+    {
+      label: 'Events Attended',
+      value: '—',
+      icon: 'fa-calendar-check',
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
+    },
+    {
+      label: 'Posts Shared',
+      value: '—',
+      icon: 'fa-paper-plane',
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-600',
+    },
   ];
 
   readonly recentActivity: ActivityItem[] = [
-    { icon: 'fa-user-check',    iconBg: 'bg-emerald-100 text-emerald-700', title: 'Your account was created successfully.',         time: 'Just now' },
-    { icon: 'fa-shield-halved', iconBg: 'bg-blue-100 text-blue-700',      title: 'Profile security check passed.',                 time: '1 min ago' },
-    { icon: 'fa-bell',          iconBg: 'bg-violet-100 text-violet-700',   title: 'Welcome to the CSE DIU Alumni Network!',         time: 'Today' },
+    {
+      icon: 'fa-user-check',
+      iconBg: 'bg-emerald-100 text-emerald-700',
+      title: 'Your account was created successfully.',
+      time: 'Just now',
+    },
+    {
+      icon: 'fa-shield-halved',
+      iconBg: 'bg-blue-100 text-blue-700',
+      title: 'Profile security check passed.',
+      time: '1 min ago',
+    },
+    {
+      icon: 'fa-bell',
+      iconBg: 'bg-violet-100 text-violet-700',
+      title: 'Welcome to the CSE DIU Alumni Network!',
+      time: 'Today',
+    },
   ];
 
   readonly upcomingEvents: UpcomingEvent[] = [
-    { title: 'Annual Alumni Reunion 2026',    date: 'Apr 15, 2026', location: 'DIU Campus, Savar',     badge: 'In-person' },
-    { title: 'Tech Talk: AI in Bangladesh',  date: 'Mar 22, 2026', location: 'Online — Zoom',         badge: 'Webinar'   },
-    { title: 'CSE Career Fair Spring 2026',  date: 'Mar 30, 2026', location: 'DIU Auditorium',        badge: 'In-person' },
+    {
+      title: 'Annual Alumni Reunion 2026',
+      date: 'Apr 15, 2026',
+      location: 'DIU Campus, Savar',
+      badge: 'In-person',
+    },
+    {
+      title: 'Tech Talk: AI in Bangladesh',
+      date: 'Mar 22, 2026',
+      location: 'Online — Zoom',
+      badge: 'Webinar',
+    },
+    {
+      title: 'CSE Career Fair Spring 2026',
+      date: 'Mar 30, 2026',
+      location: 'DIU Auditorium',
+      badge: 'In-person',
+    },
   ];
 
   readonly quickLinks = [
-    { label: 'Edit Profile',     path: '/profile',      icon: 'fa-user-pen' },
-    { label: 'Alumni Directory', path: '/alumni',      icon: 'fa-users' },
-    { label: 'Job Board',        path: '/jobs',         icon: 'fa-briefcase' },
-    { label: 'Events',           path: '/events',       icon: 'fa-calendar-days' },
-    { label: 'Mentorship',       path: '/mentorship',   icon: 'fa-handshake' },
-    { label: 'Gallery',          path: '/gallery',      icon: 'fa-images' },
-    { label: 'News',             path: '/news',         icon: 'fa-newspaper' },
+    { label: 'Edit Profile', path: '/profile', icon: 'fa-user-pen' },
+    { label: 'Alumni Directory', path: '/alumni', icon: 'fa-users' },
+    { label: 'Job Board', path: '/jobs', icon: 'fa-briefcase' },
+    { label: 'Events', path: '/events', icon: 'fa-calendar-days' },
+    { label: 'Mentorship', path: '/mentorship', icon: 'fa-handshake' },
+    { label: 'Gallery', path: '/gallery', icon: 'fa-images' },
+    { label: 'News', path: '/news', icon: 'fa-newspaper' },
   ];
 
   readonly profileCompletion = computed(() => {

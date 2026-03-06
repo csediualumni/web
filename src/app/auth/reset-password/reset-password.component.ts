@@ -43,13 +43,15 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   private passwordsMatch(group: FormGroup) {
-    return group.get('password')?.value === group.get('confirm')?.value
-      ? null
-      : { mismatch: true };
+    return group.get('password')?.value === group.get('confirm')?.value ? null : { mismatch: true };
   }
 
-  get password() { return this.form.get('password')!; }
-  get confirm()  { return this.form.get('confirm')!; }
+  get password() {
+    return this.form.get('password')!;
+  }
+  get confirm() {
+    return this.form.get('confirm')!;
+  }
 
   onSubmit(): void {
     if (this.form.invalid || !this.token()) return;

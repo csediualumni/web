@@ -1,28 +1,47 @@
 <!-- ── Hero ── -->
-<section class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
-  <div class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white"
+>
+  <div
+    class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"
+  ></div>
+  <div
+    class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-3xl pointer-events-none"
+  ></div>
+  <div
+    class="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"
+  ></div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
     <div class="max-w-2xl">
-      <span class="inline-flex items-center gap-1.5 bg-blue-900/70 border border-blue-700/60 text-blue-200 text-xs font-medium px-3 py-1 rounded-full mb-5">
+      <span
+        class="inline-flex items-center gap-1.5 bg-blue-900/70 border border-blue-700/60 text-blue-200 text-xs font-medium px-3 py-1 rounded-full mb-5"
+      >
         <i class="fa-solid fa-calendar-days text-blue-300 text-[10px]"></i>
         Events &amp; Reunions
       </span>
       <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-5">
-        Where the Community<br>
-        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-blue-400">Comes Alive.</span>
+        Where the Community<br />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-blue-400"
+          >Comes Alive.</span
+        >
       </h1>
       <p class="text-blue-100/80 text-lg leading-relaxed mb-8">
-        Reunions, workshops, hackathons, cultural nights, and everything in between. Stay connected with what's happening in the CSE DIU alumni world.
+        Reunions, workshops, hackathons, cultural nights, and everything in between. Stay connected
+        with what's happening in the CSE DIU alumni world.
       </p>
       <div class="flex flex-col sm:flex-row gap-3">
-        <a routerLink="/contact" class="shad-btn-primary bg-white text-blue-700 hover:bg-blue-50 px-6 h-11 text-base gap-2">
+        <a
+          routerLink="/contact"
+          class="shad-btn-primary bg-white text-blue-700 hover:bg-blue-50 px-6 h-11 text-base gap-2"
+        >
           <i class="fa-solid fa-calendar-plus"></i>
           Propose an Event
         </a>
-        <a routerLink="/gallery" class="shad-btn-ghost text-blue-200 hover:text-white hover:bg-blue-800/60 px-6 h-11 text-base gap-2">
+        <a
+          routerLink="/gallery"
+          class="shad-btn-ghost text-blue-200 hover:text-white hover:bg-blue-800/60 px-6 h-11 text-base gap-2"
+        >
           <i class="fa-solid fa-images"></i>
           Event Gallery
         </a>
@@ -35,27 +54,41 @@
 @if (featuredEvent()) {
   <section class="bg-white border-b border-zinc-100 py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <p class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+      <p
+        class="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4 flex items-center gap-2"
+      >
         <i class="fa-solid fa-star text-amber-400"></i>
         Featured Event
       </p>
       <div class="rounded-2xl border border-zinc-200 overflow-hidden lg:grid lg:grid-cols-5">
         <!-- Placeholder image -->
-        <div class="lg:col-span-2 {{ featuredEvent()!.color }} min-h-[200px] flex items-center justify-center">
+        <div
+          class="lg:col-span-2 {{
+            featuredEvent()!.color
+          }} min-h-[200px] flex items-center justify-center"
+        >
           <i class="fa-solid {{ featuredEvent()!.image }} text-7xl text-zinc-400"></i>
         </div>
         <!-- Info -->
         <div class="lg:col-span-3 p-8 flex flex-col justify-center">
           <div class="flex flex-wrap items-center gap-2 mb-3">
-            <span class="text-xs font-semibold bg-amber-100 text-amber-700 rounded-full px-3 py-0.5">{{ featuredEvent()!.category }}</span>
-            <span class="text-xs bg-emerald-100 text-emerald-700 rounded-full px-3 py-0.5 font-medium">Open</span>
+            <span
+              class="text-xs font-semibold bg-amber-100 text-amber-700 rounded-full px-3 py-0.5"
+              >{{ featuredEvent()!.category }}</span
+            >
+            <span
+              class="text-xs bg-emerald-100 text-emerald-700 rounded-full px-3 py-0.5 font-medium"
+              >Open</span
+            >
             <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
               <i class="fa-solid fa-location-dot text-[10px]"></i>
               {{ featuredEvent()!.mode }}
             </span>
           </div>
           <h2 class="text-2xl font-bold text-zinc-900 mb-2">{{ featuredEvent()!.title }}</h2>
-          <p class="text-zinc-500 text-sm leading-relaxed mb-5">{{ featuredEvent()!.description }}</p>
+          <p class="text-zinc-500 text-sm leading-relaxed mb-5">
+            {{ featuredEvent()!.description }}
+          </p>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
             <div class="flex items-center gap-2 text-sm text-zinc-600">
               <i class="fa-regular fa-calendar w-4 text-center text-zinc-400"></i>
@@ -77,7 +110,10 @@
               <span>{{ featuredEvent()!.seatsLeft }} / {{ featuredEvent()!.seats }} remaining</span>
             </div>
             <div class="h-2 bg-zinc-100 rounded-full overflow-hidden">
-              <div class="h-full bg-blue-600 rounded-full transition-all" [style.width.%]="occupancyPercent(featuredEvent()!)"></div>
+              <div
+                class="h-full bg-blue-600 rounded-full transition-all"
+                [style.width.%]="occupancyPercent(featuredEvent()!)"
+              ></div>
             </div>
           </div>
           <div class="flex gap-3">
@@ -99,7 +135,6 @@
 <!-- ── Tabs + Filter + Grid ── -->
 <section class="bg-zinc-50 py-12 lg:py-16">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
     <!-- Tab bar -->
     <div class="flex items-center gap-1 p-1 bg-zinc-200 rounded-xl w-fit mb-8">
       <button
@@ -111,7 +146,10 @@
         [class.text-zinc-500]="activeTab() !== 'upcoming'"
       >
         <i class="fa-solid fa-calendar-check mr-1.5 text-xs"></i>
-        Upcoming <span class="ml-1 text-xs bg-zinc-100 text-zinc-600 rounded-md px-1.5 py-0.5">{{ upcomingCount() }}</span>
+        Upcoming
+        <span class="ml-1 text-xs bg-zinc-100 text-zinc-600 rounded-md px-1.5 py-0.5">{{
+          upcomingCount()
+        }}</span>
       </button>
       <button
         (click)="setTab('past')"
@@ -122,7 +160,10 @@
         [class.text-zinc-500]="activeTab() !== 'past'"
       >
         <i class="fa-regular fa-clock mr-1.5 text-xs"></i>
-        Past <span class="ml-1 text-xs bg-zinc-100 text-zinc-600 rounded-md px-1.5 py-0.5">{{ pastCount() }}</span>
+        Past
+        <span class="ml-1 text-xs bg-zinc-100 text-zinc-600 rounded-md px-1.5 py-0.5">{{
+          pastCount()
+        }}</span>
       </button>
     </div>
 
@@ -160,13 +201,14 @@
         <!-- Skip featured on upcoming tab since it's already shown above -->
         @if (!event.featured) {
           <div class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-
             <!-- Placeholder image -->
             <div class="h-40 {{ event.color }} flex items-center justify-center relative">
               <i class="fa-solid {{ event.image }} text-5xl text-zinc-400"></i>
               <!-- Status badge -->
               <span
-                class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{ statusBadge(event).classes }}"
+                class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{
+                  statusBadge(event).classes
+                }}"
               >
                 {{ statusBadge(event).label }}
               </span>
@@ -175,7 +217,10 @@
             <div class="p-5 flex flex-col flex-1 gap-3">
               <!-- Category + mode -->
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-medium bg-zinc-100 text-zinc-600 rounded px-2 py-0.5">{{ event.category }}</span>
+                <span
+                  class="text-[11px] font-medium bg-zinc-100 text-zinc-600 rounded px-2 py-0.5"
+                  >{{ event.category }}</span
+                >
                 <span class="inline-flex items-center gap-1 text-[11px] text-zinc-400">
                   <i class="fa-solid {{ modeIcon(event.mode) }} text-[10px]"></i>
                   {{ event.mode }}
@@ -185,7 +230,9 @@
               <!-- Title + description -->
               <div>
                 <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
-                <p class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">{{ event.description }}</p>
+                <p class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">
+                  {{ event.description }}
+                </p>
               </div>
 
               <!-- Date / time / location -->
@@ -244,19 +291,30 @@
       <!-- Featured card in grid (styled differently) -->
       @for (event of filteredEvents(); track event.id) {
         @if (event.featured) {
-          <div class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col ring-2 ring-amber-300">
+          <div
+            class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col ring-2 ring-amber-300"
+          >
             <div class="h-40 {{ event.color }} flex items-center justify-center relative">
               <i class="fa-solid {{ event.image }} text-5xl text-zinc-400"></i>
-              <span class="absolute top-3 left-3 text-xs font-semibold bg-amber-400 text-amber-900 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span
+                class="absolute top-3 left-3 text-xs font-semibold bg-amber-400 text-amber-900 px-2 py-0.5 rounded-full flex items-center gap-1"
+              >
                 <i class="fa-solid fa-star text-[9px]"></i> Featured
               </span>
-              <span class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{ statusBadge(event).classes }}">
+              <span
+                class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{
+                  statusBadge(event).classes
+                }}"
+              >
                 {{ statusBadge(event).label }}
               </span>
             </div>
             <div class="p-5 flex flex-col flex-1 gap-3">
               <div class="flex items-center gap-2">
-                <span class="text-[11px] font-medium bg-amber-100 text-amber-700 rounded px-2 py-0.5">{{ event.category }}</span>
+                <span
+                  class="text-[11px] font-medium bg-amber-100 text-amber-700 rounded px-2 py-0.5"
+                  >{{ event.category }}</span
+                >
                 <span class="inline-flex items-center gap-1 text-[11px] text-zinc-400">
                   <i class="fa-solid {{ modeIcon(event.mode) }} text-[10px]"></i>
                   {{ event.mode }}
@@ -264,7 +322,9 @@
               </div>
               <div>
                 <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
-                <p class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">{{ event.description }}</p>
+                <p class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">
+                  {{ event.description }}
+                </p>
               </div>
               <div class="space-y-1.5">
                 <div class="flex items-center gap-2 text-xs text-zinc-500">
@@ -283,7 +343,10 @@
                     <span>{{ occupancyPercent(event) }}% filled</span>
                   </div>
                   <div class="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-blue-600 rounded-full" [style.width.%]="occupancyPercent(event)"></div>
+                    <div
+                      class="h-full bg-blue-600 rounded-full"
+                      [style.width.%]="occupancyPercent(event)"
+                    ></div>
                   </div>
                 </div>
               }

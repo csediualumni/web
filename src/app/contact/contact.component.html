@@ -1,10 +1,18 @@
 <!-- ── Hero ── -->
-<section class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
-  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
-  <div class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white"
+>
+  <div
+    class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"
+  ></div>
+  <div
+    class="absolute -top-40 -right-40 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-3xl pointer-events-none"
+  ></div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 text-center">
-    <span class="inline-flex items-center gap-1.5 bg-blue-900/70 border border-blue-700/60 text-blue-200 text-xs font-medium px-3 py-1 rounded-full mb-5">
+    <span
+      class="inline-flex items-center gap-1.5 bg-blue-900/70 border border-blue-700/60 text-blue-200 text-xs font-medium px-3 py-1 rounded-full mb-5"
+    >
       <i class="fa-solid fa-envelope text-blue-300 text-[10px]"></i>
       Get in Touch
     </span>
@@ -19,20 +27,27 @@
 <section class="bg-white py-16 lg:py-24">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="lg:grid lg:grid-cols-5 lg:gap-16">
-
       <!-- Left: info cards -->
       <div class="lg:col-span-2 mb-12 lg:mb-0">
         <h2 class="text-xl font-bold text-zinc-900 mb-6">Contact Information</h2>
         <div class="space-y-4">
           @for (info of contactInfo; track info.label) {
             <div class="flex items-start gap-4 p-4 rounded-xl border border-zinc-100 bg-zinc-50">
-              <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div
+                class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5"
+              >
                 <i class="fa-solid {{ info.icon }} text-white text-sm"></i>
               </div>
               <div>
-                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">{{ info.label }}</p>
+                <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1">
+                  {{ info.label }}
+                </p>
                 @if (info.link) {
-                  <a [href]="info.link" class="text-sm text-zinc-700 hover:text-zinc-900 transition-colors font-medium">{{ info.lines[0] }}</a>
+                  <a
+                    [href]="info.link"
+                    class="text-sm text-zinc-700 hover:text-zinc-900 transition-colors font-medium"
+                    >{{ info.lines[0] }}</a
+                  >
                 } @else {
                   @for (line of info.lines; track line) {
                     <p class="text-sm text-zinc-700">{{ line }}</p>
@@ -47,20 +62,40 @@
         <div class="mt-8">
           <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Follow Us</p>
           <div class="flex items-center gap-3">
-            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="Facebook"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-facebook-f text-sm"></i>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors">
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="LinkedIn"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-linkedin-in text-sm"></i>
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter / X"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors">
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="Twitter / X"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-x-twitter text-sm"></i>
             </a>
-            <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors">
+            <a
+              href="https://youtube.com"
+              target="_blank"
+              rel="noopener"
+              aria-label="YouTube"
+              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+            >
               <i class="fa-brands fa-youtube text-sm"></i>
             </a>
           </div>
@@ -75,7 +110,9 @@
 
             <!-- Error -->
             @if (error()) {
-              <div class="mb-5 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div
+                class="mb-5 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+              >
                 <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
                 {{ error() }}
               </div>
@@ -84,7 +121,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <!-- Name -->
               <div>
-                <label for="contact-name" class="block text-sm font-medium text-zinc-700 mb-1.5">Full Name <span class="text-red-500">*</span></label>
+                <label for="contact-name" class="block text-sm font-medium text-zinc-700 mb-1.5"
+                  >Full Name <span class="text-red-500">*</span></label
+                >
                 <input
                   id="contact-name"
                   type="text"
@@ -96,7 +135,9 @@
 
               <!-- Email -->
               <div>
-                <label for="contact-email" class="block text-sm font-medium text-zinc-700 mb-1.5">Email Address <span class="text-red-500">*</span></label>
+                <label for="contact-email" class="block text-sm font-medium text-zinc-700 mb-1.5"
+                  >Email Address <span class="text-red-500">*</span></label
+                >
                 <input
                   id="contact-email"
                   type="email"
@@ -108,7 +149,9 @@
 
               <!-- Subject (full width) -->
               <div class="sm:col-span-2">
-                <label for="contact-subject" class="block text-sm font-medium text-zinc-700 mb-1.5">Subject <span class="text-red-500">*</span></label>
+                <label for="contact-subject" class="block text-sm font-medium text-zinc-700 mb-1.5"
+                  >Subject <span class="text-red-500">*</span></label
+                >
                 <select
                   id="contact-subject"
                   [(ngModel)]="form.subject"
@@ -123,7 +166,9 @@
 
               <!-- Message (full width) -->
               <div class="sm:col-span-2">
-                <label for="contact-message" class="block text-sm font-medium text-zinc-700 mb-1.5">Message <span class="text-red-500">*</span></label>
+                <label for="contact-message" class="block text-sm font-medium text-zinc-700 mb-1.5"
+                  >Message <span class="text-red-500">*</span></label
+                >
                 <textarea
                   id="contact-message"
                   [(ngModel)]="form.message"
@@ -153,17 +198,16 @@
         } @else {
           <!-- Success state -->
           <div class="shad-card p-12 flex flex-col items-center text-center">
-            <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-5">
+            <div
+              class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-5"
+            >
               <i class="fa-solid fa-circle-check text-emerald-600 text-3xl"></i>
             </div>
             <h3 class="text-xl font-bold text-zinc-900 mb-2">Message Sent!</h3>
             <p class="text-zinc-500 text-sm mb-6 max-w-sm">
               Thank you for reaching out. We'll get back to you within 2 business days.
             </p>
-            <button
-              (click)="submitted.set(false)"
-              class="shad-btn-outline gap-2"
-            >
+            <button (click)="submitted.set(false)" class="shad-btn-outline gap-2">
               <i class="fa-solid fa-rotate-left"></i>
               Send Another Message
             </button>
@@ -219,7 +263,9 @@
             ></i>
           </button>
           @if (isFaqOpen(i)) {
-            <div class="px-5 pb-4 text-sm text-zinc-500 leading-relaxed border-t border-zinc-100 pt-3">
+            <div
+              class="px-5 pb-4 text-sm text-zinc-500 leading-relaxed border-t border-zinc-100 pt-3"
+            >
               {{ faq.a }}
             </div>
           }
@@ -229,7 +275,10 @@
 
     <p class="text-center mt-8 text-sm text-zinc-500">
       Still have questions?
-      <a routerLink="/contact" class="text-zinc-900 font-semibold hover:underline underline-offset-4 ml-1">
+      <a
+        routerLink="/contact"
+        class="text-zinc-900 font-semibold hover:underline underline-offset-4 ml-1"
+      >
         Drop us a message
       </a>
     </p>

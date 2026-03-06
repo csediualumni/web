@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 // ── Shared models ─────────────────────────────────────────────────
 
 export type InvoiceStatus = 'pending' | 'partial' | 'paid' | 'cancelled' | 'refunded';
-export type InvoiceType   = 'donation' | 'event' | 'membership' | 'other';
+export type InvoiceType = 'donation' | 'event' | 'membership' | 'other';
 export type PaymentStatus = 'pending' | 'verified' | 'rejected' | 'refunded';
 
 export interface InvoicePayment {
@@ -60,15 +60,11 @@ export interface SubmitPaymentDto {
 // ── Helpers ───────────────────────────────────────────────────────
 
 export function paidAmount(invoice: Invoice): number {
-  return invoice.payments
-    .filter((p) => p.status === 'verified')
-    .reduce((s, p) => s + p.amount, 0);
+  return invoice.payments.filter((p) => p.status === 'verified').reduce((s, p) => s + p.amount, 0);
 }
 
 export function pendingAmount(invoice: Invoice): number {
-  return invoice.payments
-    .filter((p) => p.status === 'pending')
-    .reduce((s, p) => s + p.amount, 0);
+  return invoice.payments.filter((p) => p.status === 'pending').reduce((s, p) => s + p.amount, 0);
 }
 
 export function dueAmount(invoice: Invoice): number {
@@ -115,16 +111,15 @@ export class InvoiceService {
     status: PaymentStatus,
     adminNote?: string,
   ): Observable<Invoice> {
-    return this.http.patch<Invoice>(
-      `${this.base}/${invoiceId}/payments/${paymentId}/status`,
-      { status, adminNote },
-    );
+    return this.http.patch<Invoice>(`${this.base}/${invoiceId}/payments/${paymentId}/status`, {
+      status,
+      adminNote,
+    });
   }
 
   refundPayment(invoiceId: string, paymentId: string, adminNote?: string): Observable<Invoice> {
-    return this.http.post<Invoice>(
-      `${this.base}/${invoiceId}/payments/${paymentId}/refund`,
-      { adminNote },
-    );
+    return this.http.post<Invoice>(`${this.base}/${invoiceId}/payments/${paymentId}/refund`, {
+      adminNote,
+    });
   }
 }

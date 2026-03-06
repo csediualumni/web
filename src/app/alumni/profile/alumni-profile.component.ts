@@ -28,9 +28,7 @@ export class AlumniProfileComponent implements OnInit {
         this.member.set(found);
         const rel = members
           .filter(
-            (m) =>
-              m.id !== found.id &&
-              (m.batch === found.batch || m.industry === found.industry),
+            (m) => m.id !== found.id && (m.batch === found.batch || m.industry === found.industry),
           )
           .slice(0, 3);
         this.related.set(rel);

@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { AuthService, ExperienceEntry, EducationEntry, AchievementEntry } from '../core/auth.service';
+  AuthService,
+  ExperienceEntry,
+  EducationEntry,
+  AchievementEntry,
+} from '../core/auth.service';
 
 const INDUSTRIES = [
   'Software Engineering',
@@ -155,7 +155,10 @@ export class ProfileEditComponent implements OnInit {
     const raw = this.skillInput().trim();
     if (!raw) return;
     // Support comma-separated input
-    const parts = raw.split(',').map((s) => s.trim()).filter(Boolean);
+    const parts = raw
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
     const current = this.skills();
     const merged = [...new Set([...current, ...parts])];
     this.skills.set(merged);
@@ -177,17 +180,32 @@ export class ProfileEditComponent implements OnInit {
 
   openAddExp() {
     this.editingExpId.set(null);
-    this.expDraft.set({ title: '', company: '', from: '', to: 'Present', sortOrder: this.experiences().length });
+    this.expDraft.set({
+      title: '',
+      company: '',
+      from: '',
+      to: 'Present',
+      sortOrder: this.experiences().length,
+    });
     this.expError.set(null);
   }
 
   openEditExp(entry: ExperienceEntry) {
     this.editingExpId.set(entry.id);
-    this.expDraft.set({ title: entry.title, company: entry.company, from: entry.from, to: entry.to, sortOrder: entry.sortOrder });
+    this.expDraft.set({
+      title: entry.title,
+      company: entry.company,
+      from: entry.from,
+      to: entry.to,
+      sortOrder: entry.sortOrder,
+    });
     this.expError.set(null);
   }
 
-  cancelExp() { this.expDraft.set(null); this.editingExpId.set(null); }
+  cancelExp() {
+    this.expDraft.set(null);
+    this.editingExpId.set(null);
+  }
 
   saveExp() {
     const draft = this.expDraft();
@@ -195,9 +213,7 @@ export class ProfileEditComponent implements OnInit {
     this.expSaving.set(true);
     this.expError.set(null);
     const editId = this.editingExpId();
-    const obs = editId
-      ? this.auth.updateExperience(editId, draft)
-      : this.auth.addExperience(draft);
+    const obs = editId ? this.auth.updateExperience(editId, draft) : this.auth.addExperience(draft);
     obs.subscribe({
       next: (saved) => {
         this.experiences.update((list) =>
@@ -207,7 +223,10 @@ export class ProfileEditComponent implements OnInit {
         this.editingExpId.set(null);
         this.expSaving.set(false);
       },
-      error: () => { this.expError.set('Failed to save. Try again.'); this.expSaving.set(false); },
+      error: () => {
+        this.expError.set('Failed to save. Try again.');
+        this.expSaving.set(false);
+      },
     });
   }
 
@@ -222,17 +241,30 @@ export class ProfileEditComponent implements OnInit {
 
   openAddEdu() {
     this.editingEduId.set(null);
-    this.eduDraft.set({ degree: '', institution: '', year: null, sortOrder: this.educations().length });
+    this.eduDraft.set({
+      degree: '',
+      institution: '',
+      year: null,
+      sortOrder: this.educations().length,
+    });
     this.eduError.set(null);
   }
 
   openEditEdu(entry: EducationEntry) {
     this.editingEduId.set(entry.id);
-    this.eduDraft.set({ degree: entry.degree, institution: entry.institution, year: entry.year, sortOrder: entry.sortOrder });
+    this.eduDraft.set({
+      degree: entry.degree,
+      institution: entry.institution,
+      year: entry.year,
+      sortOrder: entry.sortOrder,
+    });
     this.eduError.set(null);
   }
 
-  cancelEdu() { this.eduDraft.set(null); this.editingEduId.set(null); }
+  cancelEdu() {
+    this.eduDraft.set(null);
+    this.editingEduId.set(null);
+  }
 
   saveEdu() {
     const draft = this.eduDraft();
@@ -240,9 +272,7 @@ export class ProfileEditComponent implements OnInit {
     this.eduSaving.set(true);
     this.eduError.set(null);
     const editId = this.editingEduId();
-    const obs = editId
-      ? this.auth.updateEducation(editId, draft)
-      : this.auth.addEducation(draft);
+    const obs = editId ? this.auth.updateEducation(editId, draft) : this.auth.addEducation(draft);
     obs.subscribe({
       next: (saved) => {
         this.educations.update((list) =>
@@ -252,7 +282,10 @@ export class ProfileEditComponent implements OnInit {
         this.editingEduId.set(null);
         this.eduSaving.set(false);
       },
-      error: () => { this.eduError.set('Failed to save. Try again.'); this.eduSaving.set(false); },
+      error: () => {
+        this.eduError.set('Failed to save. Try again.');
+        this.eduSaving.set(false);
+      },
     });
   }
 
@@ -277,7 +310,10 @@ export class ProfileEditComponent implements OnInit {
     this.achError.set(null);
   }
 
-  cancelAch() { this.achDraft.set(null); this.editingAchId.set(null); }
+  cancelAch() {
+    this.achDraft.set(null);
+    this.editingAchId.set(null);
+  }
 
   saveAch() {
     const draft = this.achDraft();
@@ -297,7 +333,10 @@ export class ProfileEditComponent implements OnInit {
         this.editingAchId.set(null);
         this.achSaving.set(false);
       },
-      error: () => { this.achError.set('Failed to save. Try again.'); this.achSaving.set(false); },
+      error: () => {
+        this.achError.set('Failed to save. Try again.');
+        this.achSaving.set(false);
+      },
     });
   }
 
@@ -332,9 +371,7 @@ export class ProfileEditComponent implements OnInit {
       },
       error: (err) => {
         this.saving.set(false);
-        this.saveError.set(
-          err?.error?.message ?? 'Failed to save profile. Please try again.',
-        );
+        this.saveError.set(err?.error?.message ?? 'Failed to save profile. Please try again.');
       },
     });
   }

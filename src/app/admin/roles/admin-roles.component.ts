@@ -11,17 +11,17 @@ import { AuthService } from '../../core/auth.service';
   templateUrl: './admin-roles.component.html',
 })
 export class AdminRolesComponent implements OnInit {
-  loading         = signal(true);
-  error           = signal('');
-  roles           = signal<Role[]>([]);
-  allPermissions  = signal<Permission[]>([]);
-  selectedRole    = signal<Role | null>(null);
+  loading = signal(true);
+  error = signal('');
+  roles = signal<Role[]>([]);
+  allPermissions = signal<Permission[]>([]);
+  selectedRole = signal<Role | null>(null);
 
-  newRoleName     = signal('');
-  newRoleDesc     = signal('');
-  creatingRole    = signal(false);
-  deletingRoleId  = signal<string | null>(null);
-  togglingPerm    = signal<Map<string, Set<string>>>(new Map());
+  newRoleName = signal('');
+  newRoleDesc = signal('');
+  creatingRole = signal(false);
+  deletingRoleId = signal<string | null>(null);
+  togglingPerm = signal<Map<string, Set<string>>>(new Map());
 
   constructor(
     public auth: AuthService,
@@ -37,10 +37,16 @@ export class AdminRolesComponent implements OnInit {
             this.allPermissions.set(perms);
             this.loading.set(false);
           },
-          error: () => { this.error.set('Failed to load permissions.'); this.loading.set(false); },
+          error: () => {
+            this.error.set('Failed to load permissions.');
+            this.loading.set(false);
+          },
         });
       },
-      error: () => { this.error.set('Failed to load roles.'); this.loading.set(false); },
+      error: () => {
+        this.error.set('Failed to load roles.');
+        this.loading.set(false);
+      },
     });
   }
 
@@ -145,7 +151,10 @@ export class AdminRolesComponent implements OnInit {
   }
 
   deleteRole(role: Role): void {
-    if (role.isSystem) { this.error.set('System roles cannot be deleted.'); return; }
+    if (role.isSystem) {
+      this.error.set('System roles cannot be deleted.');
+      return;
+    }
     if (!confirm(`Delete role "${role.name}"? This cannot be undone.`)) return;
     this.deletingRoleId.set(role.id);
     this.adminService.deleteRole(role.id).subscribe({

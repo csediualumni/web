@@ -7,17 +7,17 @@ export interface Campaign {
   title: string;
   tagline: string;
   description: string;
-  goal: number;          // BDT
-  raised: number;        // BDT
+  goal: number; // BDT
+  raised: number; // BDT
   donors: number;
   status: CampaignStatus;
-  deadline?: string;     // display string
+  deadline?: string; // display string
   category: string;
-  icon: string;          // fa icon
-  color: string;         // Tailwind colour class (bg-*)
+  icon: string; // fa icon
+  color: string; // Tailwind colour class (bg-*)
   featured?: boolean;
-  impact: string[];      // bullet points on how funds are used
-  updates?: string[];    // latest update notes
+  impact: string[]; // bullet points on how funds are used
+  updates?: string[]; // latest update notes
 }
 
 export interface Donor {
@@ -153,12 +153,33 @@ export class DonationsService {
   ];
 
   readonly recentDonors: Donor[] = [
-    { name: 'Ariful Islam', amount: 10_000, batch: 2018, message: 'For the scholars who follow!', anonymous: false, date: 'Mar 5, 2026' },
+    {
+      name: 'Ariful Islam',
+      amount: 10_000,
+      batch: 2018,
+      message: 'For the scholars who follow!',
+      anonymous: false,
+      date: 'Mar 5, 2026',
+    },
     { name: 'Anonymous', amount: 25_000, anonymous: true, date: 'Mar 4, 2026' },
-    { name: 'Nusrat Jahan', amount: 15_000, batch: 2019, message: 'Happy to give back to DIU.', anonymous: false, date: 'Mar 3, 2026' },
+    {
+      name: 'Nusrat Jahan',
+      amount: 15_000,
+      batch: 2019,
+      message: 'Happy to give back to DIU.',
+      anonymous: false,
+      date: 'Mar 3, 2026',
+    },
     { name: 'Mahmudul Hasan', amount: 5_000, batch: 2016, anonymous: false, date: 'Mar 2, 2026' },
     { name: 'Anonymous', amount: 50_000, anonymous: true, date: 'Mar 2, 2026' },
-    { name: 'Rakibul Islam', amount: 20_000, batch: 2015, message: 'Lab upgrade is long overdue!', anonymous: false, date: 'Mar 1, 2026' },
+    {
+      name: 'Rakibul Islam',
+      amount: 20_000,
+      batch: 2015,
+      message: 'Lab upgrade is long overdue!',
+      anonymous: false,
+      date: 'Mar 1, 2026',
+    },
     { name: 'Sadia Rahman', amount: 8_000, batch: 2020, anonymous: false, date: 'Feb 28, 2026' },
     { name: 'Anonymous', amount: 5_000, anonymous: true, date: 'Feb 27, 2026' },
   ];
