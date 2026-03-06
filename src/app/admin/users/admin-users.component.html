@@ -1,0 +1,104 @@
+<!-- Error banner -->
+@if (error()) {
+  <div class="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 flex items-center justify-between">
+    <p class="text-xs text-red-600">{{ error() }}</p>
+    <button (click)="error.set('')" class="ml-3 text-red-400 hover:text-red-600 cursor-pointer text-sm leading-none">✕</button>
+  </div>
+}
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <i class="fa-solid fa-spinner fa-spin text-zinc-400 text-2xl"></i>
+  </div>
+}
+
+@if (!loading()) {
+  <div class="shad-card overflow-hidden">
+    <div class="px-5 py-3 border-b border-zinc-100 flex items-center justify-between">
+      <h2 class="text-sm font-semibold text-zinc-900">Users</h2>
+      <span class="text-xs text-zinc-400">{{ users().length }} total</span>
+    </div>
+
+    <!-- Responsive table wrapper -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[640px]">
+        <thead>
+          <tr class="text-left border-b border-zinc-100">
+            <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">User</th>
+            <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Auth</th>
+            <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Joined</th>
+            <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Roles</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-50">
+          @for (user of users(); track user.id) {
+            <tr class="hover:bg-zinc-50/50 transition-colors">
+
+              <!-- User -->
+              <td class="px-5 py-3">
+                <div class="flex items-center gap-2.5">
+                  @if (user.avatar) {
+                    <img [src]="user.avatar" [alt]="user.displayName ?? user.email"
+                         class="w-7 h-7 rounded-full object-cover flex-shrink-0"/>
+                  } @else {
+                    <div class="w-7 h-7 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 font-semibold text-xs uppercase flex-shrink-0">
+                      {{ user.displayName ? user.displayName[0] : user.email[0] }}
+                    </div>
+                  }
+                  <div class="min-w-0">
+                    <p class="text-xs font-medium text-zinc-900 truncate">{{ user.displayName ?? '—' }}</p>
+                    <p class="text-zinc-400 text-[11px] truncate">{{ user.email }}</p>
+                    @if (user.id === auth.currentUser()?.id) {
+                      <span class="text-[10px] text-zinc-400">(you)</span>
+                    }
+                  </div>
+                </div>
+              </td>
+
+              <!-- Auth type -->
+              <td class="px-5 py-3">
+                @if (user.googleId) {
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-600 border border-blue-100">Google</span>
+                } @else {
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-zinc-100 text-zinc-500 border border-zinc-200">Email</span>
+                }
+              </td>
+
+              <!-- Joined -->
+              <td class="px-5 py-3 text-zinc-400 text-[11px] whitespace-nowrap">
+                {{ user.createdAt | date: 'mediumDate' }}
+              </td>
+
+              <!-- Roles — toggle chips -->
+              <td class="px-5 py-3">
+                <div class="flex flex-wrap gap-1">
+                  @for (role of allRoles(); track role.id) {
+                    <button
+                      (click)="toggleUserRole(user, role.id)"
+                      [disabled]="isTogglingRole(user.id, role.id) || !auth.hasPermission('users:assign_role')"
+                      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      [class.bg-blue-700]="hasRole(user, role.id)"
+                      [class.text-white]="hasRole(user, role.id)"
+                      [class.border-blue-700]="hasRole(user, role.id)"
+                      [class.bg-white]="!hasRole(user, role.id)"
+                      [class.text-zinc-500]="!hasRole(user, role.id)"
+                      [class.border-zinc-200]="!hasRole(user, role.id)"
+                      [title]="(hasRole(user, role.id) ? 'Remove ' : 'Add ') + role.name">
+                      @if (isTogglingRole(user.id, role.id)) {
+                        <i class="fa-solid fa-spinner fa-spin text-[10px]"></i>
+                      } @else {
+                        {{ role.name }}
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

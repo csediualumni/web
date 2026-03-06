@@ -1,281 +1,87 @@
-<div class="min-h-screen bg-zinc-50">
+<div class="min-h-screen bg-zinc-50 flex flex-col">
 
   <!-- Top bar -->
-  <header class="bg-white border-b border-zinc-200 px-5 h-12 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <button (click)="goBack()" class="shad-btn-ghost -ml-1" aria-label="Go back">
-        <i class="fa-solid fa-arrow-left text-sm"></i>
+  <header class="bg-white border-b border-zinc-200 h-12 flex items-center px-4 gap-3 flex-shrink-0 z-20 sticky top-0">
+    <button (click)="toggleSidebar()" class="md:hidden flex items-center justify-center w-8 h-8 rounded-md text-zinc-500 hover:bg-zinc-100 transition-colors cursor-pointer" aria-label="Toggle sidebar">
+      <i class="fa-solid fa-bars text-sm"></i>
+    </button>
+    <div class="flex items-center gap-2 flex-1 min-w-0">
+      <button (click)="goBack()" class="hidden md:flex items-center justify-center w-7 h-7 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer" aria-label="Go back">
+        <i class="fa-solid fa-arrow-left text-xs"></i>
       </button>
-      <span class="text-sm font-semibold text-zinc-900">Admin Panel</span>
+      <span class="text-sm font-semibold text-zinc-900 truncate">Admin Panel</span>
     </div>
-    <div class="flex gap-1.5">
+    <div class="flex gap-1.5 flex-shrink-0">
       @for (role of (auth.currentUser()?.roles ?? []); track role.id) {
-        <span class="shad-badge-secondary uppercase text-[10px] tracking-wider">{{ role.name }}</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider border border-zinc-200 text-zinc-500 bg-zinc-50">
+          {{ role.name }}
+        </span>
       }
     </div>
   </header>
 
-  <!-- Tab bar -->
-  <div class="bg-white border-b border-zinc-200 px-5">
-    <nav class="flex gap-0 -mb-px">
-      <button (click)="setTab('users')"
-        class="px-4 py-2.5 text-xs font-medium border-b-2 transition-colors cursor-pointer"
-        [class.border-zinc-900]="activeTab() === 'users'"
-        [class.text-zinc-900]="activeTab() === 'users'"
-        [class.border-transparent]="activeTab() !== 'users'"
-        [class.text-zinc-400]="activeTab() !== 'users'">
-        Users
-      </button>
-      <button (click)="setTab('roles')"
-        class="px-4 py-2.5 text-xs font-medium border-b-2 transition-colors cursor-pointer"
-        [class.border-zinc-900]="activeTab() === 'roles'"
-        [class.text-zinc-900]="activeTab() === 'roles'"
-        [class.border-transparent]="activeTab() !== 'roles'"
-        [class.text-zinc-400]="activeTab() !== 'roles'">
-        Roles &amp; Permissions
-      </button>
-    </nav>
-  </div>
+  <div class="flex flex-1 overflow-hidden">
 
-  <main class="max-w-6xl mx-auto px-4 py-6">
-
-    <!-- Error banner -->
-    @if (error()) {
-      <div class="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 flex items-center justify-between">
-        <p class="text-xs text-red-600">{{ error() }}</p>
-        <button (click)="error.set('')" class="ml-3 text-red-400 hover:text-red-600 cursor-pointer text-sm leading-none">✕</button>
-      </div>
+    @if (sidebarOpen()) {
+      <div class="fixed inset-0 bg-black/20 z-20 md:hidden" (click)="closeSidebar()" aria-hidden="true"></div>
     }
 
-    <!-- Loading -->
-    @if (loading()) {
-      <div class="flex justify-center items-center py-20">
-        <i class="fa-solid fa-spinner fa-spin text-zinc-400 text-2xl"></i>
+    <!-- Vertical Sidebar -->
+    <aside
+      class="fixed top-12 left-0 bottom-0 z-30 w-60 bg-white border-r border-zinc-200 flex flex-col transition-transform duration-200 ease-in-out md:sticky md:top-0 md:translate-x-0 md:h-[calc(100vh-3rem)]"
+      [class.-translate-x-full]="!sidebarOpen()"
+      [class.translate-x-0]="sidebarOpen()">
+
+      <div class="md:hidden flex items-center justify-between px-4 h-11 border-b border-zinc-100 flex-shrink-0">
+        <span class="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Menu</span>
+        <button (click)="closeSidebar()" class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 cursor-pointer transition-colors">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
       </div>
-    }
 
-    <!-- ═══════════════════════ USERS TAB ═══════════════════════ -->
-    @if (!loading() && activeTab() === 'users') {
-      <div class="shad-card overflow-hidden">
-        <div class="px-5 py-3 border-b border-zinc-100 flex items-center justify-between">
-          <h2 class="text-sm font-medium text-zinc-900">Users</h2>
-          <span class="text-xs text-zinc-400">{{ users().length }} total</span>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="text-left border-b border-zinc-100">
-                <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">User</th>
-                <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Auth</th>
-                <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Joined</th>
-                <th class="px-5 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Roles</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-50">
-              @for (user of users(); track user.id) {
-                <tr class="hover:bg-zinc-50/50 transition-colors">
-                  <!-- User -->
-                  <td class="px-5 py-3">
-                    <div class="flex items-center gap-2.5">
-                      @if (user.avatar) {
-                        <img [src]="user.avatar" [alt]="user.displayName ?? user.email"
-                             class="w-7 h-7 rounded-full object-cover flex-shrink-0"/>
-                      } @else {
-                        <div class="w-7 h-7 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 font-semibold text-xs uppercase flex-shrink-0">
-                          {{ user.displayName ? user.displayName[0] : user.email[0] }}
-                        </div>
-                      }
-                      <div class="min-w-0">
-                        <p class="text-xs font-medium text-zinc-900 truncate">{{ user.displayName ?? '—' }}</p>
-                        <p class="text-zinc-400 text-[11px] truncate">{{ user.email }}</p>
-                        @if (user.id === auth.currentUser()?.id) {
-                          <span class="text-[10px] text-zinc-400">(you)</span>
-                        }
-                      </div>
-                    </div>
-                  </td>
-                  <!-- Auth type -->
-                  <td class="px-5 py-3">
-                    @if (user.googleId) {
-                      <span class="shad-badge bg-blue-50 text-blue-600 border-blue-100">Google</span>
-                    } @else {
-                      <span class="shad-badge-secondary">Email</span>
-                    }
-                  </td>
-                  <!-- Joined -->
-                  <td class="px-5 py-3 text-zinc-400 text-[11px]">
-                    {{ user.createdAt | date: 'mediumDate' }}
-                  </td>
-                  <!-- Roles — toggle chips -->
-                  <td class="px-5 py-3">
-                    <div class="flex flex-wrap gap-1">
-                      @for (role of allRoles(); track role.id) {
-                        <button
-                          (click)="toggleUserRole(user, role.id)"
-                          [disabled]="isTogglingRole(user.id, role.id) || !auth.hasPermission('users:assign_role')"
-                          class="text-[11px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                          [class.bg-blue-700]="hasRole(user, role.id)"
-                          [class.text-white]="hasRole(user, role.id)"
-                          [class.border-blue-700]="hasRole(user, role.id)"                          [class.bg-white]="!hasRole(user, role.id)"
-                          [class.text-zinc-500]="!hasRole(user, role.id)"
-                          [class.border-zinc-200]="!hasRole(user, role.id)"
-                          [title]="(hasRole(user, role.id) ? 'Remove ' : 'Add ') + role.name"
-                        >
-                          @if (isTogglingRole(user.id, role.id)) {
-                            <i class="fa-solid fa-spinner fa-spin text-[10px]"></i>
-                          } @else {
-                            {{ role.name }}
-                          }
-                        </button>
-                      }
-                    </div>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+      <div class="px-4 pt-5 pb-2">
+        <p class="text-[10px] font-semibold uppercase tracking-widest text-zinc-400">Manage</p>
       </div>
-    }
 
-    <!-- ═══════════════════════ ROLES TAB ═══════════════════════ -->
-    @if (!loading() && activeTab() === 'roles') {
-      <div class="flex gap-4">
-
-        <!-- Left: roles list + create form -->
-        <div class="w-64 flex-shrink-0 flex flex-col gap-3">
-
-          <!-- Create new role -->
-          @if (auth.hasPermission('roles:write')) {
-            <div class="shad-card p-4 space-y-2">
-              <h3 class="text-xs font-semibold text-zinc-700 uppercase tracking-wider">New Role</h3>
-              <input
-                [(ngModel)]="newRoleName"
-                placeholder="Role name"
-                class="shad-input"
-              />
-              <input
-                [(ngModel)]="newRoleDesc"
-                placeholder="Description (optional)"
-                class="shad-input"
-              />
-              <button
-                (click)="createRole()"
-                [disabled]="creatingRole() || !newRoleName().trim()"
-                class="shad-btn-primary w-full"
-              >
-                @if (creatingRole()) { Creating… } @else { Create Role }
-              </button>
-            </div>
-          }
-
-          <!-- Roles list -->
-          <div class="shad-card overflow-hidden">
-            <div class="px-4 py-2.5 border-b border-zinc-100 flex items-center justify-between">
-              <h3 class="text-xs font-semibold text-zinc-700 uppercase tracking-wider">Roles</h3>
-              <span class="text-[11px] text-zinc-400">{{ roles().length }}</span>
-            </div>
-            <ul class="divide-y divide-zinc-50">
-              @for (role of roles(); track role.id) {
-                <li>
-                  <button
-                    (click)="selectRole(role)"
-                    class="w-full text-left px-4 py-2.5 hover:bg-zinc-50 transition-colors cursor-pointer flex items-center justify-between gap-2"
-                    [class.bg-zinc-50]="selectedRole()?.id === role.id"
-                  >
-                    <div class="min-w-0">
-                      <p class="text-xs font-medium text-zinc-900 truncate">{{ role.name }}</p>
-                      @if (role.description) {
-                        <p class="text-[11px] text-zinc-400 mt-0.5 truncate">{{ role.description }}</p>
-                      }
-                      <p class="text-[11px] text-zinc-400 mt-0.5">{{ role.permissions.length }} permission(s)</p>
-                    </div>
-                    <div class="flex flex-col items-end gap-1 flex-shrink-0">
-                      @if (role.isSystem) {
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-100">system</span>
-                      }
-                      @if (!role.isSystem && auth.hasPermission('roles:delete')) {
-                        <button
-                          (click)="$event.stopPropagation(); deleteRole(role)"
-                          [disabled]="deletingRoleId() === role.id"
-                          class="text-[11px] text-red-400 hover:text-red-600 cursor-pointer disabled:opacity-50"
-                          title="Delete role"
-                        >
-                          @if (deletingRoleId() === role.id) { … } @else { delete }
-                        </button>
-                      }
-                    </div>
-                  </button>
-                </li>
-              }
-            </ul>
-          </div>
-        </div>
-
-        <!-- Right: permission editor for selectedRole -->
-        @if (selectedRole()) {
-          <div class="flex-1 shad-card p-5">
-            <div class="flex items-start justify-between mb-4">
-              <div>
-                <h2 class="text-sm font-semibold text-zinc-900">{{ selectedRole()!.name }}</h2>
-                @if (selectedRole()!.description) {
-                  <p class="text-xs text-zinc-400 mt-0.5">{{ selectedRole()!.description }}</p>
-                }
-              </div>
-              <button (click)="selectedRole.set(null)" class="shad-btn-ghost h-7 w-7 p-0 text-zinc-400 hover:text-zinc-600">✕</button>
-            </div>
-
-            @if (!auth.hasPermission('permissions:assign')) {
-              <p class="text-xs text-zinc-400">You don't have permission to modify role permissions.</p>
-            }
-
-            @for (group of groupedPermissions(); track group.group) {
-              <div class="mb-4">
-                <span class="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded mb-2"
-                      [class]="permBadgeGroup(group.group)">
-                  {{ group.group }}
-                </span>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                  @for (perm of group.permissions; track perm.id) {
-                    <label
-                      class="flex items-start gap-2.5 p-2.5 rounded-md border transition-colors"
-                      [class.border-zinc-300]="hasPermissionOnRole(selectedRole()!, perm.id)"
-                      [class.bg-zinc-50]="hasPermissionOnRole(selectedRole()!, perm.id)"
-                      [class.border-zinc-200]="!hasPermissionOnRole(selectedRole()!, perm.id)"
-                      [class.cursor-pointer]="auth.hasPermission('permissions:assign')"
-                      [class.opacity-60]="!auth.hasPermission('permissions:assign')"
-                    >
-                      <input
-                        type="checkbox"
-                        [checked]="hasPermissionOnRole(selectedRole()!, perm.id)"
-                        [disabled]="isTogglingPerm(selectedRole()!.id, perm.id) || !auth.hasPermission('permissions:assign')"
-                        (change)="toggleRolePermission(selectedRole()!, perm.id)"
-                        class="mt-0.5 rounded accent-zinc-900 cursor-pointer"
-                      />
-                      <div>
-                        <p class="text-xs font-medium text-zinc-800">{{ perm.key }}</p>
-                        @if (perm.description) {
-                          <p class="text-[11px] text-zinc-400 mt-0.5">{{ perm.description }}</p>
-                        }
-                        @if (isTogglingPerm(selectedRole()!.id, perm.id)) {
-                          <p class="text-[11px] text-zinc-400 mt-0.5">Saving…</p>
-                        }
-                      </div>
-                    </label>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="flex-1 flex items-center justify-center text-zinc-300 text-sm select-none">
-            ← Select a role to manage its permissions
-          </div>
+      <ul class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+        @for (item of navItems; track item.path) {
+          <li>
+            <a [routerLink]="item.path" routerLinkActive="!bg-zinc-900 !text-white hover:!bg-zinc-800" [routerLinkActiveOptions]="{ exact: false }" (click)="closeSidebar()"
+              class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900">
+              <i class="fa-solid {{ item.icon }} w-4 text-center text-xs shrink-0"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          </li>
         }
+      </ul>
 
+      <div class="hidden md:block px-2 pb-4 pt-3 border-t border-zinc-100 flex-shrink-0">
+        <button (click)="goBack()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 transition-colors cursor-pointer">
+          <i class="fa-solid fa-arrow-left w-4 text-center text-xs"></i>
+          <span>Back to Dashboard</span>
+        </button>
       </div>
-    }
+    </aside>
 
-  </main>
+    <!-- Main content area -->
+    <main class="flex-1 min-w-0 overflow-y-auto">
+      <div class="md:hidden bg-white border-b border-zinc-200 px-2 overflow-x-auto">
+        <div class="flex -mb-px whitespace-nowrap min-w-max">
+          @for (item of navItems; track item.path) {
+            <a [routerLink]="item.path" routerLinkActive #rla="routerLinkActive" (click)="closeSidebar()"
+              class="flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors cursor-pointer shrink-0"
+              [class.border-zinc-900]="rla.isActive" [class.text-zinc-900]="rla.isActive"
+              [class.border-transparent]="!rla.isActive" [class.text-zinc-400]="!rla.isActive">
+              <i class="fa-solid {{ item.icon }} text-[10px]"></i>
+              {{ item.label }}
+            </a>
+          }
+        </div>
+      </div>
+      <div class="p-4 md:p-6 max-w-5xl mx-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+  </div>
 </div>

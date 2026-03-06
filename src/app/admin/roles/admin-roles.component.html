@@ -1,0 +1,154 @@
+<!-- Error banner -->
+@if (error()) {
+  <div class="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 flex items-center justify-between">
+    <p class="text-xs text-red-600">{{ error() }}</p>
+    <button (click)="error.set('')" class="ml-3 text-red-400 hover:text-red-600 cursor-pointer text-sm leading-none">✕</button>
+  </div>
+}
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <i class="fa-solid fa-spinner fa-spin text-zinc-400 text-2xl"></i>
+  </div>
+}
+
+@if (!loading()) {
+  <!-- Layout: left panel (roles list + create) + right panel (permission editor) -->
+  <!-- On mobile: stacked; md+: side-by-side -->
+  <div class="flex flex-col md:flex-row gap-4">
+
+    <!-- ── Left: create-form + roles list ── -->
+    <div class="w-full md:w-64 md:flex-shrink-0 flex flex-col gap-3">
+
+      <!-- Create new role -->
+      @if (auth.hasPermission('roles:write')) {
+        <div class="shad-card p-4 space-y-2">
+          <h3 class="text-xs font-semibold text-zinc-700 uppercase tracking-wider">New Role</h3>
+          <input
+            [(ngModel)]="newRoleName"
+            placeholder="Role name"
+            class="shad-input"
+          />
+          <input
+            [(ngModel)]="newRoleDesc"
+            placeholder="Description (optional)"
+            class="shad-input"
+          />
+          <button
+            (click)="createRole()"
+            [disabled]="creatingRole() || !newRoleName().trim()"
+            class="shad-btn-primary w-full">
+            @if (creatingRole()) { Creating… } @else { Create Role }
+          </button>
+        </div>
+      }
+
+      <!-- Roles list -->
+      <div class="shad-card overflow-hidden">
+        <div class="px-4 py-2.5 border-b border-zinc-100 flex items-center justify-between">
+          <h3 class="text-xs font-semibold text-zinc-700 uppercase tracking-wider">Roles</h3>
+          <span class="text-[11px] text-zinc-400">{{ roles().length }}</span>
+        </div>
+        <ul class="divide-y divide-zinc-50">
+          @for (role of roles(); track role.id) {
+            <li>
+              <button
+                (click)="selectRole(role)"
+                class="w-full text-left px-4 py-2.5 hover:bg-zinc-50 transition-colors cursor-pointer flex items-center justify-between gap-2"
+                [class.bg-zinc-50]="selectedRole()?.id === role.id">
+                <div class="min-w-0">
+                  <p class="text-xs font-medium text-zinc-900 truncate">{{ role.name }}</p>
+                  @if (role.description) {
+                    <p class="text-[11px] text-zinc-400 mt-0.5 truncate">{{ role.description }}</p>
+                  }
+                  <p class="text-[11px] text-zinc-400 mt-0.5">{{ role.permissions.length }} permission(s)</p>
+                </div>
+                <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                  @if (role.isSystem) {
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-100">system</span>
+                  }
+                  @if (!role.isSystem && auth.hasPermission('roles:delete')) {
+                    <button
+                      (click)="$event.stopPropagation(); deleteRole(role)"
+                      [disabled]="deletingRoleId() === role.id"
+                      class="text-[11px] text-red-400 hover:text-red-600 cursor-pointer disabled:opacity-50"
+                      title="Delete role">
+                      @if (deletingRoleId() === role.id) { … } @else { delete }
+                    </button>
+                  }
+                </div>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Right: permission editor ── -->
+    <div class="flex-1 min-w-0">
+      @if (selectedRole()) {
+        <div class="shad-card p-5">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h2 class="text-sm font-semibold text-zinc-900">{{ selectedRole()!.name }}</h2>
+              @if (selectedRole()!.description) {
+                <p class="text-xs text-zinc-400 mt-0.5">{{ selectedRole()!.description }}</p>
+              }
+            </div>
+            <button (click)="selectedRole.set(null)"
+              class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer text-sm">
+              ✕
+            </button>
+          </div>
+
+          @if (!auth.hasPermission('permissions:assign')) {
+            <p class="text-xs text-zinc-400">You don't have permission to modify role permissions.</p>
+          }
+
+          @for (group of groupedPermissions(); track group.group) {
+            <div class="mb-5">
+              <span class="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded mb-2"
+                    [class]="permBadgeGroup(group.group)">
+                {{ group.group }}
+              </span>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                @for (perm of group.permissions; track perm.id) {
+                  <label
+                    class="flex items-start gap-2.5 p-2.5 rounded-md border transition-colors"
+                    [class.border-zinc-300]="hasPermissionOnRole(selectedRole()!, perm.id)"
+                    [class.bg-zinc-50]="hasPermissionOnRole(selectedRole()!, perm.id)"
+                    [class.border-zinc-200]="!hasPermissionOnRole(selectedRole()!, perm.id)"
+                    [class.cursor-pointer]="auth.hasPermission('permissions:assign')"
+                    [class.opacity-60]="!auth.hasPermission('permissions:assign')">
+                    <input
+                      type="checkbox"
+                      [checked]="hasPermissionOnRole(selectedRole()!, perm.id)"
+                      [disabled]="isTogglingPerm(selectedRole()!.id, perm.id) || !auth.hasPermission('permissions:assign')"
+                      (change)="toggleRolePermission(selectedRole()!, perm.id)"
+                      class="mt-0.5 rounded accent-zinc-900 cursor-pointer"
+                    />
+                    <div class="min-w-0">
+                      <p class="text-xs font-medium text-zinc-800 break-all">{{ perm.key }}</p>
+                      @if (perm.description) {
+                        <p class="text-[11px] text-zinc-400 mt-0.5">{{ perm.description }}</p>
+                      }
+                      @if (isTogglingPerm(selectedRole()!.id, perm.id)) {
+                        <p class="text-[11px] text-zinc-400 mt-0.5">Saving…</p>
+                      }
+                    </div>
+                  </label>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="hidden md:flex flex-1 h-32 items-center justify-center text-zinc-300 text-sm select-none">
+          ← Select a role to manage its permissions
+        </div>
+      }
+    </div>
+
+  </div>
+}

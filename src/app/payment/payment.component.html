@@ -1,0 +1,406 @@
+<!-- ── Loading ──────────────────────────────────────────────────── -->
+@if (loading()) {
+  <div class="min-h-[60vh] flex items-center justify-center">
+    <i class="fa-solid fa-spinner fa-spin text-3xl text-zinc-400"></i>
+  </div>
+}
+
+<!-- ── Not Found ───────────────────────────────────────────────── -->
+@if (!loading() && notFound()) {
+  <div class="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-4">
+    <i class="fa-solid fa-file-circle-xmark text-6xl text-zinc-300"></i>
+    <h1 class="text-2xl font-bold text-zinc-800">Invoice Not Found</h1>
+    <p class="text-zinc-500">The invoice ID in the URL is invalid or has been removed.</p>
+    <a routerLink="/donations" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm">
+      <i class="fa-solid fa-arrow-left"></i> Back to Donations
+    </a>
+  </div>
+}
+
+<!-- ── Main ────────────────────────────────────────────────────── -->
+@if (!loading() && !notFound() && invoice(); as inv) {
+
+  <!-- Top breadcrumb -->
+  <nav class="bg-white border-b border-zinc-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 text-sm text-zinc-500">
+      <a routerLink="/" class="hover:text-zinc-800 transition-colors">Home</a>
+      <i class="fa-solid fa-chevron-right text-[10px]"></i>
+      <a routerLink="/donations" class="hover:text-zinc-800 transition-colors">Donations</a>
+      <i class="fa-solid fa-chevron-right text-[10px]"></i>
+      <span class="text-zinc-800 font-medium">Payment</span>
+    </div>
+  </nav>
+
+  <div class="bg-zinc-50 min-h-[calc(100vh-120px)] py-10 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+
+      <!-- ═══════════════════════════════════════════════════
+           LEFT: Invoice Card + Payment History
+           ═══════════════════════════════════════════════════ -->
+      <div class="lg:col-span-2 space-y-5">
+
+        <!-- Invoice Card -->
+        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+          <!-- Header -->
+          <div class="bg-gradient-to-br from-emerald-700 to-teal-800 px-5 py-5 text-white">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-widest text-emerald-200 mb-1">Invoice</p>
+                <p class="font-mono text-xs text-emerald-300 truncate max-w-[180px]">{{ inv.id }}</p>
+              </div>
+              <span class="flex-shrink-0 text-xs font-semibold border rounded-full px-2.5 py-0.5 {{ statusColor(inv.status) }}">
+                {{ statusLabel(inv.status) }}
+              </span>
+            </div>
+            @if (inv.campaignTitle) {
+              <p class="mt-3 text-base font-bold leading-snug">{{ inv.campaignTitle }}</p>
+            }
+            <p class="mt-1 text-sm text-emerald-200 leading-snug">{{ inv.description }}</p>
+          </div>
+
+          <!-- Amounts -->
+          <div class="px-5 py-4 space-y-2.5 border-b border-zinc-100">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-zinc-500">Invoice Total</span>
+              <span class="font-bold text-zinc-900 text-base">{{ fmt(inv.totalAmount) }}</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-zinc-500 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Verified Paid
+              </span>
+              <span class="font-semibold text-emerald-600">{{ fmt(paid()) }}</span>
+            </div>
+            @if (pending() > 0) {
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-zinc-500 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> Under Review
+                </span>
+                <span class="font-semibold text-amber-600">{{ fmt(pending()) }}</span>
+              </div>
+            }
+            <div class="flex justify-between items-center text-sm pt-1 border-t border-zinc-100">
+              <span class="font-bold text-zinc-800">Due</span>
+              <span class="font-extrabold text-xl" [class.text-rose-600]="due() > 0" [class.text-emerald-600]="due() === 0">
+                {{ fmt(due()) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Progress bar -->
+          <div class="px-5 py-3">
+            <div class="flex justify-between text-xs text-zinc-400 mb-1.5">
+              <span>{{ progressPct() }}% funded</span>
+              <span>{{ fmt(paid()) }} / {{ fmt(inv.totalAmount) }}</span>
+            </div>
+            <div class="h-2 rounded-full bg-zinc-100 overflow-hidden">
+              <div class="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                   [style.width.%]="progressPct()"></div>
+            </div>
+          </div>
+
+          <!-- Donor info (non-anonymous) -->
+          @if (!inv.isAnonymous && (inv.donorName || inv.donorMessage)) {
+            <div class="px-5 pb-4 pt-1 border-t border-zinc-100">
+              @if (inv.donorName) {
+                <p class="text-xs text-zinc-400 mb-0.5">Donor</p>
+                <p class="text-sm font-semibold text-zinc-800">{{ inv.donorName }}</p>
+              }
+              @if (inv.donorMessage) {
+                <p class="text-xs text-zinc-500 mt-1 italic">"{{ inv.donorMessage }}"</p>
+              }
+            </div>
+          }
+
+          <!-- Anonymous notice -->
+          @if (inv.isAnonymous) {
+            <div class="px-5 pb-4 pt-2 border-t border-zinc-100">
+              <p class="text-xs text-zinc-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-user-secret"></i>
+                Anonymous donation — donor information is not stored.
+              </p>
+            </div>
+          }
+
+          <!-- Created at -->
+          <div class="px-5 pb-4 text-xs text-zinc-400">
+            <i class="fa-regular fa-calendar mr-1"></i>
+            Created {{ inv.createdAt | date:'medium' }}
+          </div>
+        </div>
+
+        <!-- Payment History -->
+        @if (inv.payments.length > 0) {
+          <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-3.5 border-b border-zinc-100 flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-zinc-400 text-sm"></i>
+              <h3 class="text-sm font-semibold text-zinc-800">Payment History</h3>
+              <span class="ml-auto text-xs text-zinc-400">{{ inv.payments.length }} transaction{{ inv.payments.length !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="divide-y divide-zinc-50">
+              @for (p of inv.payments; track p.id) {
+                <div class="px-5 py-3.5">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <p class="text-sm font-bold text-zinc-900">{{ fmt(p.amount) }}</p>
+                      <p class="text-xs text-zinc-500 font-mono mt-0.5 truncate">Txn: {{ p.transactionId }}</p>
+                      @if (p.senderBkash) {
+                        <p class="text-xs text-zinc-400 mt-0.5">
+                          <i class="fa-solid fa-mobile-screen-button text-[9px] mr-1"></i>{{ p.senderBkash }}
+                        </p>
+                      }
+                      <p class="text-[10px] text-zinc-400 mt-1">{{ p.createdAt | date:'medium' }}</p>
+                      @if (p.adminNote) {
+                        <p class="text-xs text-zinc-500 mt-1 italic">Note: {{ p.adminNote }}</p>
+                      }
+                    </div>
+                    <span class="flex-shrink-0 text-[11px] font-semibold border rounded-full px-2 py-0.5 {{ paymentStatusColor(p.status) }}">
+                      {{ paymentStatusLabel(p.status) }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           RIGHT: Payment Form
+           ═══════════════════════════════════════════════════ -->
+      <div class="lg:col-span-3">
+
+        @if (inv.status === 'cancelled') {
+          <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm px-6 py-10 flex flex-col items-center text-center gap-3">
+            <i class="fa-solid fa-ban text-5xl text-zinc-300"></i>
+            <h2 class="text-lg font-bold text-zinc-700">Invoice Cancelled</h2>
+            <p class="text-sm text-zinc-500">This invoice has been cancelled and no longer accepts payments.</p>
+          </div>
+        } @else if (inv.status === 'paid') {
+          <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm px-6 py-10 flex flex-col items-center text-center gap-3">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center">
+              <i class="fa-solid fa-circle-check text-3xl text-emerald-500"></i>
+            </div>
+            <h2 class="text-lg font-bold text-zinc-800">Invoice Fully Paid</h2>
+            <p class="text-sm text-zinc-500">Thank you! This invoice has been fully settled.</p>
+            <a routerLink="/donations" class="mt-2 inline-flex items-center gap-2 border border-zinc-200 text-zinc-600 hover:bg-zinc-50 text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+              Back to Donations
+            </a>
+          </div>
+        } @else {
+          <!-- ── Active payment form ──────────────────────────────── -->
+          <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+
+            <!-- Form header -->
+            <div class="px-6 py-5 border-b border-zinc-100">
+              <h2 class="text-lg font-bold text-zinc-900 flex items-center gap-2">
+                <i class="fa-solid fa-mobile-screen-button text-emerald-500"></i>
+                Pay via bKash
+              </h2>
+              <p class="text-sm text-zinc-500 mt-1">Send your payment to our bKash number, then enter the transaction details below.</p>
+            </div>
+
+            @if (!submitted()) {
+              <div class="px-6 py-6 space-y-6">
+
+                <!-- ① bKash instruction box -->
+                <div class="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
+                  <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Step 1 — Send Money
+                  </p>
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-pink-600 flex items-center justify-center flex-shrink-0 shadow">
+                      <span class="text-white font-extrabold text-base leading-none">b</span>
+                    </div>
+                    <div>
+                      <p class="text-xs text-zinc-500">Association bKash Number</p>
+                      <p class="text-xl font-extrabold text-zinc-900 tracking-wide font-mono">{{ bkashNumber }}</p>
+                      <p class="text-xs text-zinc-500 mt-0.5">Account Type: <strong>Personal</strong></p>
+                    </div>
+                  </div>
+                  <ol class="mt-3 space-y-1.5 text-xs text-zinc-600">
+                    <li class="flex items-start gap-2">
+                      <span class="font-bold text-emerald-700 flex-shrink-0">1.</span>
+                      Open your bKash app and tap <strong>Send Money</strong>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="font-bold text-emerald-700 flex-shrink-0">2.</span>
+                      Enter the number: <strong>{{ bkashNumber }}</strong>
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="font-bold text-emerald-700 flex-shrink-0">3.</span>
+                      Enter your desired amount and complete the payment
+                    </li>
+                    <li class="flex items-start gap-2">
+                      <span class="font-bold text-emerald-700 flex-shrink-0">4.</span>
+                      Note the <strong>Transaction ID (Txn ID)</strong> from the confirmation SMS
+                    </li>
+                  </ol>
+                </div>
+
+                <!-- ② Amount -->
+                <div>
+                  <p class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bangladeshi-taka-sign text-[10px]"></i>
+                    Step 2 — Enter Amount You Sent (BDT)
+                  </p>
+                  <!-- Quick amounts -->
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    @for (amt of quickAmounts; track amt) {
+                      <button type="button" (click)="selectQuick(amt)"
+                        class="px-3.5 py-1.5 rounded-lg border text-sm font-semibold transition-all"
+                        [class.bg-emerald-600]="formAmount() === amt && !customAmountStr()"
+                        [class.border-emerald-600]="formAmount() === amt && !customAmountStr()"
+                        [class.text-white]="formAmount() === amt && !customAmountStr()"
+                        [class.bg-white]="formAmount() !== amt || !!customAmountStr()"
+                        [class.border-zinc-300]="formAmount() !== amt || !!customAmountStr()"
+                        [class.text-zinc-700]="formAmount() !== amt || !!customAmountStr()"
+                      >৳{{ amt.toLocaleString() }}</button>
+                    }
+                  </div>
+                  <!-- Custom amount -->
+                  <div class="relative w-full sm:w-56">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 font-semibold text-sm">৳</span>
+                    <input
+                      type="number" min="10" placeholder="Or custom amount…"
+                      [ngModel]="customAmountStr()"
+                      (ngModelChange)="onCustomInput($event)"
+                      class="w-full h-10 pl-7 pr-3 rounded-lg border border-zinc-300 bg-white text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    />
+                  </div>
+                  @if (due() > 0) {
+                    <p class="text-xs text-zinc-400 mt-1.5">
+                      Due amount: <strong class="text-rose-600">{{ fmt(due()) }}</strong> — you can pay any amount (partial payments accepted).
+                    </p>
+                  }
+                </div>
+
+                <!-- ③ Transaction ID -->
+                <div>
+                  <p class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-hashtag text-[10px]"></i>
+                    Step 3 — bKash Transaction ID
+                  </p>
+                  <input
+                    type="text" placeholder="e.g. 8AB2CD4EF5"
+                    [ngModel]="transactionId()"
+                    (ngModelChange)="transactionId.set($event)"
+                    class="w-full h-10 px-3 rounded-lg border border-zinc-300 bg-white text-sm text-zinc-900 font-mono placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  />
+                  <p class="text-xs text-zinc-400 mt-1">Find this in your bKash confirmation SMS.</p>
+                </div>
+
+                <!-- ④ Sender bKash (skip if anonymous) -->
+                @if (!inv.isAnonymous) {
+                  <div>
+                    <p class="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                      <i class="fa-solid fa-mobile-screen-button text-[10px]"></i>
+                      Step 4 — Your bKash Number
+                    </p>
+                    <input
+                      type="tel" placeholder="e.g. 01712-000000"
+                      [ngModel]="senderBkash()"
+                      (ngModelChange)="senderBkash.set($event)"
+                      class="w-full sm:w-64 h-10 px-3 rounded-lg border border-zinc-300 bg-white text-sm text-zinc-900 font-mono placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    />
+                    <p class="text-xs text-zinc-400 mt-1">Required for refund eligibility if there's an issue.</p>
+                  </div>
+                } @else {
+                  <div class="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 flex items-start gap-2.5 text-sm">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
+                    <div>
+                      <p class="font-semibold text-amber-800">Anonymous Payment</p>
+                      <p class="text-amber-700 mt-0.5 text-xs">
+                        Your bKash number is not required for anonymous payments.
+                        However, <strong>anonymous payments are non-refundable</strong> — if there is an issue, we cannot trace or return your payment.
+                      </p>
+                    </div>
+                  </div>
+                }
+
+                <!-- Error -->
+                @if (error()) {
+                  <div class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 flex items-start gap-2 text-sm text-red-700">
+                    <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+                    {{ error() }}
+                  </div>
+                }
+
+                <!-- Submit summary + button -->
+                <div class="pt-2 border-t border-zinc-100 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                  @if (effectiveAmount() >= 10) {
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2 text-sm font-bold text-emerald-800">
+                      Submitting: ৳{{ effectiveAmount().toLocaleString() }}
+                    </div>
+                  }
+                  <button
+                    type="button"
+                    (click)="submit()"
+                    [disabled]="!canSubmit() || submitting()"
+                    class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold px-7 py-2.5 rounded-lg transition-colors shadow-sm">
+                    @if (submitting()) {
+                      <i class="fa-solid fa-spinner fa-spin text-xs"></i> Submitting…
+                    } @else {
+                      <i class="fa-solid fa-paper-plane text-xs"></i> Submit for Verification
+                    }
+                  </button>
+                </div>
+
+                <!-- Security note -->
+                <p class="text-[11px] text-zinc-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-shield-halved text-zinc-300"></i>
+                  Your submission will be manually verified by the committee within 24 hours.
+                  An invoice can receive multiple partial payments.
+                </p>
+
+              </div>
+
+            } @else {
+              <!-- ── Success ─────────────────────────────────────── -->
+              <div class="px-6 py-12 flex flex-col items-center text-center gap-4">
+                <div class="w-20 h-20 rounded-full bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center">
+                  <i class="fa-solid fa-circle-check text-4xl text-emerald-500"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-zinc-900">Payment Submitted!</h3>
+                  <p class="text-sm text-zinc-500 mt-2 max-w-sm mx-auto">
+                    Your transaction ID <strong class="text-zinc-700 font-mono">{{ transactionId() }}</strong> has been recorded.
+                    The committee will verify it within <strong>24 hours</strong>.
+                  </p>
+                  @if (!inv.isAnonymous) {
+                    <p class="text-xs text-zinc-400 mt-2">
+                      Refunds (if any) will be sent to <strong>{{ senderBkash() }}</strong>.
+                    </p>
+                  }
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                  <button type="button" (click)="resetForm()"
+                    class="inline-flex items-center gap-2 border border-zinc-200 text-zinc-600 hover:bg-zinc-50 text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    Submit Another Payment
+                  </button>
+                  <a routerLink="/donations"
+                    class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors">
+                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                    Back to Donations
+                  </a>
+                </div>
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- Help text -->
+        <div class="mt-4 text-xs text-zinc-400 flex items-start gap-2 px-1">
+          <i class="fa-solid fa-circle-info mt-0.5 text-zinc-300"></i>
+          <p>
+            Payments are verified manually within 24 hours. If you experience issues,
+            contact the treasurer via the <a routerLink="/contact" class="underline hover:text-zinc-600">Contact page</a>.
+            This invoice can receive multiple partial payments from different senders.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+}

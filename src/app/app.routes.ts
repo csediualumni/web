@@ -48,6 +48,30 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadComponent: () =>
       import('./admin/admin.component').then((m) => m.AdminComponent),
+    children: [
+      { path: '', redirectTo: 'users', pathMatch: 'full' },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./admin/users/admin-users.component').then(
+            (m) => m.AdminUsersComponent,
+          ),
+      },
+      {
+        path: 'roles',
+        loadComponent: () =>
+          import('./admin/roles/admin-roles.component').then(
+            (m) => m.AdminRolesComponent,
+          ),
+      },
+      {
+        path: 'invoices',
+        loadComponent: () =>
+          import('./admin/invoices/admin-invoices.component').then(
+            (m) => m.AdminInvoicesComponent,
+          ),
+      },
+    ],
   },
   {
     path: 'about',
@@ -77,6 +101,18 @@ export const routes: Routes = [
     path: 'events',
     loadComponent: () =>
       import('./events/events.component').then((m) => m.EventsComponent),
+  },
+  {
+    path: 'donations',
+    loadComponent: () =>
+      import('./donations/donations.component').then(
+        (m) => m.DonationsComponent,
+      ),
+  },
+  {
+    path: 'payment',
+    loadComponent: () =>
+      import('./payment/payment.component').then((m) => m.PaymentComponent),
   },
   {
     path: 'contact',

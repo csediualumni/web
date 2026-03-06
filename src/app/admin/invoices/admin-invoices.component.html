@@ -1,0 +1,199 @@
+<!-- Error banner -->
+@if (error()) {
+  <div class="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 flex items-center justify-between">
+    <p class="text-xs text-red-600">{{ error() }}</p>
+    <button (click)="error.set('')" class="ml-3 text-red-400 hover:text-red-600 cursor-pointer text-sm leading-none">✕</button>
+  </div>
+}
+
+<!-- Header row -->
+<div class="flex items-center justify-between mb-4">
+  <h2 class="text-sm font-semibold text-zinc-900">Invoices</h2>
+  <button (click)="loadInvoices()"
+    class="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-800 border border-zinc-200 rounded-md px-3 py-1.5 transition-colors cursor-pointer">
+    <i class="fa-solid fa-rotate-right" [class.fa-spin]="loading()"></i>
+    Refresh
+  </button>
+</div>
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="flex justify-center items-center py-16">
+    <i class="fa-solid fa-spinner fa-spin text-zinc-400 text-xl"></i>
+  </div>
+}
+
+<!-- Empty state -->
+@if (!loading() && invoices().length === 0) {
+  <div class="flex flex-col items-center justify-center py-16 text-zinc-300 gap-2">
+    <i class="fa-solid fa-file-invoice text-3xl"></i>
+    <p class="text-sm">No invoices found.</p>
+  </div>
+}
+
+<!-- Table -->
+@if (!loading() && invoices().length > 0) {
+  <div class="shad-card overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[900px]">
+        <thead>
+          <tr class="text-left border-b border-zinc-100">
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">ID</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Type</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Description</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider text-right">Total</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider text-right">Paid</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider text-right">Due</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Status</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Donor</th>
+            <th class="px-4 py-2.5 text-xs font-medium text-zinc-400 uppercase tracking-wider">Created</th>
+            <th class="px-4 py-2.5"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-50">
+          @for (inv of invoices(); track inv.id) {
+            <!-- Main row -->
+            <tr class="hover:bg-zinc-50/50 transition-colors">
+              <td class="px-4 py-3 font-mono text-[11px] text-zinc-400">{{ inv.id.slice(0, 8) }}…</td>
+              <td class="px-4 py-3">
+                <span class="inline-block rounded px-2 py-0.5 text-[11px] font-medium bg-zinc-100 text-zinc-600 capitalize">{{ inv.type }}</span>
+              </td>
+              <td class="px-4 py-3 max-w-[180px]">
+                <p class="text-xs text-zinc-800 truncate" [title]="inv.description">{{ inv.description }}</p>
+                @if (inv.campaignTitle) {
+                  <p class="text-[11px] text-zinc-400 truncate">{{ inv.campaignTitle }}</p>
+                }
+              </td>
+              <td class="px-4 py-3 text-xs text-zinc-800 text-right font-medium">{{ fmt(inv.totalAmount) }}</td>
+              <td class="px-4 py-3 text-xs text-emerald-700 text-right font-medium">{{ fmt(invoicePaid(inv)) }}</td>
+              <td class="px-4 py-3 text-xs text-right font-medium"
+                  [class.text-red-600]="invoiceDue(inv) > 0"
+                  [class.text-zinc-400]="invoiceDue(inv) === 0">{{ fmt(invoiceDue(inv)) }}</td>
+              <td class="px-4 py-3">
+                @if (auth.hasPermission('invoices:write')) {
+                  <select
+                    [value]="inv.status"
+                    [disabled]="updatingInvoiceId() === inv.id"
+                    (change)="setInvoiceStatus(inv, $any($event.target).value)"
+                    class="text-[11px] rounded border px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400"
+                    [ngClass]="invoiceStatusClass(inv.status)">
+                    <option value="pending">Pending</option>
+                    <option value="partial">Partial</option>
+                    <option value="paid">Paid</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="refunded">Refunded</option>
+                  </select>
+                } @else {
+                  <span class="inline-block rounded border px-2 py-0.5 text-[11px] font-medium capitalize" [ngClass]="invoiceStatusClass(inv.status)">{{ inv.status }}</span>
+                }
+              </td>
+              <td class="px-4 py-3">
+                @if (inv.isAnonymous) {
+                  <span class="text-[11px] text-zinc-400 flex items-center gap-1"><i class="fa-solid fa-user-secret"></i> Anonymous</span>
+                } @else {
+                  <p class="text-xs text-zinc-700">{{ inv.donorName ?? '—' }}</p>
+                }
+              </td>
+              <td class="px-4 py-3 text-[11px] text-zinc-400 whitespace-nowrap">{{ inv.createdAt | date:'d MMM y, HH:mm' }}</td>
+              <td class="px-4 py-3">
+                <button
+                  type="button"
+                  (click)="toggleInvoice(inv.id)"
+                  class="text-[11px] text-zinc-500 hover:text-zinc-800 flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap">
+                  <i class="fa-solid"
+                     [class.fa-chevron-down]="expandedInvoiceId() !== inv.id"
+                     [class.fa-chevron-up]="expandedInvoiceId() === inv.id"></i>
+                  {{ inv.payments.length }} payment{{ inv.payments.length === 1 ? '' : 's' }}
+                </button>
+              </td>
+            </tr>
+
+            <!-- Expanded payments sub-table -->
+            @if (expandedInvoiceId() === inv.id) {
+              <tr>
+                <td colspan="10" class="px-0 py-0 bg-zinc-50/70 border-t border-zinc-100">
+                  @if (inv.payments.length === 0) {
+                    <p class="text-xs text-zinc-400 px-8 py-4">No payment submissions yet.</p>
+                  } @else {
+                    <table class="w-full text-xs min-w-[800px]">
+                      <thead>
+                        <tr class="text-left border-b border-zinc-100">
+                          <th class="pl-10 pr-4 py-2 text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Amount</th>
+                          <th class="px-4 py-2 text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Transaction ID</th>
+                          <th class="px-4 py-2 text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Sender bKash</th>
+                          <th class="px-4 py-2 text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Submitted</th>
+                          <th class="px-4 py-2 text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Status</th>
+                          <th class="px-4 py-2 text-[11px] font-medium text-zinc-400 uppercase tracking-wider">Admin Note</th>
+                          <th class="px-4 py-2"></th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-zinc-100">
+                        @for (pay of inv.payments; track pay.id) {
+                          <tr [class.opacity-60]="updatingPaymentId() === pay.id">
+                            <td class="pl-10 pr-4 py-2.5 font-semibold text-zinc-800">{{ fmt(pay.amount) }}</td>
+                            <td class="px-4 py-2.5 font-mono text-zinc-600">{{ pay.transactionId }}</td>
+                            <td class="px-4 py-2.5 text-zinc-500">
+                              @if (pay.senderBkash) { {{ pay.senderBkash }} }
+                              @else { <em class="text-zinc-300">— anonymous</em> }
+                            </td>
+                            <td class="px-4 py-2.5 text-zinc-400 whitespace-nowrap">{{ pay.createdAt | date:'d MMM y, HH:mm' }}</td>
+                            <td class="px-4 py-2.5">
+                              @if (auth.hasPermission('invoices:write')) {
+                                <select
+                                  [value]="getPaymentDraftStatus(pay.id, pay.status)"
+                                  [disabled]="updatingPaymentId() === pay.id"
+                                  (change)="setPaymentDraftStatus(pay.id, $any($event.target).value)"
+                                  class="text-[11px] rounded border px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 min-w-[90px]"
+                                  [ngClass]="paymentStatusClass(getPaymentDraftStatus(pay.id, pay.status))">
+                                  <option value="pending">Pending</option>
+                                  <option value="verified">Verified</option>
+                                  <option value="rejected">Rejected</option>
+                                  <option value="refunded">Refunded</option>
+                                </select>
+                              } @else {
+                                <span class="inline-block rounded px-2 py-0.5 text-[11px] font-medium capitalize" [ngClass]="paymentStatusClass(pay.status)">{{ pay.status }}</span>
+                              }
+                            </td>
+                            <td class="px-4 py-2.5">
+                              @if (auth.hasPermission('invoices:write')) {
+                                <input
+                                  type="text"
+                                  [value]="getPaymentNote(pay.id) || (pay.adminNote ?? '')"
+                                  (input)="setPaymentNote(pay.id, $any($event.target).value)"
+                                  placeholder="Add note…"
+                                  class="w-full min-w-[130px] h-7 px-2 rounded border border-zinc-200 bg-white text-[11px] text-zinc-700 placeholder:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+                                />
+                              } @else {
+                                <span class="text-zinc-400">{{ pay.adminNote ?? '—' }}</span>
+                              }
+                            </td>
+                            <td class="px-4 py-2.5">
+                              @if (auth.hasPermission('invoices:write')) {
+                                <button
+                                  type="button"
+                                  (click)="savePaymentStatus(inv, pay)"
+                                  [disabled]="updatingPaymentId() === pay.id || (!isPaymentDirty(pay) && !getPaymentNote(pay.id))"
+                                  class="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded border border-zinc-200 text-zinc-600 hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer whitespace-nowrap">
+                                  @if (updatingPaymentId() === pay.id) {
+                                    <i class="fa-solid fa-spinner fa-spin"></i>
+                                  } @else {
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                  }
+                                  Save
+                                </button>
+                              }
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

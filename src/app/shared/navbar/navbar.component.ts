@@ -29,6 +29,7 @@ export class NavbarComponent {
     { label: 'Alumni', path: '/alumni', icon: 'fa-users' },
     { label: 'Committee', path: '/committee', icon: 'fa-crown' },
     { label: 'Events', path: '/events', icon: 'fa-calendar-days' },
+    { label: 'Donate', path: '/donations', icon: 'fa-hand-holding-heart' },
     { label: 'Gallery', path: '/gallery', icon: 'fa-images' },
     { label: 'Contact', path: '/contact', icon: 'fa-envelope' },
   ];
