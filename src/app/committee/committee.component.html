@@ -1,0 +1,232 @@
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<section class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
+  <!-- Grid overlay -->
+  <div class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+  <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-indigo-400/15 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/40 text-amber-300 text-xs font-medium px-3 py-1 rounded-full mb-5">
+        <i class="fa-solid fa-crown text-[10px]"></i>
+        Alumni Committee
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-5">
+        Meet the People<br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-yellow-400">Behind the Network.</span>
+      </h1>
+      <p class="text-zinc-400 text-lg leading-relaxed">
+        The CSE DIU Alumni Association is led by elected alumni who volunteer their time to serve the community, organise events, and build lasting connections between all batches.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Current Committee ──────────────────────────────────────────── -->
+@if (current(); as cur) {
+  <section class="py-14 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Section heading -->
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            Currently Serving
+          </div>
+          <h2 class="text-3xl font-extrabold text-zinc-900 tracking-tight">
+            Committee {{ cur.committee.term }}
+          </h2>
+          <p class="text-zinc-500 mt-1 text-sm italic">{{ cur.committee.theme }}</p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 self-start sm:self-auto bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <i class="fa-solid fa-circle-check text-emerald-500"></i>
+          Active Term
+        </span>
+      </div>
+
+      <!-- President spotlight -->
+      @for (entry of sortedMembers(cur.members).slice(0, 1); track entry.alumnus.id) {
+        <div class="mb-8 rounded-2xl bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/70 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 shadow-sm">
+          <!-- Avatar -->
+          <a [routerLink]="['/alumni', entry.alumnus.id]" class="flex-shrink-0">
+            <div [class]="'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' + entry.alumnus.color">
+              {{ entry.alumnus.initials }}
+            </div>
+          </a>
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="inline-flex items-center gap-1.5 bg-amber-400/20 border border-amber-400/50 text-amber-800 text-xs font-bold px-3 py-0.5 rounded-full mb-2">
+              <i class="fa-solid fa-crown text-amber-600 text-[10px]"></i>
+              {{ entry.designation }}
+            </div>
+            <h3 class="text-2xl font-bold text-zinc-900">{{ entry.alumnus.name }}</h3>
+            <p class="text-zinc-600 mt-0.5">{{ entry.alumnus.role }} <span class="text-zinc-400">at</span> {{ entry.alumnus.company }}</p>
+            <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-zinc-500">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-layer-group text-[10px] text-zinc-400"></i>
+                Batch {{ entry.alumnus.batch }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-location-dot text-[10px] text-zinc-400"></i>
+                {{ entry.alumnus.city }}, {{ entry.alumnus.country }}
+              </span>
+            </div>
+          </div>
+          <!-- CTA -->
+          <a [routerLink]="['/alumni', entry.alumnus.id]"
+             class="flex-shrink-0 inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm">
+            View Profile
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+      }
+
+      <!-- Rest of the current committee grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        @for (entry of sortedMembers(cur.members).slice(1); track entry.alumnus.id) {
+          <a [routerLink]="['/alumni', entry.alumnus.id]"
+             class="group flex flex-col bg-white border border-zinc-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer">
+            <!-- top row: avatar + designation -->
+            <div class="flex items-start gap-3 mb-3">
+              <div [class]="'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' + entry.alumnus.color">
+                {{ entry.alumnus.initials }}
+              </div>
+              <div class="min-w-0 flex-1 pt-0.5">
+                <span class="inline-block text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-0.5 leading-none">
+                  {{ entry.designation }}
+                </span>
+              </div>
+            </div>
+            <!-- Info -->
+            <h4 class="text-sm font-bold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight">{{ entry.alumnus.name }}</h4>
+            <p class="text-xs text-zinc-500 mt-0.5 truncate">{{ entry.alumnus.role }}</p>
+            <p class="text-xs text-zinc-400 truncate">{{ entry.alumnus.company }}</p>
+            <!-- Footer -->
+            <div class="flex items-center justify-between mt-auto pt-3 border-t border-zinc-100">
+              <span class="text-[11px] text-zinc-400 flex items-center gap-1">
+                <i class="fa-solid fa-layer-group text-[9px]"></i> Batch {{ entry.alumnus.batch }}
+              </span>
+              <span class="text-[11px] text-blue-500 group-hover:underline flex items-center gap-1">
+                View <i class="fa-solid fa-arrow-right text-[9px]"></i>
+              </span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<!-- ── Divider ────────────────────────────────────────────────────── -->
+<div class="bg-zinc-50 border-t border-zinc-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center gap-3">
+      <i class="fa-solid fa-clock-rotate-left text-zinc-400"></i>
+      <h2 class="text-lg font-bold text-zinc-700">Past Committees</h2>
+      <span class="text-xs text-zinc-400 font-medium">— click a term to expand</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Past Committees ─────────────────────────────────────────────── -->
+<section class="bg-zinc-50 pb-16 lg:pb-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+
+    @for (resolved of past(); track resolved.committee.id) {
+      <!-- Accordion panel -->
+      <div class="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm transition-shadow"
+           [class.shadow-md]="isExpanded(resolved.committee.id)">
+
+        <!-- Panel header / toggle -->
+        <button
+          type="button"
+          class="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-zinc-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          (click)="togglePast(resolved.committee.id)"
+          [attr.aria-expanded]="isExpanded(resolved.committee.id)">
+          <div class="flex items-center gap-4 min-w-0">
+            <!-- Year badge -->
+            <div class="flex-shrink-0 w-14 h-14 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col items-center justify-center">
+              <i class="fa-solid fa-users text-zinc-400 text-sm mb-1"></i>
+              <span class="text-[10px] font-bold text-zinc-500 leading-none">{{ resolved.committee.term.split('–')[0] }}</span>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-base font-bold text-zinc-900">{{ resolved.committee.sessionLabel }}</h3>
+              <p class="text-xs text-zinc-500 mt-0.5 italic">{{ resolved.committee.theme }}</p>
+              <p class="text-xs text-zinc-400 mt-0.5">{{ resolved.committee.members.length }} members</p>
+            </div>
+          </div>
+          <!-- Expand icon -->
+          <div class="flex-shrink-0 ml-4 w-8 h-8 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-center transition-colors"
+               [class.bg-blue-50]="isExpanded(resolved.committee.id)"
+               [class.border-blue-200]="isExpanded(resolved.committee.id)">
+            <i class="fa-solid fa-chevron-down text-zinc-400 text-xs transition-transform duration-200"
+               [class.rotate-180]="isExpanded(resolved.committee.id)"
+               [class.text-blue-500]="isExpanded(resolved.committee.id)"></i>
+          </div>
+        </button>
+
+        <!-- Panel body -->
+        @if (isExpanded(resolved.committee.id)) {
+          <div class="border-t border-zinc-100 px-6 py-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              @for (entry of sortedMembers(resolved.members); track entry.alumnus.id) {
+                <a [routerLink]="['/alumni', entry.alumnus.id]"
+                   class="group flex items-start gap-3 p-4 rounded-xl border border-zinc-100 hover:border-blue-300 hover:bg-blue-50/40 transition-all duration-200 cursor-pointer">
+                  <!-- Avatar -->
+                  <div [class]="'w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 group-hover:scale-105 transition-transform ' + entry.alumnus.color">
+                    {{ entry.alumnus.initials }}
+                  </div>
+                  <!-- Info -->
+                  <div class="min-w-0 flex-1">
+                    <span class="inline-block text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mb-1 leading-none">
+                      {{ entry.designation }}
+                    </span>
+                    <p class="text-sm font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight truncate">{{ entry.alumnus.name }}</p>
+                    <p class="text-xs text-zinc-500 truncate">{{ entry.alumnus.role }}</p>
+                    <p class="text-[11px] text-zinc-400 flex items-center gap-1 mt-0.5">
+                      <i class="fa-solid fa-layer-group text-[9px]"></i> Batch {{ entry.alumnus.batch }}
+                    </p>
+                  </div>
+                  <!-- Arrow -->
+                  <i class="fa-solid fa-arrow-right text-[10px] text-zinc-300 group-hover:text-blue-400 mt-1 flex-shrink-0 transition-colors"></i>
+                </a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (past().length === 0) {
+      <div class="flex flex-col items-center justify-center gap-4 py-24 text-center">
+        <i class="fa-solid fa-clock-rotate-left text-5xl text-zinc-300"></i>
+        <p class="text-zinc-500 text-base">No past committee records found.</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ── CTA Banner ─────────────────────────────────────────────────── -->
+<section class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-16">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+    <i class="fa-solid fa-handshake text-3xl text-blue-400 mb-4"></i>
+    <h2 class="text-3xl font-extrabold tracking-tight mb-3">Want to serve our alumni community?</h2>
+    <p class="text-zinc-400 text-base mb-8">
+      Committee elections are held every two years. All registered alumni are eligible to nominate themselves or fellow members.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a routerLink="/alumni"
+         class="inline-flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 font-semibold px-7 py-3 rounded-lg transition-colors text-sm">
+        <i class="fa-solid fa-users"></i>
+        Browse Alumni Directory
+      </a>
+      <a routerLink="/contact"
+         class="inline-flex items-center justify-center gap-2 bg-blue-800/60 hover:bg-blue-700/60 border border-blue-700/50 text-blue-100 font-semibold px-7 py-3 rounded-lg transition-colors text-sm">
+        <i class="fa-solid fa-envelope"></i>
+        Contact the Committee
+      </a>
+    </div>
+  </div>
+</section>

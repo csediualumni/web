@@ -67,6 +67,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'committee',
+    loadComponent: () =>
+      import('./committee/committee.component').then(
+        (m) => m.CommitteeComponent,
+      ),
+  },
+  {
     path: 'events',
     loadComponent: () =>
       import('./events/events.component').then((m) => m.EventsComponent),
