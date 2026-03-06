@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminService } from '../core/admin.service';
 
 interface ContactForm {
   name: string;
@@ -58,7 +59,7 @@ export class ContactComponent {
     {
       icon: 'fa-clock',
       label: 'Office Hours',
-      lines: ['Sunday – Thursday', '9:00 AM – 5:00 PM'],
+      lines: ['Always Open'],
       link: null,
     },
   ];
@@ -84,6 +85,8 @@ export class ContactComponent {
 
   openFaqs = signal<number[]>([]);
 
+  constructor(private adminService: AdminService) {}
+
   toggleFaq(index: number) {
     this.openFaqs.update((open) =>
       open.includes(index) ? open.filter((i) => i !== index) : [...open, index],
@@ -106,11 +109,16 @@ export class ContactComponent {
       return;
     }
     this.submitting.set(true);
-    // Simulate API call
-    setTimeout(() => {
-      this.submitting.set(false);
-      this.submitted.set(true);
-      this.form = { name: '', email: '', subject: '', message: '' };
-    }, 1000);
+    this.adminService.submitContactForm({ name: name.trim(), email: email.trim(), subject, message: message.trim() }).subscribe({
+      next: () => {
+        this.submitting.set(false);
+        this.submitted.set(true);
+        this.form = { name: '', email: '', subject: '', message: '' };
+      },
+      error: () => {
+        this.submitting.set(false);
+        this.error.set('Failed to send your message. Please try again later.');
+      },
+    });
   }
 }

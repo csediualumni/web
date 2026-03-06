@@ -40,12 +40,35 @@ export interface Permission {
   group: string | null;
 }
 
+export type ContactTicketStatus = 'open' | 'in_progress' | 'resolved';
+
+export interface ContactTicketComment {
+  id: string;
+  ticketId: string;
+  authorName: string;
+  body: string;
+  createdAt: string;
+}
+
+export interface ContactTicket {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: ContactTicketStatus;
+  comments: ContactTicketComment[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private readonly adminBase = `${environment.apiUrl}/admin`;
   private readonly rolesBase = `${environment.apiUrl}/roles`;
   private readonly permsBase = `${environment.apiUrl}/permissions`;
   private readonly newsletterBase = `${environment.apiUrl}/newsletter`;
+  private readonly contactBase = `${environment.apiUrl}/contact`;
 
   constructor(private http: HttpClient) {}
 
@@ -124,5 +147,31 @@ export class AdminService {
 
   sendNewsletter(subject: string, htmlBody: string): Observable<{ sent: number }> {
     return this.http.post<{ sent: number }>(`${this.adminBase}/newsletter/send`, { subject, htmlBody });
+  }
+
+  // ── Contact Tickets (public submit) ────────────────────────
+  submitContactForm(data: { name: string; email: string; subject: string; message: string }): Observable<ContactTicket> {
+    return this.http.post<ContactTicket>(this.contactBase, data);
+  }
+
+  // ── Contact Tickets (admin) ────────────────────────────────
+  listContactTickets(): Observable<ContactTicket[]> {
+    return this.http.get<ContactTicket[]>(`${this.adminBase}/contact/tickets`);
+  }
+
+  getContactTicket(id: string): Observable<ContactTicket> {
+    return this.http.get<ContactTicket>(`${this.adminBase}/contact/tickets/${id}`);
+  }
+
+  updateContactTicketStatus(id: string, status: ContactTicketStatus): Observable<ContactTicket> {
+    return this.http.patch<ContactTicket>(`${this.adminBase}/contact/tickets/${id}/status`, { status });
+  }
+
+  addContactTicketComment(id: string, body: string, authorName: string): Observable<ContactTicket> {
+    return this.http.post<ContactTicket>(`${this.adminBase}/contact/tickets/${id}/comments`, { body, authorName });
+  }
+
+  deleteContactTicket(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/contact/tickets/${id}`);
   }
 }

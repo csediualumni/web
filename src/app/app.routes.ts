@@ -67,6 +67,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/newsletter/admin-newsletter.component').then((m) => m.AdminNewsletterComponent),
       },
+      {
+        path: 'contact',
+        loadComponent: () =>
+          import('./admin/contact/admin-contact.component').then((m) => m.AdminContactComponent),
+      },
     ],
   },
   {

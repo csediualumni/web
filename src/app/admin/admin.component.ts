@@ -18,6 +18,7 @@ export class AdminComponent {
     { label: 'Roles & Permissions', path: 'roles', icon: 'fa-shield-halved' },
     { label: 'Invoices', path: 'invoices', icon: 'fa-file-invoice-dollar' },
     { label: 'Newsletter', path: 'newsletter', icon: 'fa-envelope' },
+    { label: 'Contact Tickets', path: 'contact', icon: 'fa-headset' },
   ];
 
   constructor(
