@@ -20,7 +20,7 @@ export class AboutComponent {
     {
       year: '2002',
       title: 'Department Founded',
-      desc: 'The Department of Computer Science & Engineering was established at Daffodil International University, launching the first batch of CSE students.',
+      desc: 'The Department of Computer Science & Engineering was established at Dhaka International University, launching the first batch of CSE students.',
     },
     {
       year: '2008',

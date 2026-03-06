@@ -26,7 +26,7 @@ export class GalleryComponent {
 
   readonly items: GalleryItem[] = [
     { id: 1,  title: 'Grand Reunion 2023',         category: 'Reunion',      year: 2023, placeholder: 'fa-people-group',      color: 'bg-zinc-200', description: 'Annual grand reunion of CSE DIU alumni gathered from across the country and abroad.' },
-    { id: 2,  title: 'Convocation Ceremony 2023',  category: 'Convocation',  year: 2023, placeholder: 'fa-graduation-cap',    color: 'bg-sky-100',  description: 'Proud graduates receiving their degrees at the 2023 Daffodil International University convocation.' },
+    { id: 2,  title: 'Convocation Ceremony 2023',  category: 'Convocation',  year: 2023, placeholder: 'fa-graduation-cap',    color: 'bg-sky-100',  description: 'Proud graduates receiving their degrees at the 2023 Dhaka International University convocation.' },
     { id: 3,  title: 'AI/ML Workshop 2023',         category: 'Workshop',     year: 2023, placeholder: 'fa-brain',             color: 'bg-violet-100', description: 'Hands-on machine learning workshop co-organised by alumni from top tech firms.' },
     { id: 4,  title: 'Cricket League 2023',         category: 'Sports',       year: 2023, placeholder: 'fa-baseball-bat-ball', color: 'bg-emerald-100', description: 'Alumni vs students cricket match as part of the annual sports day festivities.' },
     { id: 5,  title: 'Cultural Night 2022',         category: 'Cultural',     year: 2022, placeholder: 'fa-music',             color: 'bg-rose-100', description: 'A vibrant evening of performances, music, and celebration by CSE DIU alumni.' },

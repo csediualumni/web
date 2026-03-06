@@ -60,7 +60,7 @@ export class AlumniService {
         'Samsung R&D "Outstanding Engineer" award 2023',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2018 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2018 },
       ],
       experience: [
         { role: 'Senior Software Engineer', company: 'Samsung R&D Bangladesh', from: '2021', to: 'Present' },
@@ -91,7 +91,7 @@ export class AlumniService {
       ],
       education: [
         { degree: 'M.Sc. in Computer Science', institution: 'Stanford University', year: 2022 },
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2019 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2019 },
       ],
       experience: [
         { role: 'ML Engineer', company: 'Google', from: '2022', to: 'Present' },
@@ -122,7 +122,7 @@ export class AlumniService {
         'Tech lead for Thoughtworks APAC internal platform initiative',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2016 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2016 },
       ],
       experience: [
         { role: 'DevOps Lead', company: 'Thoughtworks', from: '2020', to: 'Present' },
@@ -152,7 +152,7 @@ export class AlumniService {
       ],
       education: [
         { degree: 'PG Diploma in Product Management', institution: 'University of Toronto', year: 2022 },
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2020 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2020 },
       ],
       experience: [
         { role: 'Product Manager', company: 'Shopify', from: '2023', to: 'Present' },
@@ -184,7 +184,7 @@ export class AlumniService {
       ],
       education: [
         { degree: 'M.Sc. in IT Security', institution: 'TU Berlin', year: 2020 },
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2017 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2017 },
       ],
       experience: [
         { role: 'Security Analyst', company: 'SAP SE', from: '2021', to: 'Present' },
@@ -214,7 +214,7 @@ export class AlumniService {
         'Grace Hopper Conference scholarship recipient 2023',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2021 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2021 },
       ],
       experience: [
         { role: 'Full-Stack Developer', company: 'bKash Limited', from: '2021', to: 'Present' },
@@ -243,7 +243,7 @@ export class AlumniService {
         '200+ SME clients across Bangladesh and Nepal',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2015 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2015 },
       ],
       experience: [
         { role: 'Co-Founder & CTO', company: 'TechVenture BD', from: '2020', to: 'Present' },
@@ -274,7 +274,7 @@ export class AlumniService {
         'Speaker, PyData Singapore 2023',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2022 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2022 },
       ],
       experience: [
         { role: 'Data Scientist', company: 'Grab', from: '2022', to: 'Present' },
@@ -304,7 +304,7 @@ export class AlumniService {
       ],
       education: [
         { degree: 'PhD in Computer Science (ongoing)', institution: 'MIT', year: 2026 },
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2014 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2014 },
       ],
       experience: [
         { role: 'PhD Researcher', company: 'MIT CSAIL', from: '2020', to: 'Present' },
@@ -335,7 +335,7 @@ export class AlumniService {
         'Winner, DIU Hackathon 2022',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2023 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2023 },
       ],
       experience: [
         { role: 'Junior Developer', company: 'Atlassian', from: '2023', to: 'Present' },
@@ -363,7 +363,7 @@ export class AlumniService {
         'Microsoft MVP nominee 2025',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2018 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2018 },
       ],
       experience: [
         { role: 'Cloud Architect', company: 'Microsoft', from: '2022', to: 'Present' },
@@ -392,7 +392,7 @@ export class AlumniService {
         'Speaker, FinTech Futures Manchester 2024',
       ],
       education: [
-        { degree: 'B.Sc. in CSE', institution: 'Daffodil International University', year: 2020 },
+        { degree: 'B.Sc. in CSE', institution: 'Dhaka International University', year: 2020 },
       ],
       experience: [
         { role: 'Fintech Engineer', company: 'Revolut', from: '2021', to: 'Present' },

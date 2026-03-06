@@ -21,6 +21,13 @@ export class LoginComponent {
   serverError = signal('');
   showPassword = signal(false);
 
+  // Forgot password
+  forgotMode = signal(false);
+  forgotEmail = signal('');
+  forgotLoading = signal(false);
+  forgotSuccess = signal('');
+  forgotError = signal('');
+
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
@@ -63,4 +70,24 @@ export class LoginComponent {
   signInWithGoogle(): void {
     this.auth.redirectToGoogle();
   }
-}
+
+  sendRecovery(): void {
+    const email = this.forgotEmail().trim();
+    if (!email) {
+      this.forgotError.set('Please enter your email address.');
+      return;
+    }
+    this.forgotLoading.set(true);
+    this.forgotError.set('');
+    this.forgotSuccess.set('');
+    this.auth.forgotPassword(email).subscribe({
+      next: (res) => {
+        this.forgotLoading.set(false);
+        this.forgotSuccess.set(res.message);
+      },
+      error: () => {
+        this.forgotLoading.set(false);
+        this.forgotError.set('Something went wrong. Please try again.');
+      },
+    });
+  }}

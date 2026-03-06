@@ -45,6 +45,14 @@ export class AuthService {
       .pipe(tap((res) => this.persistSession(res)));
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/reset-password`, { token, password });
+  }
+
   // ──────────────────────────────────────────────
   // Google OAuth
   // ──────────────────────────────────────────────

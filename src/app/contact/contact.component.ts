@@ -38,23 +38,22 @@ export class ContactComponent {
       icon: 'fa-location-dot',
       label: 'Address',
       lines: [
-        'Dept. of CSE, Daffodil International University',
-        'Daffodil Smart City, Birulia, Savar',
-        'Dhaka-1216, Bangladesh',
+        'Department of Computer Science & Engineering (CSE), Dhaka International University',
+        'Satarkul, Badda, Dhaka-1212, Bangladesh',
       ],
       link: null,
     },
     {
       icon: 'fa-envelope',
       label: 'Email',
-      lines: ['alumni@cse.diu.edu.bd'],
-      link: 'mailto:alumni@cse.diu.edu.bd',
+      lines: ['support@csediualumni.com'],
+      link: 'mailto:support@csediualumni.com',
     },
     {
       icon: 'fa-phone',
       label: 'Phone',
-      lines: ['+880 17XX-XXXXXX'],
-      link: 'tel:+88017XXXXXXXX',
+      lines: ['+880 1624-350761'],
+      link: 'tel:+8801624350761',
     },
     {
       icon: 'fa-clock',
@@ -67,7 +66,7 @@ export class ContactComponent {
   readonly faqs = [
     {
       q: 'Who can join the CSE DIU Alumni Network?',
-      a: 'Any graduate or current student of the CSE department at Daffodil International University can register for free.',
+      a: 'Any graduate or current student of the CSE department at Dhaka International University can register for free.',
     },
     {
       q: 'How do I update my profile information?',
@@ -75,7 +74,7 @@ export class ContactComponent {
     },
     {
       q: 'I forgot my password. What should I do?',
-      a: 'Use the "Sign in with Google" option or contact us at alumni@cse.diu.edu.bd and we will help you recover access.',
+      a: 'Use the "Sign in with Google" option or contact us at support@csediualumni.com and we will help you recover access.',
     },
     {
       q: 'How can I post a job opportunity for alumni?',

@@ -64,4 +64,8 @@ export class HomeComponent {
   get ctaLabel(): string {
     return this.auth.isLoggedIn() ? 'Go to Dashboard' : 'Join the Network';
   }
+
+  get ctaIcon(): string {
+    return this.auth.isLoggedIn() ? 'fa-gauge' : 'fa-user-plus';
+  }
 }

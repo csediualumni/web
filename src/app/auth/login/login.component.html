@@ -1,6 +1,14 @@
 <div class="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
   <div class="w-full max-w-sm">
 
+    <!-- Back to Home -->
+    <div class="mb-4">
+      <a routerLink="/" class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors">
+        <i class="fa-solid fa-arrow-left text-xs"></i>
+        Back to Home
+      </a>
+    </div>
+
     <!-- Header -->
     <div class="text-center mb-6">
       <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 mb-4">
@@ -83,7 +91,12 @@
 
         <!-- Password -->
         <div class="space-y-1.5">
-          <label for="password" class="shad-label">Password</label>
+          <div class="flex items-center justify-between">
+            <label for="password" class="shad-label">Password</label>
+            <button type="button" (click)="forgotMode.set(true)" class="text-xs text-blue-600 hover:text-blue-800 transition-colors">
+              Forgot password?
+            </button>
+          </div>
           <div class="relative">
             <input
               id="password"
@@ -127,6 +140,58 @@
       </form>
 
     </div>
+
+    <!-- Forgot password panel -->
+    @if (forgotMode()) {
+      <div class="mt-4 shad-card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-zinc-900">Recover your password</h2>
+          <button type="button" (click)="forgotMode.set(false); forgotSuccess.set(''); forgotError.set('')" class="text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Close">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
+        @if (forgotSuccess()) {
+          <div class="flex items-start gap-2 px-3 py-2.5 rounded-md bg-emerald-50 border border-emerald-200 mb-3">
+            <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 text-sm"></i>
+            <p class="text-xs text-emerald-700">{{ forgotSuccess() }}</p>
+          </div>
+          <p class="text-xs text-zinc-500">Didn't receive it? Check your spam folder or
+            <a href="mailto:support@csediualumni.com" class="text-blue-600 hover:underline">contact support</a>.
+          </p>
+        } @else {
+          <p class="text-xs text-zinc-500 mb-3">
+            Enter your email and we'll send you a recovery link. If you signed up with Google, use
+            "Continue with Google" instead.
+          </p>
+          <div class="space-y-3">
+            <input
+              type="email"
+              [value]="forgotEmail()"
+              (input)="forgotEmail.set($any($event.target).value)"
+              placeholder="you@example.com"
+              class="shad-input"
+            />
+            @if (forgotError()) {
+              <p class="text-xs text-red-500">{{ forgotError() }}</p>
+            }
+            <button
+              type="button"
+              (click)="sendRecovery()"
+              [disabled]="forgotLoading()"
+              class="shad-btn-primary w-full"
+            >
+              @if (forgotLoading()) {
+                <i class="fa-solid fa-spinner fa-spin mr-2"></i>
+                Sending…
+              } @else {
+                Send recovery link
+              }
+            </button>
+          </div>
+        }
+      </div>
+    }
 
     <!-- Register link -->
     <p class="mt-4 text-center text-sm text-zinc-500">
