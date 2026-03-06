@@ -1,0 +1,324 @@
+<div class="min-h-screen bg-zinc-50">
+
+  <!-- ── Page header ───────────────────────────────────────────── -->
+  <div class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-sm text-zinc-400 mb-6">
+        <a routerLink="/dashboard" class="hover:text-white transition-colors">Dashboard</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-white font-medium">Edit Profile</span>
+      </nav>
+
+      <div class="flex items-center gap-5">
+        <!-- Avatar initials -->
+        <div class="w-20 h-20 rounded-2xl bg-blue-600 ring-4 ring-white/20 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0 select-none">
+          {{ (form?.get('displayName')?.value || email)?.[0]?.toUpperCase() || '?' }}
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Edit Your Profile</h1>
+          <p class="text-zinc-400 text-sm mt-1">{{ email }}</p>
+        </div>
+
+        <!-- Completion ring -->
+        <div class="ml-auto hidden sm:flex flex-col items-center gap-1 flex-shrink-0" title="Profile completion">
+          <div class="relative w-14 h-14">
+            <svg class="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+              <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>
+              <circle cx="28" cy="28" r="22" fill="none" stroke="white" stroke-width="5"
+                      stroke-dasharray="138.23"
+                      [attr.stroke-dashoffset]="138.23 - (profileCompletion / 100) * 138.23"
+                      stroke-linecap="round"/>
+            </svg>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold">{{ profileCompletion }}%</span>
+          </div>
+          <p class="text-[10px] text-zinc-400">Complete</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast notifications ───────────────────────────────────── -->
+  @if (saveSuccess()) {
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5">
+      <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm">
+        <i class="fa-solid fa-circle-check text-emerald-500"></i>
+        Profile saved successfully!
+      </div>
+    </div>
+  }
+  @if (saveError()) {
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5">
+      <div class="flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
+        <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+        {{ saveError() }}
+      </div>
+    </div>
+  }
+
+  <!-- ── Loading skeleton ──────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+      @for (_ of [1,2,3]; track $index) {
+        <div class="shad-card rounded-2xl p-6 animate-pulse">
+          <div class="h-5 w-40 bg-zinc-200 rounded mb-5"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="h-10 bg-zinc-100 rounded-lg"></div>
+            <div class="h-10 bg-zinc-100 rounded-lg"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── Form ──────────────────────────────────────────────────── -->
+  @if (!loading()) {
+    <form [formGroup]="form" (ngSubmit)="save()" class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+
+      <!-- ── 1. Basic Information ──────────────────────────────── -->
+      <div class="shad-card rounded-2xl p-6">
+        <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
+          <i class="fa-solid fa-circle-user text-zinc-400"></i> Basic Information
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          <!-- Full name -->
+          <div class="sm:col-span-2">
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              Full Name
+            </label>
+            <input formControlName="displayName" type="text" placeholder="e.g. Ariful Islam"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Email (read-only) -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              Email <span class="text-zinc-400 text-xs font-normal">(cannot change)</span>
+            </label>
+            <input [value]="email" type="email" readonly
+                   class="shad-input w-full bg-zinc-50 text-zinc-400 cursor-not-allowed" />
+          </div>
+
+          <!-- Phone -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Phone</label>
+            <input formControlName="phone" type="tel" placeholder="+880 1xxx xxxxxx"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Graduation batch -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              Graduation Batch <span class="text-zinc-400 text-xs font-normal">(year)</span>
+            </label>
+            <input formControlName="batch" type="number" placeholder="e.g. 2020" min="2000" max="2099"
+                   class="shad-input w-full" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── 2. Professional Details ────────────────────────────── -->
+      <div class="shad-card rounded-2xl p-6">
+        <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
+          <i class="fa-solid fa-briefcase text-zinc-400"></i> Professional Details
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          <!-- Job title -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Job Title / Role</label>
+            <input formControlName="jobTitle" type="text" placeholder="e.g. Senior Software Engineer"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Company -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Company / Organisation</label>
+            <input formControlName="company" type="text" placeholder="e.g. Google"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Industry -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Industry</label>
+            <select formControlName="industry" class="shad-input w-full">
+              <option value="">Select industry…</option>
+              @for (ind of industries; track ind) {
+                <option [value]="ind">{{ ind }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- City -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">City</label>
+            <input formControlName="city" type="text" placeholder="e.g. Dhaka"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Country -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Country</label>
+            <select formControlName="country" class="shad-input w-full">
+              <option value="">Select country…</option>
+              @for (c of countries; track c) {
+                <option [value]="c">{{ c }}</option>
+              }
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── 3. Bio ─────────────────────────────────────────────── -->
+      <div class="shad-card rounded-2xl p-6">
+        <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
+          <i class="fa-solid fa-align-left text-zinc-400"></i> About / Bio
+        </h2>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            Bio <span class="text-zinc-400 text-xs font-normal">(max 1000 characters)</span>
+          </label>
+          <textarea formControlName="bio" rows="5"
+                    placeholder="Tell fellow alumni a bit about yourself — your journey, interests, and what you're working on…"
+                    class="shad-input w-full resize-none leading-relaxed"></textarea>
+          <p class="text-xs text-zinc-400 mt-1.5 text-right">
+            {{ form.get('bio')?.value?.length ?? 0 }} / 1000
+          </p>
+        </div>
+      </div>
+
+      <!-- ── 4. Skills ─────────────────────────────────────────── -->
+      <div class="shad-card rounded-2xl p-6">
+        <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
+          <i class="fa-solid fa-tags text-zinc-400"></i> Skills
+        </h2>
+
+        <!-- Tag list -->
+        @if (skills().length > 0) {
+          <div class="flex flex-wrap gap-2 mb-4">
+            @for (skill of skills(); track skill) {
+              <span class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm font-medium">
+                {{ skill }}
+                <button type="button" (click)="removeSkill(skill)"
+                        class="text-blue-400 hover:text-blue-700 transition-colors leading-none">
+                  <i class="fa-solid fa-xmark text-[11px]"></i>
+                </button>
+              </span>
+            }
+          </div>
+        }
+
+        <!-- Skill input -->
+        <div class="flex gap-2">
+          <input
+            type="text"
+            [value]="skillInput()"
+            (input)="skillInput.set($any($event.target).value)"
+            (keydown)="onSkillKeydown($event)"
+            placeholder="Type a skill and press Enter or comma to add…"
+            class="shad-input flex-1" />
+          <button type="button" (click)="addSkill()"
+                  class="shad-btn-outline px-4 text-sm flex-shrink-0">
+            Add
+          </button>
+        </div>
+        <p class="text-xs text-zinc-400 mt-2">e.g. Python, React, Docker</p>
+      </div>
+
+      <!-- ── 5. Social Links ────────────────────────────────────── -->
+      <div class="shad-card rounded-2xl p-6">
+        <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
+          <i class="fa-solid fa-share-nodes text-zinc-400"></i> Social &amp; Web Links
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+          <!-- LinkedIn -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              <i class="fa-brands fa-linkedin-in text-blue-600 mr-1"></i> LinkedIn URL
+            </label>
+            <input formControlName="linkedin" type="url" placeholder="https://linkedin.com/in/your-profile"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- GitHub -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              <i class="fa-brands fa-github text-zinc-700 mr-1"></i> GitHub URL
+            </label>
+            <input formControlName="github" type="url" placeholder="https://github.com/your-handle"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Twitter / X -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              <i class="fa-brands fa-x-twitter text-zinc-700 mr-1"></i> X / Twitter URL
+            </label>
+            <input formControlName="twitter" type="url" placeholder="https://twitter.com/your-handle"
+                   class="shad-input w-full" />
+          </div>
+
+          <!-- Website -->
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+              <i class="fa-solid fa-globe text-zinc-500 mr-1"></i> Personal Website
+            </label>
+            <input formControlName="website" type="url" placeholder="https://yourwebsite.com"
+                   class="shad-input w-full" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── 6. Settings ───────────────────────────────────────── -->
+      <div class="shad-card rounded-2xl p-6">
+        <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-zinc-400"></i> Settings
+        </h2>
+
+        <!-- Open to mentoring -->
+        <label class="flex items-start gap-4 cursor-pointer group">
+          <div class="relative mt-0.5 flex-shrink-0">
+            <input formControlName="openToMentoring" type="checkbox" class="sr-only peer" />
+            <div class="w-11 h-6 bg-zinc-200 peer-checked:bg-blue-600 rounded-full transition-colors"></div>
+            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors">
+              Open to Mentoring
+            </p>
+            <p class="text-xs text-zinc-500 mt-0.5 leading-relaxed">
+              Let junior students and recent graduates know you're available for career guidance, code reviews, or general advice.
+            </p>
+          </div>
+        </label>
+      </div>
+
+      <!-- ── Action bar ────────────────────────────────────────── -->
+      <div class="flex items-center justify-between gap-4 py-2">
+        <a routerLink="/dashboard"
+           class="shad-btn-outline text-sm px-5">
+          <i class="fa-solid fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+        <button type="submit"
+                [disabled]="form.invalid || saving()"
+                class="shad-btn-primary text-sm px-8 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+          @if (saving()) {
+            <i class="fa-solid fa-spinner animate-spin"></i> Saving…
+          } @else {
+            <i class="fa-solid fa-floppy-disk"></i> Save Profile
+          }
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>

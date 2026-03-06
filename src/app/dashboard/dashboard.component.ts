@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/auth.service';
@@ -24,11 +24,16 @@ export interface UpcomingEvent {
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   constructor(
     public auth: AuthService,
     private router: Router,
   ) {}
+
+  ngOnInit() {
+    // Refresh profile data silently so the completion ring is accurate
+    this.auth.loadProfile().subscribe({ error: () => {} });
+  }
 
   // ── Computed helpers ─────────────────────────────────────────
   readonly userInitial = computed(() => {
@@ -75,6 +80,7 @@ export class DashboardComponent {
   ];
 
   readonly quickLinks = [
+    { label: 'Edit Profile',     path: '/profile',      icon: 'fa-user-pen' },
     { label: 'Alumni Directory', path: '/alumni',      icon: 'fa-users' },
     { label: 'Job Board',        path: '/jobs',         icon: 'fa-briefcase' },
     { label: 'Events',           path: '/events',       icon: 'fa-calendar-days' },
@@ -82,6 +88,25 @@ export class DashboardComponent {
     { label: 'Gallery',          path: '/gallery',      icon: 'fa-images' },
     { label: 'News',             path: '/news',         icon: 'fa-newspaper' },
   ];
+
+  readonly profileCompletion = computed(() => {
+    const p = this.auth.currentUser()?.profile as Record<string, unknown> | undefined;
+    if (!p) return 0;
+    const fields = [
+      p['displayName'],
+      p['batch'],
+      p['bio'],
+      p['jobTitle'],
+      p['company'],
+      p['city'],
+      p['country'],
+      p['industry'],
+      p['linkedin'] || p['github'],
+      Array.isArray(p['skills']) && (p['skills'] as string[]).length > 0,
+    ];
+    const filled = fields.filter(Boolean).length;
+    return Math.round((filled / fields.length) * 100);
+  });
 
   goToAdmin(): void {
     this.router.navigate(['/admin']);

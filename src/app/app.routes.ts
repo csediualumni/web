@@ -44,6 +44,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./profile/profile-edit.component').then(
+        (m) => m.ProfileEditComponent,
+      ),
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     loadComponent: () =>

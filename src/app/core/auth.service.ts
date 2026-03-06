@@ -14,12 +14,33 @@ export interface AuthResponse {
   };
 }
 
+export interface UserProfile {
+  displayName: string | null;
+  phone: string | null;
+  batch: number | null;
+  bio: string | null;
+  jobTitle: string | null;
+  company: string | null;
+  industry: string | null;
+  city: string | null;
+  country: string | null;
+  linkedin: string | null;
+  github: string | null;
+  twitter: string | null;
+  website: string | null;
+  skills: string[] | null;
+  openToMentoring: boolean;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
   permissions: string[];
   roles: { id: string; name: string }[];
+  profile?: Partial<UserProfile>;
 }
+
+export type UpdateProfileDto = Partial<UserProfile>;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -97,6 +118,38 @@ export class AuthService {
 
   hasPermission(key: string): boolean {
     return this.currentUser()?.permissions.includes(key) ?? false;
+  }
+
+  // ──────────────────────────────────────────────
+  // Profile
+  // ──────────────────────────────────────────────
+
+  loadProfile(): Observable<UserProfile & { id: string; email: string }> {
+    return this.http
+      .get<UserProfile & { id: string; email: string }>(`${this.base}/me`)
+      .pipe(
+        tap((data) => {
+          const current = this.currentUser();
+          if (current) {
+            this.currentUser.set({ ...current, profile: data });
+            localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+          }
+        }),
+      );
+  }
+
+  updateProfile(dto: UpdateProfileDto): Observable<UserProfile & { id: string; email: string }> {
+    return this.http
+      .patch<UserProfile & { id: string; email: string }>(`${this.base}/me`, dto)
+      .pipe(
+        tap((data) => {
+          const current = this.currentUser();
+          if (current) {
+            this.currentUser.set({ ...current, profile: data });
+            localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+          }
+        }),
+      );
   }
 
   private decodeJwt(token: string): { permissions?: string[]; roles?: { id: string; name: string }[] } | null {
