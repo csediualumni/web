@@ -17,7 +17,7 @@ type DonateTab = 'active' | 'completed' | 'upcoming';
 export class DonationsComponent {
   readonly svc         = inject(DonationsService);
   private readonly inv = inject(InvoiceService);
-  private readonly auth = inject(AuthService);
+  readonly auth        = inject(AuthService);
   private readonly router = inject(Router);
 
   // ── Tabs ──────────────────────────────────────────────────
@@ -38,8 +38,6 @@ export class DonationsComponent {
   activeDonationId = signal<number | null>(null);
   selectedAmount = signal<number | null>(500);
   customAmount = signal('');
-  donorName = signal('');
-  donorMessage = signal('');
   isAnonymous = signal(false);
   submitting = signal(false);
   submitted = signal(false);
@@ -54,9 +52,8 @@ export class DonationsComponent {
     this.formError.set('');
     this.selectedAmount.set(500);
     this.customAmount.set('');
-    this.donorName.set('');
-    this.donorMessage.set('');
-    this.isAnonymous.set(false);
+    // Force anonymous when not logged in
+    this.isAnonymous.set(!this.auth.isLoggedIn());
     // Scroll to form after tick
     setTimeout(() => {
       document.getElementById(`donation-form-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -97,14 +94,16 @@ export class DonationsComponent {
     this.submitting.set(true);
     this.formError.set('');
 
+    const user = this.auth.currentUser();
+    const isAnon = this.isAnonymous();
+
     this.inv.create({
       type: 'donation',
       description: `Donation to: ${campaign.title}`,
       campaignTitle: campaign.title,
       totalAmount: amount,
-      donorName: this.isAnonymous() ? undefined : (this.donorName().trim() || undefined),
-      donorMessage: this.isAnonymous() ? undefined : (this.donorMessage().trim() || undefined),
-      isAnonymous: this.isAnonymous(),
+      donorName: isAnon ? undefined : (user?.email?.trim() || undefined),
+      isAnonymous: isAnon,
       metadata: { campaignId: campaign.id, campaignCategory: campaign.category },
     }).subscribe({
       next: (invoice) => {

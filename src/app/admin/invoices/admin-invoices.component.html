@@ -96,15 +96,26 @@
               </td>
               <td class="px-4 py-3 text-[11px] text-zinc-400 whitespace-nowrap">{{ inv.createdAt | date:'d MMM y, HH:mm' }}</td>
               <td class="px-4 py-3">
-                <button
-                  type="button"
-                  (click)="toggleInvoice(inv.id)"
-                  class="text-[11px] text-zinc-500 hover:text-zinc-800 flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap">
-                  <i class="fa-solid"
-                     [class.fa-chevron-down]="expandedInvoiceId() !== inv.id"
-                     [class.fa-chevron-up]="expandedInvoiceId() === inv.id"></i>
-                  {{ inv.payments.length }} payment{{ inv.payments.length === 1 ? '' : 's' }}
-                </button>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    (click)="toggleInvoice(inv.id)"
+                    class="text-[11px] text-zinc-500 hover:text-zinc-800 flex items-center gap-1 transition-colors cursor-pointer whitespace-nowrap">
+                    <i class="fa-solid"
+                       [class.fa-chevron-down]="expandedInvoiceId() !== inv.id"
+                       [class.fa-chevron-up]="expandedInvoiceId() === inv.id"></i>
+                    {{ inv.payments.length }} payment{{ inv.payments.length === 1 ? '' : 's' }}
+                  </button>
+                  <a
+                    [href]="'/payment?invoiceId=' + inv.id"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Open payment page"
+                    class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 hover:text-emerald-800 border border-emerald-200 hover:border-emerald-400 bg-emerald-50 hover:bg-emerald-100 rounded px-2 py-0.5 transition-colors whitespace-nowrap">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                    Pay
+                  </a>
+                </div>
               </td>
             </tr>
 
