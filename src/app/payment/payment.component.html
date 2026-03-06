@@ -34,6 +34,14 @@
   <div class="bg-zinc-50 min-h-[calc(100vh-120px)] py-10 px-4 sm:px-6">
     <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
 
+      <!-- Email sent notice (non-anonymous invoices only) -->
+      @if (!inv.isAnonymous) {
+        <div class="lg:col-span-5 flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800">
+          <i class="fa-solid fa-envelope-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+          <span>Invoice details and your payment link have been sent to your registered email — you can complete the payment at any time.</span>
+        </div>
+      }
+
       <!-- ═══════════════════════════════════════════════════
            LEFT: Invoice Card + Payment History
            ═══════════════════════════════════════════════════ -->
@@ -368,7 +376,13 @@
                     The committee will verify it within <strong>24 hours</strong>.
                   </p>
                   @if (!inv.isAnonymous) {
-                    <p class="text-xs text-zinc-400 mt-2">
+                    <p class="text-xs text-emerald-600 mt-2 flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-envelope-circle-check"></i>
+                      A confirmation email has been sent to your registered email address.
+                    </p>
+                  }
+                  @if (!inv.isAnonymous) {
+                    <p class="text-xs text-zinc-400 mt-1">
                       Refunds (if any) will be sent to <strong>{{ senderBkash() }}</strong>.
                     </p>
                   }
