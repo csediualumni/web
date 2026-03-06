@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommitteeService, Committee } from './committee.service';
 import { AlumniService, AlumnusMember } from '../alumni/alumni.service';
 
@@ -25,6 +26,8 @@ export class CommitteeComponent {
   private readonly committeeService = inject(CommitteeService);
   private readonly alumniService = inject(AlumniService);
 
+  private readonly allMembers = toSignal(this.alumniService.members$, { initialValue: [] as AlumnusMember[] });
+
   /** IDs of expanded past‑committee panels */
   expandedIds = signal<Set<number>>(new Set());
 
@@ -40,7 +43,7 @@ export class CommitteeComponent {
 
   private resolve(committee: Committee): ResolvedCommittee {
     const members: ResolvedMember[] = committee.members.reduce<ResolvedMember[]>((acc, entry) => {
-      const alumnus = this.alumniService.getById(entry.alumniId);
+      const alumnus = this.allMembers().find((m) => m.id === String(entry.alumniId));
       if (alumnus) {
         acc.push({ alumnus, designation: entry.designation, note: entry.note });
       }

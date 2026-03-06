@@ -14,6 +14,29 @@ export interface AuthResponse {
   };
 }
 
+export interface ExperienceEntry {
+  id: string;
+  title: string;
+  company: string;
+  from: string;
+  to: string;
+  sortOrder?: number;
+}
+
+export interface EducationEntry {
+  id: string;
+  degree: string;
+  institution: string;
+  year: number | null;
+  sortOrder?: number;
+}
+
+export interface AchievementEntry {
+  id: string;
+  title: string;
+  sortOrder?: number;
+}
+
 export interface UserProfile {
   displayName: string | null;
   phone: string | null;
@@ -30,6 +53,9 @@ export interface UserProfile {
   website: string | null;
   skills: string[] | null;
   openToMentoring: boolean;
+  experiences: ExperienceEntry[];
+  educations: EducationEntry[];
+  achievements: AchievementEntry[];
 }
 
 export interface AuthUser {
@@ -150,6 +176,54 @@ export class AuthService {
           }
         }),
       );
+  }
+
+  // ────────────────────────────────────────────
+  // Experience CRUD
+  // ────────────────────────────────────────────
+
+  addExperience(dto: Omit<ExperienceEntry, 'id'>): Observable<ExperienceEntry> {
+    return this.http.post<ExperienceEntry>(`${this.base}/me/experience`, dto);
+  }
+
+  updateExperience(id: string, dto: Omit<ExperienceEntry, 'id'>): Observable<ExperienceEntry> {
+    return this.http.patch<ExperienceEntry>(`${this.base}/me/experience/${id}`, dto);
+  }
+
+  deleteExperience(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/me/experience/${id}`);
+  }
+
+  // ────────────────────────────────────────────
+  // Education CRUD
+  // ────────────────────────────────────────────
+
+  addEducation(dto: Omit<EducationEntry, 'id'>): Observable<EducationEntry> {
+    return this.http.post<EducationEntry>(`${this.base}/me/education`, dto);
+  }
+
+  updateEducation(id: string, dto: Omit<EducationEntry, 'id'>): Observable<EducationEntry> {
+    return this.http.patch<EducationEntry>(`${this.base}/me/education/${id}`, dto);
+  }
+
+  deleteEducation(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/me/education/${id}`);
+  }
+
+  // ────────────────────────────────────────────
+  // Achievement CRUD
+  // ────────────────────────────────────────────
+
+  addAchievement(dto: Omit<AchievementEntry, 'id'>): Observable<AchievementEntry> {
+    return this.http.post<AchievementEntry>(`${this.base}/me/achievements`, dto);
+  }
+
+  updateAchievement(id: string, dto: Omit<AchievementEntry, 'id'>): Observable<AchievementEntry> {
+    return this.http.patch<AchievementEntry>(`${this.base}/me/achievements/${id}`, dto);
+  }
+
+  deleteAchievement(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/me/achievements/${id}`);
   }
 
   private decodeJwt(token: string): { permissions?: string[]; roles?: { id: string; name: string }[] } | null {

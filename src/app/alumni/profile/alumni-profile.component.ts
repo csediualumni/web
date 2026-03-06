@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { AlumniService, AlumnusMember } from '../alumni.service';
 
 @Component({
@@ -20,21 +21,22 @@ export class AlumniProfileComponent implements OnInit {
   related = signal<AlumnusMember[]>([]);
 
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.alumniService.getById(id);
-    if (found) {
-      this.member.set(found);
-      const rel = this.alumniService
-        .getAll()
-        .filter(
-          (m) =>
-            m.id !== found.id &&
-            (m.batch === found.batch || m.industry === found.industry),
-        )
-        .slice(0, 3);
-      this.related.set(rel);
-    } else {
-      this.notFound.set(true);
-    }
+    const id = this.route.snapshot.paramMap.get('id') ?? '';
+    this.alumniService.members$.pipe(take(1)).subscribe((members) => {
+      const found = members.find((m) => m.id === id);
+      if (found) {
+        this.member.set(found);
+        const rel = members
+          .filter(
+            (m) =>
+              m.id !== found.id &&
+              (m.batch === found.batch || m.industry === found.industry),
+          )
+          .slice(0, 3);
+        this.related.set(rel);
+      } else {
+        this.notFound.set(true);
+      }
+    });
   }
 }

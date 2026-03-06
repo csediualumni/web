@@ -2,7 +2,9 @@ import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AlumniService } from './alumni.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { tap } from 'rxjs/operators';
+import { AlumniService, AlumnusMember } from './alumni.service';
 
 @Component({
   selector: 'app-alumni',
@@ -12,7 +14,14 @@ import { AlumniService } from './alumni.service';
 })
 export class AlumniComponent {
   private readonly alumniService = inject(AlumniService);
-  readonly members = this.alumniService.getAll();
+
+  readonly loading = signal(true);
+
+  readonly members = toSignal(
+    this.alumniService.members$.pipe(tap(() => this.loading.set(false))),
+    { initialValue: [] as AlumnusMember[] },
+  );
+
   searchQuery = signal('');
   selectedBatch = signal('');
   selectedIndustry = signal('');
@@ -49,20 +58,19 @@ export class AlumniComponent {
     'Netherlands',
   ];
 
-
   filteredMembers = computed(() => {
     const q = this.searchQuery().toLowerCase();
     const batch = this.selectedBatch();
     const industry = this.selectedIndustry();
     const country = this.selectedCountry();
 
-    return this.members.filter((m) => {
+    return this.members().filter((m) => {
       const matchesQuery =
         !q ||
-        m.name.toLowerCase().includes(q) ||
-        m.company.toLowerCase().includes(q) ||
-        m.role.toLowerCase().includes(q) ||
-        m.skills.some((s) => s.toLowerCase().includes(q));
+        (m.name ?? '').toLowerCase().includes(q) ||
+        (m.company ?? '').toLowerCase().includes(q) ||
+        (m.role ?? '').toLowerCase().includes(q) ||
+        (m.skills ?? []).some((s) => s.toLowerCase().includes(q));
       const matchesBatch = !batch || m.batch === +batch;
       const matchesIndustry = !industry || m.industry === industry;
       const matchesCountry = !country || m.country === country;
