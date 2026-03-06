@@ -28,6 +28,7 @@ function passwordStrength(control: AbstractControl): ValidationErrors | null {
 export class RegisterComponent {
   form: FormGroup;
   loading = signal(false);
+  currentYear = new Date().getFullYear();
   serverError = signal('');
   showPassword = signal(false);
 

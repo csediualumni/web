@@ -1,203 +1,271 @@
-<div class="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
-  <div class="w-full max-w-sm">
+<div class="min-h-screen flex">
 
-    <!-- Back to Home -->
-    <div class="mb-4">
-      <a routerLink="/" class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors">
+  <!-- ── Left branding panel (hidden on mobile) ─────────────────── -->
+  <div class="hidden lg:flex lg:w-[45%] xl:w-[42%] flex-col relative overflow-hidden bg-zinc-950">
+    <!-- Ambient glow -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-indigo-600/15 blur-3xl pointer-events-none"></div>
+
+    <!-- Grid pattern overlay -->
+    <div class="absolute inset-0 opacity-[0.04]"
+         style="background-image: linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px); background-size: 40px 40px;">
+    </div>
+
+    <div class="relative z-10 flex flex-col h-full px-10 py-10">
+      <!-- Logo -->
+      <a routerLink="/" class="flex items-center gap-3 group w-fit">
+        <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600 shadow-lg shadow-blue-600/40">
+          <i class="fa-solid fa-graduation-cap text-white text-sm"></i>
+        </div>
+        <div>
+          <p class="text-white font-semibold text-sm leading-tight">CSE DIU</p>
+          <p class="text-zinc-500 text-[10px] uppercase tracking-widest leading-tight">Alumni Network</p>
+        </div>
+      </a>
+
+      <!-- Main pitch -->
+      <div class="flex-1 flex flex-col justify-center max-w-xs">
+        <p class="text-[11px] font-semibold uppercase tracking-widest text-blue-400 mb-4">Welcome back</p>
+        <h2 class="text-3xl font-bold text-white leading-tight mb-4">
+          Your alumni community awaits.
+        </h2>
+        <p class="text-zinc-400 text-sm leading-relaxed">
+          Connect with thousands of CSE DIU graduates. Access exclusive events, jobs, mentorships, and more.
+        </p>
+
+        <!-- Feature list -->
+        <ul class="mt-8 space-y-3">
+          <li class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-7 h-7 rounded-md bg-blue-600/20 flex items-center justify-center">
+              <i class="fa-solid fa-users text-blue-400 text-[10px]"></i>
+            </div>
+            <span class="text-zinc-300 text-sm">10,000+ alumni across the globe</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-7 h-7 rounded-md bg-blue-600/20 flex items-center justify-center">
+              <i class="fa-solid fa-briefcase text-blue-400 text-[10px]"></i>
+            </div>
+            <span class="text-zinc-300 text-sm">Exclusive job board & referrals</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-7 h-7 rounded-md bg-blue-600/20 flex items-center justify-center">
+              <i class="fa-solid fa-handshake text-blue-400 text-[10px]"></i>
+            </div>
+            <span class="text-zinc-300 text-sm">Mentorship & networking events</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <p class="text-zinc-600 text-xs">© {{ currentYear }} CSE DIU Alumni. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- ── Right form panel ───────────────────────────────────────── -->
+  <div class="flex-1 flex flex-col bg-zinc-50">
+
+    <!-- Top nav -->
+    <div class="flex items-center justify-between px-6 py-5 lg:px-10">
+      <!-- Mobile logo -->
+      <a routerLink="/" class="flex items-center gap-2 lg:hidden">
+        <div class="flex items-center justify-center w-7 h-7 rounded-md bg-blue-600">
+          <i class="fa-solid fa-graduation-cap text-white text-xs"></i>
+        </div>
+        <span class="font-semibold text-zinc-900 text-sm">CSE DIU Alumni</span>
+      </a>
+      <!-- Back to home (desktop) -->
+      <a routerLink="/" class="hidden lg:inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors">
         <i class="fa-solid fa-arrow-left text-xs"></i>
         Back to Home
       </a>
+      <a routerLink="/auth/register" class="text-sm text-zinc-500 hover:text-zinc-900 transition-colors">
+        No account? <span class="font-medium text-zinc-900 underline underline-offset-4">Register</span>
+      </a>
     </div>
 
-    <!-- Header -->
-    <div class="text-center mb-6">
-      <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 mb-4">
-        <i class="fa-solid fa-user text-white text-sm"></i>
-      </div>
-      <h1 class="text-xl font-semibold tracking-tight text-zinc-900">Welcome back</h1>
-      <p class="mt-1 text-sm text-zinc-500">Sign in to your CSE DIU Alumni account</p>
-    </div>
+    <!-- Form area -->
+    <div class="flex-1 flex items-center justify-center px-6 py-8 lg:px-16">
+      <div class="w-full max-w-md">
 
-    <!-- Card -->
-    <div class="shad-card p-6">
-
-      <!-- Google button -->
-      <button
-        type="button"
-        (click)="signInWithGoogle()"
-        class="shad-btn-outline w-full gap-2"
-      >
-        <!-- Google SVG logo -->
-        <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-            fill="#4285F4"
-          />
-          <path
-            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-            fill="#34A853"
-          />
-          <path
-            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-            fill="#FBBC05"
-          />
-          <path
-            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-            fill="#EA4335"
-          />
-        </svg>
-        Continue with Google
-      </button>
-
-      <!-- Divider -->
-      <div class="relative my-4">
-        <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-zinc-200"></div>
-        </div>
-        <div class="relative flex justify-center">
-          <span class="px-2 bg-white text-xs text-zinc-400">or continue with email</span>
-        </div>
-      </div>
-
-      <!-- Server error -->
-      @if (serverError()) {
-        <div class="mb-3 px-3 py-2 rounded-md bg-red-50 border border-red-200">
-          <p class="text-xs text-red-600">{{ serverError() }}</p>
-        </div>
-      }
-
-      <!-- Form -->
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-4">
-
-        <!-- Email -->
-        <div class="space-y-1.5">
-          <label for="email" class="shad-label">Email</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-            placeholder="you@example.com"
-            class="shad-input"
-            [class.shad-input-error]="email.invalid && email.touched"
-          />
-          @if (email.invalid && email.touched) {
-            <p class="text-xs text-red-500">
-              @if (email.errors?.['required']) { Email is required. }
-              @else if (email.errors?.['email']) { Please enter a valid email address. }
-            </p>
-          }
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Sign in</h1>
+          <p class="mt-1.5 text-sm text-zinc-500">Enter your credentials to access your account.</p>
         </div>
 
-        <!-- Password -->
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between">
-            <label for="password" class="shad-label">Password</label>
-            <button type="button" (click)="forgotMode.set(true)" class="text-xs text-blue-600 hover:text-blue-800 transition-colors">
-              Forgot password?
-            </button>
-          </div>
-          <div class="relative">
-            <input
-              id="password"
-              [type]="showPassword() ? 'text' : 'password'"
-              formControlName="password"
-              autocomplete="current-password"
-              placeholder="Enter your password"
-              class="shad-input pr-9"
-              [class.shad-input-error]="password.invalid && password.touched"
-            />
-            <button
-              type="button"
-              (click)="showPassword.set(!showPassword())"
-              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
-              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
-            >
-              @if (showPassword()) {
-                <i class="fa-solid fa-eye-slash text-sm"></i>
-              } @else {
-                <i class="fa-solid fa-eye text-sm"></i>
-              }
-            </button>
-          </div>
-          @if (password.invalid && password.touched) {
-            <p class="text-xs text-red-500">
-              @if (password.errors?.['required']) { Password is required. }
-            </p>
-          }
-        </div>
-
-        <!-- Submit -->
-        <button type="submit" [disabled]="loading()" class="shad-btn-primary w-full">
-          @if (loading()) {
-            <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-            Signing in…
-          } @else {
-            Sign in
-          }
+        <!-- Google button -->
+        <button
+          type="button"
+          (click)="signInWithGoogle()"
+          class="w-full flex items-center justify-center gap-3 h-10 px-4 rounded-lg border border-zinc-200 bg-white text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer"
+        >
+          <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
         </button>
 
-      </form>
-
-    </div>
-
-    <!-- Forgot password panel -->
-    @if (forgotMode()) {
-      <div class="mt-4 shad-card p-5">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-zinc-900">Recover your password</h2>
-          <button type="button" (click)="forgotMode.set(false); forgotSuccess.set(''); forgotError.set('')" class="text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="Close">
-            <i class="fa-solid fa-xmark text-sm"></i>
-          </button>
+        <!-- Divider -->
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-zinc-200"></div>
+          </div>
+          <div class="relative flex justify-center">
+            <span class="px-3 bg-zinc-50 text-xs text-zinc-400 uppercase tracking-wide">or with email</span>
+          </div>
         </div>
 
-        @if (forgotSuccess()) {
-          <div class="flex items-start gap-2 px-3 py-2.5 rounded-md bg-emerald-50 border border-emerald-200 mb-3">
-            <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 text-sm"></i>
-            <p class="text-xs text-emerald-700">{{ forgotSuccess() }}</p>
-          </div>
-          <p class="text-xs text-zinc-500">Didn't receive it? Check your spam folder or
-            <a href="mailto:support@csediualumni.com" class="text-blue-600 hover:underline">contact support</a>.
-          </p>
-        } @else {
-          <p class="text-xs text-zinc-500 mb-3">
-            Enter your email and we'll send you a recovery link. If you signed up with Google, use
-            "Continue with Google" instead.
-          </p>
-          <div class="space-y-3">
-            <input
-              type="email"
-              [value]="forgotEmail()"
-              (input)="forgotEmail.set($any($event.target).value)"
-              placeholder="you@example.com"
-              class="shad-input"
-            />
-            @if (forgotError()) {
-              <p class="text-xs text-red-500">{{ forgotError() }}</p>
-            }
-            <button
-              type="button"
-              (click)="sendRecovery()"
-              [disabled]="forgotLoading()"
-              class="shad-btn-primary w-full"
-            >
-              @if (forgotLoading()) {
-                <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-                Sending…
-              } @else {
-                Send recovery link
-              }
-            </button>
+        <!-- Server error -->
+        @if (serverError()) {
+          <div class="mb-5 flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-red-50 border border-red-200">
+            <i class="fa-solid fa-circle-exclamation text-red-500 text-sm mt-0.5 flex-shrink-0"></i>
+            <p class="text-sm text-red-700">{{ serverError() }}</p>
           </div>
         }
-      </div>
-    }
 
-    <!-- Register link -->
-    <p class="mt-4 text-center text-sm text-zinc-500">
-      Don't have an account?
-      <a routerLink="/auth/register" class="font-medium text-zinc-900 underline underline-offset-4 hover:text-zinc-700">Create one</a>
-    </p>
+        <!-- Form -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+
+          <!-- Email -->
+          <div class="space-y-1.5">
+            <label for="email" class="shad-label">Email address</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              class="shad-input h-10"
+              [class.shad-input-error]="email.invalid && email.touched"
+            />
+            @if (email.invalid && email.touched) {
+              <p class="text-xs text-red-500 flex items-center gap-1">
+                <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                @if (email.errors?.['required']) { Email is required. }
+                @else if (email.errors?.['email']) { Please enter a valid email address. }
+              </p>
+            }
+          </div>
+
+          <!-- Password -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label for="password" class="shad-label">Password</label>
+              <button type="button" (click)="forgotMode.set(true)" class="text-xs text-blue-600 hover:text-blue-800 transition-colors font-medium">
+                Forgot password?
+              </button>
+            </div>
+            <div class="relative">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                class="shad-input h-10 pr-10"
+                [class.shad-input-error]="password.invalid && password.touched"
+              />
+              <button
+                type="button"
+                (click)="showPassword.set(!showPassword())"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              >
+                @if (showPassword()) {
+                  <i class="fa-solid fa-eye-slash text-sm"></i>
+                } @else {
+                  <i class="fa-solid fa-eye text-sm"></i>
+                }
+              </button>
+            </div>
+            @if (password.invalid && password.touched) {
+              <p class="text-xs text-red-500 flex items-center gap-1">
+                <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                @if (password.errors?.['required']) { Password is required. }
+              </p>
+            }
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" [disabled]="loading()" class="shad-btn-primary w-full h-10 text-sm font-semibold mt-1">
+            @if (loading()) {
+              <i class="fa-solid fa-spinner fa-spin mr-2"></i>Signing in…
+            } @else {
+              Sign in
+            }
+          </button>
+
+        </form>
+
+        <!-- Forgot password panel -->
+        @if (forgotMode()) {
+          <div class="mt-6 rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-key text-zinc-400 text-sm"></i>
+                <h2 class="text-sm font-semibold text-zinc-900">Recover your password</h2>
+              </div>
+              <button type="button" (click)="forgotMode.set(false); forgotSuccess.set(''); forgotError.set('')"
+                class="w-6 h-6 flex items-center justify-center rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
+                aria-label="Close">
+                <i class="fa-solid fa-xmark text-sm"></i>
+              </button>
+            </div>
+
+            @if (forgotSuccess()) {
+              <div class="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-emerald-50 border border-emerald-200 mb-3">
+                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 text-sm flex-shrink-0"></i>
+                <p class="text-sm text-emerald-700">{{ forgotSuccess() }}</p>
+              </div>
+              <p class="text-xs text-zinc-500">Didn't receive it? Check your spam folder or
+                <a href="mailto:support@csediualumni.com" class="text-blue-600 hover:underline">contact support</a>.
+              </p>
+            } @else {
+              <p class="text-xs text-zinc-500 mb-3">
+                Enter your email and we'll send you a recovery link. If you signed up with Google, use the button above instead.
+              </p>
+              <div class="space-y-3">
+                <input
+                  type="email"
+                  [value]="forgotEmail()"
+                  (input)="forgotEmail.set($any($event.target).value)"
+                  placeholder="you@example.com"
+                  class="shad-input h-10"
+                />
+                @if (forgotError()) {
+                  <p class="text-xs text-red-500 flex items-center gap-1">
+                    <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                    {{ forgotError() }}
+                  </p>
+                }
+                <button
+                  type="button"
+                  (click)="sendRecovery()"
+                  [disabled]="forgotLoading()"
+                  class="shad-btn-primary w-full h-9"
+                >
+                  @if (forgotLoading()) {
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i>Sending…
+                  } @else {
+                    Send recovery link
+                  }
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Register link (mobile) -->
+        <p class="mt-6 text-center text-sm text-zinc-500 lg:hidden">
+          Don't have an account?
+          <a routerLink="/auth/register" class="font-medium text-zinc-900 underline underline-offset-4 hover:text-zinc-700">Create one</a>
+        </p>
+
+      </div>
+    </div>
 
   </div>
 </div>

@@ -18,6 +18,7 @@ import { AuthService } from '../../core/auth.service';
 export class LoginComponent {
   form: FormGroup;
   loading = signal(false);
+  currentYear = new Date().getFullYear();
   serverError = signal('');
   showPassword = signal(false);
 

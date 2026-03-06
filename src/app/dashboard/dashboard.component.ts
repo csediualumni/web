@@ -32,8 +32,8 @@ export class DashboardComponent {
 
   // ── Computed helpers ─────────────────────────────────────────
   readonly userInitial = computed(() => {
-    const email = this.auth.currentUser()?.email ?? '?';
-    return email[0].toUpperCase();
+    const email = this.auth.currentUser()?.email;
+    return (email?.[0] ?? '?').toUpperCase();
   });
 
   readonly userEmail = computed(() => this.auth.currentUser()?.email ?? '');
