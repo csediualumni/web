@@ -1,20 +1,31 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { CommitteeService, Committee } from './committee.service';
-import { AlumniService, AlumnusMember } from '../alumni/alumni.service';
+import { AdminService, Committee, CommitteeEntry } from '../core/admin.service';
 
-export interface ResolvedMember {
-  alumnus: AlumnusMember;
-  designation: string;
-  note?: string;
+const AVATAR_COLORS = [
+  'bg-sky-600', 'bg-blue-600', 'bg-violet-600', 'bg-emerald-600',
+  'bg-rose-600', 'bg-amber-600', 'bg-indigo-600', 'bg-teal-600',
+];
+
+export function colorFor(id: string): string {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0xffffff;
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
 }
 
-export interface ResolvedCommittee {
-  committee: Committee;
-  members: ResolvedMember[];
+export function initialsFor(displayName: string | null, email: string): string {
+  const name = displayName?.trim() || email;
+  const parts = name.split(/\s+/).filter(Boolean);
+  return parts.length >= 2
+    ? (parts[0][0] + parts[1][0]).toUpperCase()
+    : name.substring(0, 2).toUpperCase();
 }
+
+const DESIGNATION_ORDER: Record<string, number> = {
+  President: 0, 'Vice President': 1, 'General Secretary': 2,
+  'Joint Secretary': 3, Treasurer: 4, 'Assistant Treasurer': 5, 'Executive Member': 6,
+};
 
 @Component({
   selector: 'app-committee',
@@ -22,68 +33,32 @@ export interface ResolvedCommittee {
   imports: [CommonModule, RouterLink],
   templateUrl: './committee.component.html',
 })
-export class CommitteeComponent {
-  private readonly committeeService = inject(CommitteeService);
-  private readonly alumniService = inject(AlumniService);
+export class CommitteeComponent implements OnInit {
+  private readonly adminService = inject(AdminService);
 
-  private readonly allMembers = toSignal(this.alumniService.members$, {
-    initialValue: [] as AlumnusMember[],
-  });
+  loading = signal(true);
+  error   = signal('');
+  all     = signal<Committee[]>([]);
 
-  /** IDs of expanded past‑committee panels */
-  expandedIds = signal<Set<number>>(new Set());
+  current = computed(() => this.all().find((c) => c.isCurrent) ?? null);
+  past    = computed(() => this.all().filter((c) => !c.isCurrent));
 
-  readonly current = computed<ResolvedCommittee | null>(() => {
-    const c = this.committeeService.getCurrent();
-    if (!c) return null;
-    return this.resolve(c);
-  });
-
-  readonly past = computed<ResolvedCommittee[]>(() =>
-    this.committeeService.getPast().map((c) => this.resolve(c)),
-  );
-
-  private resolve(committee: Committee): ResolvedCommittee {
-    const members: ResolvedMember[] = committee.members.reduce<ResolvedMember[]>((acc, entry) => {
-      const alumnus = this.allMembers().find((m) => m.id === String(entry.alumniId));
-      if (alumnus) {
-        acc.push({ alumnus, designation: entry.designation, note: entry.note });
-      }
-      return acc;
-    }, []);
-    return { committee, members };
-  }
-
-  togglePast(id: number) {
-    this.expandedIds.update((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
+  ngOnInit(): void {
+    this.adminService.getCommittees().subscribe({
+      next: (data) => { this.all.set(data); this.loading.set(false); },
+      error: () => { this.error.set('Failed to load committees.'); this.loading.set(false); },
     });
   }
 
-  isExpanded(id: number): boolean {
-    return this.expandedIds().has(id);
-  }
+  colorFor    = colorFor;
+  initialsFor = initialsFor;
+  readonly Boolean = Boolean;
 
-  /** Designation display order map for sorting */
-  private readonly order: Record<string, number> = {
-    President: 0,
-    'Vice President': 1,
-    'General Secretary': 2,
-    'Joint Secretary': 3,
-    Treasurer: 4,
-    'Assistant Treasurer': 5,
-    'Executive Member': 6,
-  };
-
-  sortedMembers(members: ResolvedMember[]): ResolvedMember[] {
+  sortedMembers(members: CommitteeEntry[]): CommitteeEntry[] {
     return [...members].sort(
-      (a, b) => (this.order[a.designation] ?? 99) - (this.order[b.designation] ?? 99),
+      (a, b) => (DESIGNATION_ORDER[a.designation] ?? 99) - (DESIGNATION_ORDER[b.designation] ?? 99),
     );
   }
 }
+
+

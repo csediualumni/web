@@ -2,7 +2,6 @@
 <section
   class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white"
 >
-  <!-- Grid overlay -->
   <div
     class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"
   ></div>
@@ -35,6 +34,32 @@
   </div>
 </section>
 
+<!-- ── Loading / Error ───────────────────────────────────────────── -->
+@if (loading()) {
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="h-8 w-64 bg-zinc-100 rounded animate-pulse mb-8"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+          <div class="bg-white border border-zinc-100 rounded-2xl p-5 animate-pulse">
+            <div class="flex items-start gap-3 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-zinc-100 flex-shrink-0"></div>
+              <div class="h-5 w-20 bg-zinc-100 rounded-full mt-1"></div>
+            </div>
+            <div class="h-5 w-36 bg-zinc-100 rounded mb-1"></div>
+            <div class="h-4 w-28 bg-zinc-100 rounded"></div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+} @else if (error()) {
+  <div class="max-w-xl mx-auto px-4 py-16 text-center">
+    <i class="fa-solid fa-circle-exclamation text-4xl text-red-400 mb-4"></i>
+    <p class="text-zinc-600">{{ error() }}</p>
+  </div>
+} @else {
+
 <!-- ── Current Committee ──────────────────────────────────────────── -->
 @if (current(); as cur) {
   <section class="py-14 lg:py-20 bg-white">
@@ -49,107 +74,119 @@
             Currently Serving
           </div>
           <h2 class="text-3xl font-extrabold text-zinc-900 tracking-tight">
-            Committee {{ cur.committee.term }}
+            Committee {{ cur.term }}
           </h2>
-          <p class="text-zinc-500 mt-1 text-sm italic">{{ cur.committee.theme }}</p>
+          @if (cur.theme) {
+            <p class="text-zinc-500 mt-1 text-sm italic">{{ cur.theme }}</p>
+          }
         </div>
-        <span
-          class="inline-flex items-center gap-1.5 self-start sm:self-auto bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full"
-        >
-          <i class="fa-solid fa-circle-check text-emerald-500"></i>
-          Active Term
-        </span>
+        <div class="flex items-center gap-3 self-start sm:self-auto">
+          <span
+            class="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full"
+          >
+            <i class="fa-solid fa-circle-check text-emerald-500"></i>
+            Active Term
+          </span>
+          <a
+            [routerLink]="['/committee', cur.id]"
+            class="inline-flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-colors"
+          >
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            Full Committee Page
+          </a>
+        </div>
       </div>
 
       <!-- President spotlight -->
-      @for (entry of sortedMembers(cur.members).slice(0, 1); track entry.alumnus.id) {
+      @if (sortedMembers(cur.members)[0]; as president) {
         <div
           class="mb-8 rounded-2xl bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/70 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 shadow-sm"
         >
-          <!-- Avatar -->
-          <a [routerLink]="['/alumni', entry.alumnus.id]" class="flex-shrink-0">
+          <a [routerLink]="['/alumni', president.user.id]" class="flex-shrink-0">
             <div
-              [class]="
-                'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' +
-                entry.alumnus.color
-              "
+              [class]="'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' + colorFor(president.user.id)"
             >
-              {{ entry.alumnus.initials }}
+              {{ initialsFor(president.user.displayName, president.user.email) }}
             </div>
           </a>
-          <!-- Info -->
           <div class="flex-1 min-w-0">
             <div
               class="inline-flex items-center gap-1.5 bg-amber-400/20 border border-amber-400/50 text-amber-800 text-xs font-bold px-3 py-0.5 rounded-full mb-2"
             >
               <i class="fa-solid fa-crown text-amber-600 text-[10px]"></i>
-              {{ entry.designation }}
+              {{ president.designation }}
             </div>
-            <h3 class="text-2xl font-bold text-zinc-900">{{ entry.alumnus.name }}</h3>
-            <p class="text-zinc-600 mt-0.5">
-              {{ entry.alumnus.role }} <span class="text-zinc-400">at</span>
-              {{ entry.alumnus.company }}
-            </p>
+            <h3 class="text-2xl font-bold text-zinc-900">
+              {{ president.user.displayName || president.user.email }}
+            </h3>
+            @if (president.user.jobTitle || president.user.company) {
+              <p class="text-zinc-600 mt-0.5">
+                {{ president.user.jobTitle }}
+                @if (president.user.company) {
+                  <span class="text-zinc-400">at</span> {{ president.user.company }}
+                }
+              </p>
+            }
             <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-zinc-500">
-              <span class="flex items-center gap-1.5">
-                <i class="fa-solid fa-layer-group text-[10px] text-zinc-400"></i>
-                Batch {{ entry.alumnus.batch }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <i class="fa-solid fa-location-dot text-[10px] text-zinc-400"></i>
-                {{ entry.alumnus.city }}, {{ entry.alumnus.country }}
-              </span>
+              @if (president.user.batch) {
+                <span class="flex items-center gap-1.5">
+                  <i class="fa-solid fa-layer-group text-[10px] text-zinc-400"></i>
+                  Batch {{ president.user.batch }}
+                </span>
+              }
+              @if (president.user.city || president.user.country) {
+                <span class="flex items-center gap-1.5">
+                  <i class="fa-solid fa-location-dot text-[10px] text-zinc-400"></i>
+                  {{ [president.user.city, president.user.country].filter(Boolean).join(', ') }}
+                </span>
+              }
             </div>
           </div>
-          <!-- CTA -->
           <a
-            [routerLink]="['/alumni', entry.alumnus.id]"
+            [routerLink]="['/alumni', president.user.id]"
             class="flex-shrink-0 inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
           >
-            View Profile
-            <i class="fa-solid fa-arrow-right text-xs"></i>
+            View Profile <i class="fa-solid fa-arrow-right text-xs"></i>
           </a>
         </div>
       }
 
       <!-- Rest of the current committee grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        @for (entry of sortedMembers(cur.members).slice(1); track entry.alumnus.id) {
+        @for (entry of sortedMembers(cur.members).slice(1); track entry.id) {
           <a
-            [routerLink]="['/alumni', entry.alumnus.id]"
+            [routerLink]="['/alumni', entry.user.id]"
             class="group flex flex-col bg-white border border-zinc-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
           >
-            <!-- top row: avatar + designation -->
             <div class="flex items-start gap-3 mb-3">
               <div
-                [class]="
-                  'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' +
-                  entry.alumnus.color
-                "
+                [class]="'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' + colorFor(entry.user.id)"
               >
-                {{ entry.alumnus.initials }}
+                {{ initialsFor(entry.user.displayName, entry.user.email) }}
               </div>
               <div class="min-w-0 flex-1 pt-0.5">
-                <span
-                  class="inline-block text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-0.5 leading-none"
-                >
+                <span class="inline-block text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-0.5 leading-none">
                   {{ entry.designation }}
                 </span>
               </div>
             </div>
-            <!-- Info -->
-            <h4
-              class="text-sm font-bold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight"
-            >
-              {{ entry.alumnus.name }}
+            <h4 class="text-sm font-bold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight">
+              {{ entry.user.displayName || entry.user.email }}
             </h4>
-            <p class="text-xs text-zinc-500 mt-0.5 truncate">{{ entry.alumnus.role }}</p>
-            <p class="text-xs text-zinc-400 truncate">{{ entry.alumnus.company }}</p>
-            <!-- Footer -->
+            @if (entry.user.jobTitle) {
+              <p class="text-xs text-zinc-500 mt-0.5 truncate">{{ entry.user.jobTitle }}</p>
+            }
+            @if (entry.user.company) {
+              <p class="text-xs text-zinc-400 truncate">{{ entry.user.company }}</p>
+            }
             <div class="flex items-center justify-between mt-auto pt-3 border-t border-zinc-100">
-              <span class="text-[11px] text-zinc-400 flex items-center gap-1">
-                <i class="fa-solid fa-layer-group text-[9px]"></i> Batch {{ entry.alumnus.batch }}
-              </span>
+              @if (entry.user.batch) {
+                <span class="text-[11px] text-zinc-400 flex items-center gap-1">
+                  <i class="fa-solid fa-layer-group text-[9px]"></i> Batch {{ entry.user.batch }}
+                </span>
+              } @else {
+                <span></span>
+              }
               <span class="text-[11px] text-blue-500 group-hover:underline flex items-center gap-1">
                 View <i class="fa-solid fa-arrow-right text-[9px]"></i>
               </span>
@@ -167,118 +204,69 @@
     <div class="flex items-center gap-3">
       <i class="fa-solid fa-clock-rotate-left text-zinc-400"></i>
       <h2 class="text-lg font-bold text-zinc-700">Past Committees</h2>
-      <span class="text-xs text-zinc-400 font-medium">— click a term to expand</span>
     </div>
   </div>
 </div>
 
 <!-- ── Past Committees ─────────────────────────────────────────────── -->
 <section class="bg-zinc-50 pb-16 lg:pb-24">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-    @for (resolved of past(); track resolved.committee.id) {
-      <!-- Accordion panel -->
-      <div
-        class="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm transition-shadow"
-        [class.shadow-md]="isExpanded(resolved.committee.id)"
-      >
-        <!-- Panel header / toggle -->
-        <button
-          type="button"
-          class="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-zinc-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-          (click)="togglePast(resolved.committee.id)"
-          [attr.aria-expanded]="isExpanded(resolved.committee.id)"
-        >
-          <div class="flex items-center gap-4 min-w-0">
-            <!-- Year badge -->
-            <div
-              class="flex-shrink-0 w-14 h-14 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col items-center justify-center"
-            >
-              <i class="fa-solid fa-users text-zinc-400 text-sm mb-1"></i>
-              <span class="text-[10px] font-bold text-zinc-500 leading-none">{{
-                resolved.committee.term.split('–')[0]
-              }}</span>
-            </div>
-            <div class="min-w-0">
-              <h3 class="text-base font-bold text-zinc-900">
-                {{ resolved.committee.sessionLabel }}
-              </h3>
-              <p class="text-xs text-zinc-500 mt-0.5 italic">{{ resolved.committee.theme }}</p>
-              <p class="text-xs text-zinc-400 mt-0.5">
-                {{ resolved.committee.members.length }} members
-              </p>
-            </div>
-          </div>
-          <!-- Expand icon -->
-          <div
-            class="flex-shrink-0 ml-4 w-8 h-8 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center justify-center transition-colors"
-            [class.bg-blue-50]="isExpanded(resolved.committee.id)"
-            [class.border-blue-200]="isExpanded(resolved.committee.id)"
-          >
-            <i
-              class="fa-solid fa-chevron-down text-zinc-400 text-xs transition-transform duration-200"
-              [class.rotate-180]="isExpanded(resolved.committee.id)"
-              [class.text-blue-500]="isExpanded(resolved.committee.id)"
-            ></i>
-          </div>
-        </button>
-
-        <!-- Panel body -->
-        @if (isExpanded(resolved.committee.id)) {
-          <div class="border-t border-zinc-100 px-6 py-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              @for (entry of sortedMembers(resolved.members); track entry.alumnus.id) {
-                <a
-                  [routerLink]="['/alumni', entry.alumnus.id]"
-                  class="group flex items-start gap-3 p-4 rounded-xl border border-zinc-100 hover:border-blue-300 hover:bg-blue-50/40 transition-all duration-200 cursor-pointer"
-                >
-                  <!-- Avatar -->
-                  <div
-                    [class]="
-                      'w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0 group-hover:scale-105 transition-transform ' +
-                      entry.alumnus.color
-                    "
-                  >
-                    {{ entry.alumnus.initials }}
-                  </div>
-                  <!-- Info -->
-                  <div class="min-w-0 flex-1">
-                    <span
-                      class="inline-block text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mb-1 leading-none"
-                    >
-                      {{ entry.designation }}
-                    </span>
-                    <p
-                      class="text-sm font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight truncate"
-                    >
-                      {{ entry.alumnus.name }}
-                    </p>
-                    <p class="text-xs text-zinc-500 truncate">{{ entry.alumnus.role }}</p>
-                    <p class="text-[11px] text-zinc-400 flex items-center gap-1 mt-0.5">
-                      <i class="fa-solid fa-layer-group text-[9px]"></i> Batch
-                      {{ entry.alumnus.batch }}
-                    </p>
-                  </div>
-                  <!-- Arrow -->
-                  <i
-                    class="fa-solid fa-arrow-right text-[10px] text-zinc-300 group-hover:text-blue-400 mt-1 flex-shrink-0 transition-colors"
-                  ></i>
-                </a>
-              }
-            </div>
-          </div>
-        }
-      </div>
-    }
-
-    <!-- Empty state -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     @if (past().length === 0) {
       <div class="flex flex-col items-center justify-center gap-4 py-24 text-center">
         <i class="fa-solid fa-clock-rotate-left text-5xl text-zinc-300"></i>
         <p class="text-zinc-500 text-base">No past committee records found.</p>
       </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        @for (c of past(); track c.id) {
+          <a
+            [routerLink]="['/committee', c.id]"
+            class="group bg-white border border-zinc-200 rounded-2xl p-6 hover:border-blue-300 hover:shadow-md transition-all duration-200 flex flex-col gap-4"
+          >
+            <div class="flex items-start gap-4">
+              <div class="flex-shrink-0 w-14 h-14 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col items-center justify-center">
+                <i class="fa-solid fa-users text-zinc-400 text-sm mb-1"></i>
+                <span class="text-[10px] font-bold text-zinc-500 leading-none">
+                  {{ c.term.split('–')[0] }}
+                </span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="text-base font-bold text-zinc-900 group-hover:text-blue-700 transition-colors">
+                  {{ c.sessionLabel }}
+                </h3>
+                @if (c.theme) {
+                  <p class="text-xs text-zinc-500 mt-0.5 italic">{{ c.theme }}</p>
+                }
+                <p class="text-xs text-zinc-400 mt-1">{{ c.members.length }} members</p>
+              </div>
+            </div>
+            <!-- Member avatar strip -->
+            <div class="flex items-center gap-1.5">
+              @for (entry of c.members.slice(0, 5); track entry.id) {
+                <div
+                  [class]="'w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold ring-2 ring-white ' + colorFor(entry.user.id)"
+                >
+                  {{ initialsFor(entry.user.displayName, entry.user.email) }}
+                </div>
+              }
+              @if (c.members.length > 5) {
+                <span class="text-xs text-zinc-400 ml-1">+{{ c.members.length - 5 }} more</span>
+              }
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
+              <span class="text-xs text-zinc-400">Term {{ c.term }}</span>
+              <span class="text-xs text-blue-500 group-hover:underline flex items-center gap-1">
+                View Details <i class="fa-solid fa-arrow-right text-[9px]"></i>
+              </span>
+            </div>
+          </a>
+        }
+      </div>
     }
   </div>
 </section>
+
+} <!-- end @else (not loading/error) -->
 
 <!-- ── CTA Banner ─────────────────────────────────────────────────── -->
 <section class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-16">

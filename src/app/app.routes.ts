@@ -93,6 +93,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/milestones/admin-milestones.component').then((m) => m.AdminMilestonesComponent),
       },
+      {
+        path: 'committees',
+        loadComponent: () =>
+          import('./admin/committees/admin-committees.component').then((m) => m.AdminCommitteesComponent),
+      },
     ],
   },
   {
@@ -112,6 +117,11 @@ export const routes: Routes = [
     path: 'committee',
     loadComponent: () =>
       import('./committee/committee.component').then((m) => m.CommitteeComponent),
+  },
+  {
+    path: 'committee/:id',
+    loadComponent: () =>
+      import('./committee/detail/committee-detail.component').then((m) => m.CommitteeDetailComponent),
   },
   {
     path: 'events',

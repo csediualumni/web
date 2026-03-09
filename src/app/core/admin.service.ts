@@ -13,6 +13,38 @@ export interface Milestone {
   updatedAt: string;
 }
 
+export interface CommitteeMemberUser {
+  id: string;
+  displayName: string | null;
+  email: string;
+  avatar: string | null;
+  batch: number | null;
+  jobTitle: string | null;
+  company: string | null;
+  city: string | null;
+  country: string | null;
+}
+
+export interface CommitteeEntry {
+  id: string;
+  designation: string;
+  sortOrder: number;
+  note: string | null;
+  user: CommitteeMemberUser;
+}
+
+export interface Committee {
+  id: string;
+  term: string;
+  sessionLabel: string;
+  isCurrent: boolean;
+  theme: string | null;
+  sortOrder: number;
+  members: CommitteeEntry[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface NewsletterSubscription {
   id: string;
   email: string;
@@ -206,5 +238,43 @@ export class AdminService {
 
   adminDeleteMilestone(id: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/milestones/${id}`);
+  }
+
+  // ── Committees (public) ─────────────────────────────────────────
+  getCommittees(): Observable<Committee[]> {
+    return this.http.get<Committee[]>(`${environment.apiUrl}/committees`);
+  }
+
+  getCommittee(id: string): Observable<Committee> {
+    return this.http.get<Committee>(`${environment.apiUrl}/committees/${id}`);
+  }
+
+  // ── Committees (admin) ──────────────────────────────────────────
+  adminListCommittees(): Observable<Committee[]> {
+    return this.http.get<Committee[]>(`${this.adminBase}/committees`);
+  }
+
+  adminCreateCommittee(data: { term: string; sessionLabel: string; isCurrent?: boolean; theme?: string; sortOrder?: number }): Observable<Committee> {
+    return this.http.post<Committee>(`${this.adminBase}/committees`, data);
+  }
+
+  adminUpdateCommittee(id: string, data: Partial<{ term: string; sessionLabel: string; isCurrent: boolean; theme: string; sortOrder: number }>): Observable<Committee> {
+    return this.http.patch<Committee>(`${this.adminBase}/committees/${id}`, data);
+  }
+
+  adminDeleteCommittee(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/committees/${id}`);
+  }
+
+  adminAddCommitteeMember(committeeId: string, data: { userId: string; designation: string; sortOrder?: number; note?: string }): Observable<CommitteeEntry> {
+    return this.http.post<CommitteeEntry>(`${this.adminBase}/committees/${committeeId}/members`, data);
+  }
+
+  adminUpdateCommitteeMember(memberId: string, data: Partial<{ designation: string; sortOrder: number; note: string }>): Observable<CommitteeEntry> {
+    return this.http.patch<CommitteeEntry>(`${this.adminBase}/committees/members/${memberId}`, data);
+  }
+
+  adminRemoveCommitteeMember(memberId: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/committees/members/${memberId}`);
   }
 }

@@ -250,19 +250,64 @@
       </p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      @for (member of team; track member.name) {
-        <div class="shad-card p-6 text-center hover:shadow-md transition-shadow">
-          <div
-            class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center mx-auto mb-4"
-          >
-            <i class="fa-solid {{ member.icon }} text-white text-xl"></i>
+    @if (committeeLoading()) {
+      <!-- Skeleton -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (_ of [1,2,3,4]; track $index) {
+          <div class="shad-card p-6 text-center animate-pulse">
+            <div class="w-16 h-16 rounded-full bg-zinc-100 mx-auto mb-4"></div>
+            <div class="h-4 w-28 bg-zinc-100 rounded mx-auto mb-2"></div>
+            <div class="h-3 w-36 bg-zinc-100 rounded mx-auto"></div>
           </div>
-          <h3 class="text-sm font-semibold text-zinc-900 mb-1">{{ member.name }}</h3>
-          <p class="text-xs text-zinc-500 leading-relaxed">{{ member.role }}</p>
+        }
+      </div>
+    } @else if (currentCommittee() && currentCommittee()!.members.length > 0) {
+      <!-- Dynamic current committee members -->
+      <div class="mb-4 flex items-center justify-between">
+        <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+          Committee {{ currentCommittee()!.term }} — Currently Serving
         </div>
-      }
-    </div>
+        <a
+          [routerLink]="['/committee', currentCommittee()!.id]"
+          class="text-xs text-blue-600 hover:underline flex items-center gap-1"
+        >
+          View full committee <i class="fa-solid fa-arrow-right text-[9px]"></i>
+        </a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (entry of currentCommittee()!.members; track entry.id) {
+          <a
+            [routerLink]="['/alumni', entry.user.id]"
+            class="shad-card p-6 text-center hover:shadow-md transition-shadow group cursor-pointer"
+          >
+            <div
+              [class]="'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl text-white group-hover:scale-110 transition-transform ' + colorFor(entry.user.id)"
+            >
+              {{ initialsFor(entry.user.displayName, entry.user.email) }}
+            </div>
+            <h3 class="text-sm font-semibold text-zinc-900 mb-0.5 group-hover:text-blue-700 transition-colors">
+              {{ entry.user.displayName || entry.user.email }}
+            </h3>
+            <span class="inline-block text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5">
+              {{ entry.designation }}
+            </span>
+            @if (entry.user.jobTitle) {
+              <p class="text-xs text-zinc-400 mt-1 truncate">{{ entry.user.jobTitle }}</p>
+            }
+          </a>
+        }
+      </div>
+    } @else {
+      <!-- Fallback: no committee data -->
+      <div class="text-center py-12 text-zinc-400">
+        <i class="fa-solid fa-users text-4xl mb-3"></i>
+        <p class="text-sm">Committee information will appear here once published by an admin.</p>
+        <a routerLink="/committee" class="mt-3 inline-block text-blue-600 hover:underline text-sm">
+          View Committee Page
+        </a>
+      </div>
+    }
   </div>
 </section>
 

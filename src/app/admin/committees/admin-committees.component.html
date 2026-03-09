@@ -1,0 +1,283 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-lg font-semibold text-zinc-900">Committees</h1>
+    <p class="text-sm text-zinc-500 mt-0.5">Manage alumni committees and their members.</p>
+  </div>
+  @if (view() === 'list' && auth.hasPermission('committees:write')) {
+    <button
+      (click)="openCreate()"
+      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
+    >
+      <i class="fa-solid fa-plus text-xs"></i>
+      New Committee
+    </button>
+  }
+  @if (view() !== 'list') {
+    <button (click)="cancelForm()" class="shad-btn-ghost text-zinc-500 hover:bg-zinc-100 px-4 h-9 text-sm gap-2">
+      <i class="fa-solid fa-arrow-left text-xs"></i>
+      Back
+    </button>
+  }
+</div>
+
+<!-- Alerts -->
+@if (error()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- ── Create / Edit Form ── -->
+@if (view() === 'create' || view() === 'edit') {
+  <div class="shad-card p-6 mb-6">
+    <h2 class="text-base font-semibold text-zinc-900 mb-4">
+      {{ view() === 'create' ? 'New Committee' : 'Edit Committee' }}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Term <span class="text-red-500">*</span></label>
+        <input type="text" [ngModel]="formTerm()" (ngModelChange)="formTerm.set($event)" placeholder="e.g. 2024–2025" class="shad-input w-full" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Sort order</label>
+        <input type="number" [ngModel]="formSortOrder()" (ngModelChange)="formSortOrder.set(+$event)" min="0" class="shad-input w-full" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Session label <span class="text-red-500">*</span></label>
+        <input type="text" [ngModel]="formSessionLabel()" (ngModelChange)="formSessionLabel.set($event)" placeholder="e.g. Current Committee" class="shad-input w-full" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Theme / motto</label>
+        <input type="text" [ngModel]="formTheme()" (ngModelChange)="formTheme.set($event)" placeholder="e.g. Connecting Futures, Celebrating Roots" class="shad-input w-full" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="flex items-center gap-3 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            [ngModel]="formIsCurrent()"
+            (ngModelChange)="formIsCurrent.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span class="text-sm font-medium text-zinc-700">Mark as current (active) committee</span>
+        </label>
+        <p class="mt-1 text-xs text-zinc-400 ml-7">Setting this will automatically un-mark any other current committee.</p>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-5">
+      <button
+        (click)="saveCommittee()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-5 h-9 text-sm gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        @if (saving()) {
+          <i class="fa-solid fa-spinner animate-spin text-xs"></i> Saving…
+        } @else {
+          <i class="fa-solid fa-floppy-disk text-xs"></i>
+          {{ view() === 'create' ? 'Create' : 'Save Changes' }}
+        }
+      </button>
+      <button (click)="cancelForm()" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm">Cancel</button>
+    </div>
+  </div>
+}
+
+<!-- ── Members Management ── -->
+@if (view() === 'members' && selected()) {
+  <div class="space-y-6">
+    <!-- Committee info banner -->
+    <div class="shad-card p-4 flex items-center gap-3 bg-blue-50 border-blue-200">
+      <i class="fa-solid fa-users text-blue-500"></i>
+      <div>
+        <p class="text-sm font-semibold text-zinc-900">{{ selected()!.sessionLabel }}</p>
+        <p class="text-xs text-zinc-500">{{ selected()!.term }}{{ selected()!.isCurrent ? ' · Currently Active' : '' }}</p>
+      </div>
+    </div>
+
+    <!-- Add member form -->
+    @if (auth.hasPermission('committees:write')) {
+      <div class="shad-card p-5">
+        <h3 class="text-sm font-semibold text-zinc-900 mb-4">Add Member</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- User search/select -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Search user</label>
+            <input
+              type="text"
+              [ngModel]="userSearch()"
+              (ngModelChange)="userSearch.set($event); addMemberUserId.set('')"
+              placeholder="Name or email…"
+              class="shad-input w-full text-sm"
+            />
+            @if (userSearch().length > 0 && !addMemberUserId()) {
+              <div class="mt-1 border border-zinc-200 rounded-lg bg-white shadow-sm max-h-40 overflow-y-auto">
+                @for (u of filteredUsers(); track u.id) {
+                  <button
+                    type="button"
+                    (click)="selectUser(u.id)"
+                    class="w-full text-left px-3 py-2 text-sm hover:bg-zinc-50 transition-colors flex items-center gap-2"
+                  >
+                    <div [class]="'w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0 ' + colorFor(u.id)">
+                      {{ initialsFor(u.displayName, u.email) }}
+                    </div>
+                    <span class="truncate">{{ u.displayName || u.email }}</span>
+                    <span class="text-zinc-400 text-xs ml-auto truncate">{{ u.email }}</span>
+                  </button>
+                }
+                @if (filteredUsers().length === 0) {
+                  <p class="px-3 py-2 text-xs text-zinc-400">No users match.</p>
+                }
+              </div>
+            }
+          </div>
+          <!-- Designation -->
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Designation</label>
+            <select [ngModel]="addMemberDesignation()" (ngModelChange)="addMemberDesignation.set($event)" class="shad-input w-full text-sm">
+              @for (d of designations; track d) {
+                <option [value]="d">{{ d }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <button
+          (click)="addMember()"
+          [disabled]="addingMember() || !addMemberUserId()"
+          class="mt-3 shad-btn-primary bg-blue-600 text-white hover:bg-blue-700 px-4 h-9 text-sm gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          @if (addingMember()) {
+            <i class="fa-solid fa-spinner animate-spin text-xs"></i> Adding…
+          } @else {
+            <i class="fa-solid fa-user-plus text-xs"></i> Add to Committee
+          }
+        </button>
+      </div>
+    }
+
+    <!-- Current members list -->
+    <div class="shad-card p-5">
+      <h3 class="text-sm font-semibold text-zinc-900 mb-4">
+        Current Members ({{ currentMembers().length }})
+      </h3>
+      @if (currentMembers().length === 0) {
+        <p class="text-sm text-zinc-400 py-6 text-center">No members yet. Add the first member above.</p>
+      } @else {
+        <div class="space-y-2">
+          @for (entry of currentMembers(); track entry.id) {
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-zinc-100 hover:border-zinc-200 transition-colors">
+              <div [class]="'w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ' + colorFor(entry.user.id)">
+                {{ initialsFor(entry.user.displayName, entry.user.email) }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-zinc-900 truncate">{{ entry.user.displayName || entry.user.email }}</p>
+                <p class="text-xs text-zinc-500 truncate">{{ entry.user.email }}</p>
+              </div>
+              <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 shrink-0">
+                {{ entry.designation }}
+              </span>
+              @if (auth.hasPermission('committees:write')) {
+                <button
+                  (click)="removeMember(entry)"
+                  [disabled]="isRemovingMember(entry.id)"
+                  class="shad-btn-ghost text-red-500 hover:bg-red-50 hover:text-red-700 h-8 w-8 p-0 flex items-center justify-center rounded-lg disabled:opacity-60 shrink-0"
+                  title="Remove member"
+                >
+                  @if (isRemovingMember(entry.id)) {
+                    <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                  } @else {
+                    <i class="fa-solid fa-trash text-xs"></i>
+                  }
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- ── List ── -->
+@if (view() === 'list') {
+  @if (loading()) {
+    <div class="space-y-3">
+      @for (_ of [1,2,3]; track $index) {
+        <div class="shad-card p-4 animate-pulse">
+          <div class="h-5 w-40 bg-zinc-100 rounded mb-2"></div>
+          <div class="h-4 w-24 bg-zinc-100 rounded"></div>
+        </div>
+      }
+    </div>
+  } @else if (committees().length === 0) {
+    <div class="shad-card flex flex-col items-center justify-center py-16 text-center">
+      <div class="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center mb-3">
+        <i class="fa-solid fa-users text-zinc-400 text-lg"></i>
+      </div>
+      <p class="text-sm font-medium text-zinc-700">No committees yet</p>
+      <p class="text-xs text-zinc-400 mt-1">Create the first committee to get started.</p>
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for (c of committees(); track c.id) {
+        <div class="shad-card p-4 hover:shadow-sm transition-shadow">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap mb-1">
+                <span class="text-sm font-semibold text-zinc-900">{{ c.sessionLabel }}</span>
+                @if (c.isCurrent) {
+                  <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Active
+                  </span>
+                }
+              </div>
+              <p class="text-xs text-zinc-500">{{ c.term }}</p>
+              @if (c.theme) {
+                <p class="text-xs text-zinc-400 italic mt-0.5">{{ c.theme }}</p>
+              }
+              <p class="text-xs text-zinc-400 mt-1">{{ c.members.length }} members</p>
+            </div>
+            <div class="flex gap-2 shrink-0 flex-wrap justify-end">
+              <button
+                (click)="openMembers(c)"
+                class="shad-btn-ghost text-zinc-500 hover:text-blue-700 hover:bg-blue-50 h-8 px-3 text-xs gap-1.5"
+              >
+                <i class="fa-solid fa-users text-[11px]"></i>
+                Members
+              </button>
+              @if (auth.hasPermission('committees:write')) {
+                <button
+                  (click)="openEdit(c)"
+                  class="shad-btn-ghost text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 h-8 px-3 text-xs gap-1.5"
+                >
+                  <i class="fa-solid fa-pen text-[11px]"></i>
+                  Edit
+                </button>
+                <button
+                  (click)="deleteCommittee(c)"
+                  [disabled]="isDeleting(c.id)"
+                  class="shad-btn-ghost text-red-500 hover:text-red-700 hover:bg-red-50 h-8 px-3 text-xs gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  @if (isDeleting(c.id)) {
+                    <i class="fa-solid fa-spinner animate-spin text-[11px]"></i>
+                  } @else {
+                    <i class="fa-solid fa-trash text-[11px]"></i>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}

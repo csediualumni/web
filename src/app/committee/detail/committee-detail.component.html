@@ -1,0 +1,185 @@
+<!-- Back link -->
+<div class="bg-zinc-50 border-b border-zinc-200 sticky top-0 z-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center gap-3">
+    <a
+      routerLink="/committee"
+      class="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+    >
+      <i class="fa-solid fa-arrow-left text-xs"></i>
+      All Committees
+    </a>
+    @if (committee()) {
+      <span class="text-zinc-300">/</span>
+      <span class="text-sm font-medium text-zinc-700">{{ committee()!.sessionLabel }}</span>
+    }
+  </div>
+</div>
+
+<!-- Loading -->
+@if (loading()) {
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="h-10 w-64 bg-zinc-100 rounded animate-pulse mb-3"></div>
+    <div class="h-5 w-48 bg-zinc-100 rounded animate-pulse mb-10"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+        <div class="bg-white border border-zinc-100 rounded-2xl p-5 animate-pulse">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="w-12 h-12 rounded-xl bg-zinc-100 flex-shrink-0"></div>
+            <div class="h-5 w-20 bg-zinc-100 rounded-full mt-1"></div>
+          </div>
+          <div class="h-5 w-36 bg-zinc-100 rounded mb-1"></div>
+          <div class="h-4 w-28 bg-zinc-100 rounded"></div>
+        </div>
+      }
+    </div>
+  </div>
+} @else if (error()) {
+  <div class="max-w-xl mx-auto px-4 py-24 text-center">
+    <i class="fa-solid fa-circle-exclamation text-4xl text-red-400 mb-4"></i>
+    <p class="text-zinc-600 mb-4">{{ error() }}</p>
+    <a routerLink="/committee" class="text-blue-600 hover:underline text-sm">← Back to Committees</a>
+  </div>
+} @else if (committee(); as c) {
+
+  <!-- Hero / header -->
+  <section
+    class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-16 md:py-20"
+  >
+    <div
+      class="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"
+    ></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          @if (c.isCurrent) {
+            <div
+              class="inline-flex items-center gap-2 bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-semibold px-3 py-1 rounded-full mb-4"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              Currently Serving
+            </div>
+          }
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-2">
+            {{ c.sessionLabel }}
+          </h1>
+          <p class="text-blue-200/70 text-base mb-1">Term: {{ c.term }}</p>
+          @if (c.theme) {
+            <p class="text-blue-100/60 text-sm italic">{{ c.theme }}</p>
+          }
+        </div>
+        <div class="flex-shrink-0 text-right">
+          <div class="text-4xl font-extrabold text-white">{{ c.members.length }}</div>
+          <div class="text-blue-300 text-sm">Members</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Members section -->
+  <section class="py-14 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-xl font-bold text-zinc-900 mb-8">Committee Members</h2>
+
+      <!-- President spotlight -->
+      @if (sortedMembers(c.members)[0]; as president) {
+        <div
+          class="mb-8 rounded-2xl bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/70 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 shadow-sm"
+        >
+          <a [routerLink]="['/alumni', president.user.id]" class="flex-shrink-0">
+            <div
+              [class]="'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' + colorFor(president.user.id)"
+            >
+              {{ initialsFor(president.user.displayName, president.user.email) }}
+            </div>
+          </a>
+          <div class="flex-1 min-w-0">
+            <div
+              class="inline-flex items-center gap-1.5 bg-amber-400/20 border border-amber-400/50 text-amber-800 text-xs font-bold px-3 py-0.5 rounded-full mb-2"
+            >
+              <i class="fa-solid fa-crown text-amber-600 text-[10px]"></i>
+              {{ president.designation }}
+            </div>
+            <h3 class="text-2xl font-bold text-zinc-900">
+              {{ president.user.displayName || president.user.email }}
+            </h3>
+            @if (president.user.jobTitle || president.user.company) {
+              <p class="text-zinc-600 mt-0.5">
+                {{ president.user.jobTitle }}
+                @if (president.user.company) {
+                  <span class="text-zinc-400">at</span> {{ president.user.company }}
+                }
+              </p>
+            }
+            <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-zinc-500">
+              @if (president.user.batch) {
+                <span class="flex items-center gap-1.5">
+                  <i class="fa-solid fa-layer-group text-[10px] text-zinc-400"></i>
+                  Batch {{ president.user.batch }}
+                </span>
+              }
+              @if (president.user.city || president.user.country) {
+                <span class="flex items-center gap-1.5">
+                  <i class="fa-solid fa-location-dot text-[10px] text-zinc-400"></i>
+                  {{ [president.user.city, president.user.country].filter(Boolean).join(', ') }}
+                </span>
+              }
+            </div>
+          </div>
+          <a
+            [routerLink]="['/alumni', president.user.id]"
+            class="flex-shrink-0 inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-sm"
+          >
+            View Profile <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+      }
+
+      <!-- Remaining members grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        @for (entry of sortedMembers(c.members).slice(1); track entry.id) {
+          <a
+            [routerLink]="['/alumni', entry.user.id]"
+            class="group flex flex-col bg-white border border-zinc-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
+          >
+            <div class="flex items-start gap-3 mb-3">
+              <div
+                [class]="'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' + colorFor(entry.user.id)"
+              >
+                {{ initialsFor(entry.user.displayName, entry.user.email) }}
+              </div>
+              <div class="min-w-0 flex-1 pt-0.5">
+                <span
+                  class="inline-block text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-0.5 leading-none"
+                >
+                  {{ entry.designation }}
+                </span>
+              </div>
+            </div>
+            <h4 class="text-sm font-bold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight">
+              {{ entry.user.displayName || entry.user.email }}
+            </h4>
+            @if (entry.user.jobTitle) {
+              <p class="text-xs text-zinc-500 mt-0.5 truncate">{{ entry.user.jobTitle }}</p>
+            }
+            @if (entry.user.company) {
+              <p class="text-xs text-zinc-400 truncate">{{ entry.user.company }}</p>
+            }
+            <div class="flex items-center justify-between mt-auto pt-3 border-t border-zinc-100">
+              @if (entry.user.batch) {
+                <span class="text-[11px] text-zinc-400 flex items-center gap-1">
+                  <i class="fa-solid fa-layer-group text-[9px]"></i> Batch {{ entry.user.batch }}
+                </span>
+              } @else {
+                <span></span>
+              }
+              <span class="text-[11px] text-blue-500 group-hover:underline flex items-center gap-1">
+                View <i class="fa-solid fa-arrow-right text-[9px]"></i>
+              </span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+} <!-- end @else if committee -->

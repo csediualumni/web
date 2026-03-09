@@ -2,7 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StatsService } from '../core/stats.service';
-import { AdminService, Milestone } from '../core/admin.service';
+import { AdminService, Milestone, Committee } from '../core/admin.service';
+import { colorFor, initialsFor } from '../committee/committee.component';
 
 @Component({
   selector: 'app-about',
@@ -19,39 +20,26 @@ export class AboutComponent implements OnInit {
   milestones = signal<Milestone[] | null>(null);
   milestonesError = signal(false);
 
+  currentCommittee = signal<Committee | null>(null);
+  committeeLoading = signal(true);
+
   ngOnInit(): void {
     this.adminService.getMilestones().subscribe({
       next: (data) => this.milestones.set(data),
       error: () => this.milestonesError.set(true),
     });
+
+    this.adminService.getCommittees().subscribe({
+      next: (data) => {
+        this.currentCommittee.set(data.find((c) => c.isCurrent) ?? null);
+        this.committeeLoading.set(false);
+      },
+      error: () => this.committeeLoading.set(false),
+    });
   }
 
-  readonly team = [
-    {
-      name: 'Dr. Md. Sazzadur Rahman',
-      role: 'Head of Department, CSE',
-      icon: 'fa-user-tie',
-      initials: 'SR',
-    },
-    {
-      name: 'Alumni Executive Board',
-      role: 'Elected representatives from each graduating class.',
-      icon: 'fa-people-group',
-      initials: 'EB',
-    },
-    {
-      name: 'Technical Committee',
-      role: 'Volunteer alumni engineers who build and maintain the platform.',
-      icon: 'fa-code',
-      initials: 'TC',
-    },
-    {
-      name: 'Events & Outreach',
-      role: 'Organises reunions, seminars, and community initiatives.',
-      icon: 'fa-calendar-star',
-      initials: 'EO',
-    },
-  ];
+  colorFor    = colorFor;
+  initialsFor = initialsFor;
 
   readonly values = [
     {
