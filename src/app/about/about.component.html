@@ -55,16 +55,28 @@
 <section class="bg-white border-b border-zinc-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-      @for (stat of stats; track stat.label) {
-        <div class="flex flex-col items-center gap-3">
-          <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center">
-            <i class="fa-solid {{ stat.icon }} text-white text-base"></i>
+      @if (stats$ | async; as stats) {
+        @for (stat of stats; track stat.label) {
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center">
+              <i class="fa-solid {{ stat.icon }} text-white text-base"></i>
+            </div>
+            <div>
+              <p class="text-3xl font-extrabold text-zinc-900 tracking-tight">{{ stat.value }}</p>
+              <p class="mt-0.5 text-sm text-zinc-500 font-medium">{{ stat.label }}</p>
+            </div>
           </div>
-          <div>
-            <p class="text-3xl font-extrabold text-zinc-900 tracking-tight">{{ stat.value }}</p>
-            <p class="mt-0.5 text-sm text-zinc-500 font-medium">{{ stat.label }}</p>
+        }
+      } @else {
+        @for (_ of [1, 2, 3, 4]; track $index) {
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-zinc-100 animate-pulse"></div>
+            <div>
+              <div class="h-9 w-20 mx-auto bg-zinc-100 rounded animate-pulse mb-1"></div>
+              <div class="h-4 w-24 mx-auto bg-zinc-100 rounded animate-pulse"></div>
+            </div>
           </div>
-        </div>
+        }
       }
     </div>
   </div>

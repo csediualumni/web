@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { StatsService } from '../core/stats.service';
 
 @Component({
   selector: 'app-about',
@@ -9,12 +10,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './about.component.html',
 })
 export class AboutComponent {
-  readonly stats = [
-    { value: '5,000+', label: 'Alumni Members', icon: 'fa-users' },
-    { value: '120+', label: 'Batches', icon: 'fa-layer-group' },
-    { value: '80+', label: 'Countries', icon: 'fa-globe' },
-    { value: '200+', label: 'Events Hosted', icon: 'fa-calendar-check' },
-  ];
+  private statsService = inject(StatsService);
+  readonly stats$ = this.statsService.iconStats$;
 
   readonly milestones = [
     {

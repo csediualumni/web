@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/auth.service';
+import { StatsService } from '../core/stats.service';
 
 @Component({
   selector: 'app-home',
@@ -12,13 +13,9 @@ import { AuthService } from '../core/auth.service';
 export class HomeComponent {
   auth = inject(AuthService);
   private router = inject(Router);
+  private statsService = inject(StatsService);
 
-  readonly stats = [
-    { value: '5,000+', label: 'Alumni Members' },
-    { value: '120+', label: 'Batches' },
-    { value: '80+', label: 'Countries' },
-    { value: '200+', label: 'Events Hosted' },
-  ];
+  readonly stats$ = this.statsService.homeStats$;
 
   readonly features = [
     {

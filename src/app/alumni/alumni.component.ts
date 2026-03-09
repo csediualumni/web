@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs/operators';
 import { AlumniService, AlumnusMember } from './alumni.service';
+import { StatsService } from '../core/stats.service';
 
 @Component({
   selector: 'app-alumni',
@@ -14,6 +15,7 @@ import { AlumniService, AlumnusMember } from './alumni.service';
 })
 export class AlumniComponent {
   private readonly alumniService = inject(AlumniService);
+  private readonly statsService = inject(StatsService);
 
   readonly loading = signal(true);
 
@@ -93,10 +95,5 @@ export class AlumniComponent {
     this.selectedCountry.set('');
   }
 
-  readonly stats = [
-    { value: '5,000+', label: 'Registered Alumni', icon: 'fa-users' },
-    { value: '120+', label: 'Graduating Batches', icon: 'fa-layer-group' },
-    { value: '80+', label: 'Countries', icon: 'fa-globe' },
-    { value: '10+', label: 'Industries', icon: 'fa-briefcase' },
-  ];
+  readonly stats$ = this.statsService.alumniPageStats$;
 }
