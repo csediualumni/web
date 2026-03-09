@@ -88,6 +88,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/contact/admin-contact.component').then((m) => m.AdminContactComponent),
       },
+      {
+        path: 'milestones',
+        loadComponent: () =>
+          import('./admin/milestones/admin-milestones.component').then((m) => m.AdminMilestonesComponent),
+      },
     ],
   },
   {

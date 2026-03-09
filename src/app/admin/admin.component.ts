@@ -20,6 +20,7 @@ export class AdminComponent {
     { label: 'Invoices', path: 'invoices', icon: 'fa-file-invoice-dollar' },
     { label: 'Newsletter', path: 'newsletter', icon: 'fa-envelope' },
     { label: 'Contact Tickets', path: 'contact', icon: 'fa-headset' },
+    { label: 'History / Milestones', path: 'milestones', icon: 'fa-timeline' },
   ];
 
   constructor(

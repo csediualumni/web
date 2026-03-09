@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StatsService } from '../core/stats.service';
+import { AdminService, Milestone } from '../core/admin.service';
 
 @Component({
   selector: 'app-about',
@@ -9,37 +10,21 @@ import { StatsService } from '../core/stats.service';
   imports: [CommonModule, RouterLink],
   templateUrl: './about.component.html',
 })
-export class AboutComponent {
+export class AboutComponent implements OnInit {
   private statsService = inject(StatsService);
+  private adminService = inject(AdminService);
+
   readonly stats$ = this.statsService.iconStats$;
 
-  readonly milestones = [
-    {
-      year: '2002',
-      title: 'Department Founded',
-      desc: 'The Department of Computer Science & Engineering was established at Dhaka International University, launching the first batch of CSE students.',
-    },
-    {
-      year: '2008',
-      title: 'Alumni Association Formed',
-      desc: 'Early graduates formed the first informal alumni group to maintain ties with the university and support incoming students.',
-    },
-    {
-      year: '2015',
-      title: 'Community Milestones',
-      desc: 'The alumni network surpassed 1,000 registered members. Career fairs and mentorship programmes were formally introduced.',
-    },
-    {
-      year: '2020',
-      title: 'Going Digital',
-      desc: 'A dedicated digital platform was launched enabling global alumni to connect, share opportunities, and collaborate remotely.',
-    },
-    {
-      year: '2024',
-      title: 'New Platform',
-      desc: 'The current CSE DIU Alumni Network was rebuilt from the ground up — faster, smarter, and designed for the next generation.',
-    },
-  ];
+  milestones = signal<Milestone[] | null>(null);
+  milestonesError = signal(false);
+
+  ngOnInit(): void {
+    this.adminService.getMilestones().subscribe({
+      next: (data) => this.milestones.set(data),
+      error: () => this.milestonesError.set(true),
+    });
+  }
 
   readonly team = [
     {

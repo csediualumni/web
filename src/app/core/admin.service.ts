@@ -3,6 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+export interface Milestone {
+  id: string;
+  year: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface NewsletterSubscription {
   id: string;
   email: string;
@@ -69,6 +79,7 @@ export class AdminService {
   private readonly permsBase = `${environment.apiUrl}/permissions`;
   private readonly newsletterBase = `${environment.apiUrl}/newsletter`;
   private readonly contactBase = `${environment.apiUrl}/contact`;
+  private readonly milestonesBase = `${environment.apiUrl}/milestones`;
 
   constructor(private http: HttpClient) {}
 
@@ -173,5 +184,27 @@ export class AdminService {
 
   deleteContactTicket(id: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/contact/tickets/${id}`);
+  }
+
+  // ── Milestones (public) ─────────────────────────────────
+  getMilestones(): Observable<Milestone[]> {
+    return this.http.get<Milestone[]>(this.milestonesBase);
+  }
+
+  // ── Milestones (admin) ─────────────────────────────────
+  adminListMilestones(): Observable<Milestone[]> {
+    return this.http.get<Milestone[]>(`${this.adminBase}/milestones`);
+  }
+
+  adminCreateMilestone(data: { year: string; title: string; description: string; sortOrder?: number }): Observable<Milestone> {
+    return this.http.post<Milestone>(`${this.adminBase}/milestones`, data);
+  }
+
+  adminUpdateMilestone(id: string, data: Partial<{ year: string; title: string; description: string; sortOrder: number }>): Observable<Milestone> {
+    return this.http.patch<Milestone>(`${this.adminBase}/milestones/${id}`, data);
+  }
+
+  adminDeleteMilestone(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/milestones/${id}`);
   }
 }

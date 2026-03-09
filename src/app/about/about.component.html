@@ -167,41 +167,69 @@
         class="absolute left-[19px] top-0 bottom-0 w-px bg-zinc-200 sm:left-[calc(50%-0.5px)]"
       ></div>
 
-      <div class="space-y-10">
-        @for (milestone of milestones; track milestone.year; let isEven = $even) {
-          <div
-            class="relative flex gap-4 sm:gap-0 items-start"
-            [class.sm:flex-row-reverse]="isEven"
-          >
-            <!-- Year badge (center on sm+) -->
+      @if (milestonesError()) {
+        <div class="flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+          <span>Failed to load history milestones. Please try again later.</span>
+        </div>
+      } @else if (milestones() === null) {
+        <!-- Skeleton -->
+        <div class="space-y-10">
+          @for (_ of [1, 2, 3]; track $index) {
+            <div class="relative flex gap-4 sm:gap-0 items-start">
+              <div class="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:top-0">
+                <div class="w-10 h-10 rounded-full bg-zinc-200 animate-pulse border-4 border-white shadow-sm"></div>
+              </div>
+              <div class="sm:w-[calc(50%-36px)] ml-6 sm:ml-0 sm:pr-8">
+                <div class="shad-card p-5 space-y-2">
+                  <div class="h-5 w-12 bg-zinc-100 rounded animate-pulse"></div>
+                  <div class="h-5 w-40 bg-zinc-100 rounded animate-pulse"></div>
+                  <div class="h-4 w-full bg-zinc-100 rounded animate-pulse"></div>
+                  <div class="h-4 w-3/4 bg-zinc-100 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (milestones()!.length === 0) {
+        <p class="text-center text-sm text-zinc-400 py-8">No history milestones have been added yet.</p>
+      } @else {
+        <div class="space-y-10">
+          @for (milestone of milestones()!; track milestone.id; let isEven = $even) {
             <div
-              class="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:top-0"
+              class="relative flex gap-4 sm:gap-0 items-start"
+              [class.sm:flex-row-reverse]="isEven"
             >
+              <!-- Year badge (center on sm+) -->
               <div
-                class="w-10 h-10 rounded-full bg-blue-600 border-4 border-white flex items-center justify-center shadow-sm"
+                class="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:top-0"
               >
-                <i class="fa-solid fa-calendar-check text-white text-xs"></i>
-              </div>
-            </div>
-
-            <!-- Content card -->
-            <div
-              class="sm:w-[calc(50%-36px)] ml-6 sm:ml-0"
-              [class.sm:pr-8]="!isEven"
-              [class.sm:pl-8]="isEven"
-            >
-              <div class="shad-card p-5">
-                <span
-                  class="inline-block text-xs font-bold text-white bg-blue-700 rounded px-2 py-0.5 mb-2"
-                  >{{ milestone.year }}</span
+                <div
+                  class="w-10 h-10 rounded-full bg-blue-600 border-4 border-white flex items-center justify-center shadow-sm"
                 >
-                <h3 class="text-base font-semibold text-zinc-900 mb-1">{{ milestone.title }}</h3>
-                <p class="text-sm text-zinc-500 leading-relaxed">{{ milestone.desc }}</p>
+                  <i class="fa-solid fa-calendar-check text-white text-xs"></i>
+                </div>
+              </div>
+
+              <!-- Content card -->
+              <div
+                class="sm:w-[calc(50%-36px)] ml-6 sm:ml-0"
+                [class.sm:pr-8]="!isEven"
+                [class.sm:pl-8]="isEven"
+              >
+                <div class="shad-card p-5">
+                  <span
+                    class="inline-block text-xs font-bold text-white bg-blue-700 rounded px-2 py-0.5 mb-2"
+                    >{{ milestone.year }}</span
+                  >
+                  <h3 class="text-base font-semibold text-zinc-900 mb-1">{{ milestone.title }}</h3>
+                  <p class="text-sm text-zinc-500 leading-relaxed">{{ milestone.description }}</p>
+                </div>
               </div>
             </div>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      }
     </div>
   </div>
 </section>
