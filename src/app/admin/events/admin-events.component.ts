@@ -32,6 +32,7 @@ export class AdminEventsComponent implements OnInit {
   viewingEvent = signal<ApiEvent | null>(null);
   rsvpsLoading = signal(false);
   deleting = signal<Set<string>>(new Set());
+  confirmingRsvp = signal<Set<string>>(new Set());
 
   // Form fields
   editingId = signal<string | null>(null);
@@ -50,6 +51,8 @@ export class AdminEventsComponent implements OnInit {
   formFeatured = signal(false);
   formRegistrationUrl = signal('');
   formSortOrder = signal(0);
+  /** Ticket price in BDT; null/0 = free event */
+  formTicketPrice = signal<number | null>(null);
 
   readonly modes = MODES;
   readonly statuses = STATUSES;
@@ -100,6 +103,7 @@ export class AdminEventsComponent implements OnInit {
     this.formFeatured.set(false);
     this.formRegistrationUrl.set('');
     this.formSortOrder.set(this.events().length);
+    this.formTicketPrice.set(null);
     this.error.set('');
     this.success.set('');
     this.mode.set('create');
@@ -123,6 +127,7 @@ export class AdminEventsComponent implements OnInit {
     this.formFeatured.set(e.featured);
     this.formRegistrationUrl.set(e.registrationUrl ?? '');
     this.formSortOrder.set(e.sortOrder);
+    this.formTicketPrice.set(e.ticketPrice ?? null);
     this.error.set('');
     this.success.set('');
     this.mode.set('edit');
@@ -201,6 +206,7 @@ export class AdminEventsComponent implements OnInit {
       featured: this.formFeatured(),
       registrationUrl: this.formRegistrationUrl().trim() || null,
       sortOrder: this.formSortOrder(),
+      ticketPrice: this.formTicketPrice() || null,
     };
 
     const id = this.editingId();
@@ -282,4 +288,20 @@ export class AdminEventsComponent implements OnInit {
       day: 'numeric',
     }).format(new Date(dateStr));
   }
-}
+
+  confirmRsvp(rsvp: import('../../core/admin.service').EventRsvp): void {
+    const eventId = this.viewingEvent()?.id;
+    if (!eventId) return;
+
+    this.confirmingRsvp.update((s) => new Set([...s, rsvp.id]));
+    this.adminService.adminConfirmEventRsvp(eventId, rsvp.id).subscribe({
+      next: (updated) => {
+        this.rsvps.update((list) => list.map((r) => (r.id === updated.id ? updated : r)));
+        this.confirmingRsvp.update((s) => { const n = new Set(s); n.delete(rsvp.id); return n; });
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Failed to confirm RSVP.');
+        this.confirmingRsvp.update((s) => { const n = new Set(s); n.delete(rsvp.id); return n; });
+      },
+    });
+  }}

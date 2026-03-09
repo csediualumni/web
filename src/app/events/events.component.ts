@@ -26,9 +26,27 @@ export class EventsComponent implements OnInit {
   apiError = signal('');
 
   /** eventId → 'registered' | 'cancelled' — tracks RSVP state during session */
-  myRsvps = signal<Map<string, 'registered' | 'cancelled'>>(new Map());
+  myRsvps = signal<Map<string, 'registered' | 'cancelled' | 'pending_payment'>>(new Map());
   /** eventId set — tracks ongoing RSVP request */
   rsvping = signal<Set<string>>(new Set());
+
+  private static readonly PAID_CUTOFF_DAYS = 7;
+
+  /** Returns true if a paid event is still open for registration (> 7 days away). */
+  isPaidRegistrationOpen(event: ApiEvent): boolean {
+    if (!event.ticketPrice) return true; // free event — no cutoff
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const days = Math.floor((new Date(event.date).getTime() - Date.now()) / msPerDay);
+    return days >= EventsComponent.PAID_CUTOFF_DAYS;
+  }
+
+  /** Returns true if a paid RSVP can still be cancelled (> 7 days away). */
+  isPaidCancellationAllowed(event: ApiEvent): boolean {
+    if (!event.ticketPrice) return true; // free event — no cutoff
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const days = Math.floor((new Date(event.date).getTime() - Date.now()) / msPerDay);
+    return days >= EventsComponent.PAID_CUTOFF_DAYS;
+  }
 
   filteredEvents = computed(() => {
     const tab = this.activeTab();
@@ -92,12 +110,31 @@ export class EventsComponent implements OnInit {
     }
     if (this.isRsvping(event.id)) return;
 
+    // Client-side guard for paid events: registration cutoff
+    if (!this.isPaidRegistrationOpen(event)) {
+      alert('Registration for this paid event is closed 7 days before the event.');
+      return;
+    }
+
     this.rsvping.update((s) => new Set([...s, event.id]));
 
     this.adminService.rsvpEvent(event.id).subscribe({
-      next: () => {
+      next: (res) => {
+        this.rsvping.update((s) => {
+          const next = new Set(s);
+          next.delete(event.id);
+          return next;
+        });
+
+        // Paid event: redirect to payment page
+        if (res.invoiceId) {
+          this.myRsvps.update((m) => new Map([...m, [event.id, 'pending_payment']]));
+          this.router.navigate(['/payment'], { queryParams: { invoiceId: res.invoiceId } });
+          return;
+        }
+
+        // Free event: mark registered and update seat count
         this.myRsvps.update((m) => new Map([...m, [event.id, 'registered']]));
-        // Decrement seatsLeft locally for instant UI feedback
         this.events.update((list) =>
           list.map((e) =>
             e.id === event.id && e.seatsLeft !== null
@@ -105,11 +142,6 @@ export class EventsComponent implements OnInit {
               : e,
           ),
         );
-        this.rsvping.update((s) => {
-          const next = new Set(s);
-          next.delete(event.id);
-          return next;
-        });
       },
       error: (err) => {
         const msg: string = err?.error?.message ?? 'Registration failed.';
@@ -124,6 +156,12 @@ export class EventsComponent implements OnInit {
   }
 
   cancelRsvp(event: ApiEvent): void {
+    // Client-side guard for paid events: cancellation cutoff
+    if (!this.isPaidCancellationAllowed(event)) {
+      alert('Cancellation is not allowed within 7 days of the event.');
+      return;
+    }
+
     if (!confirm('Cancel your registration for this event?')) return;
     if (this.isRsvping(event.id)) return;
 

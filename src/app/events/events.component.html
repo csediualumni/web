@@ -149,14 +149,25 @@
               <button
                 (click)="cancelRsvp(featuredEvent()!)"
                 [disabled]="isRsvping(featuredEvent()!.id)"
+                [title]="!isPaidCancellationAllowed(featuredEvent()!) ? 'Cancellation not allowed within 7 days of the event' : ''"
                 class="shad-btn-outline gap-2 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
               >
                 @if (isRsvping(featuredEvent()!.id)) {
                   <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                } @else if (!isPaidCancellationAllowed(featuredEvent()!)) {
+                  <i class="fa-solid fa-lock text-xs"></i>
                 } @else {
                   <i class="fa-solid fa-circle-check text-xs"></i>
                 }
                 Registered
+              </button>
+            } @else if (!isPaidRegistrationOpen(featuredEvent()!)) {
+              <button
+                disabled
+                class="shad-btn-outline gap-2 opacity-50 cursor-not-allowed"
+              >
+                <i class="fa-solid fa-lock text-xs"></i>
+                Registration Closed
               </button>
             } @else {
               <button
@@ -169,7 +180,11 @@
                   Registering…
                 } @else {
                   <i class="fa-solid fa-ticket"></i>
-                  Register Now
+                  @if (featuredEvent()!.ticketPrice) {
+                    Register Now &middot; BDT {{ featuredEvent()!.ticketPrice | number }}
+                  } @else {
+                    Register Now
+                  }
                 }
               </button>
             }
@@ -272,7 +287,7 @@
 
             <div class="p-5 flex flex-col flex-1 gap-3">
               <!-- Category + mode -->
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <span
                   class="text-[11px] font-medium bg-zinc-100 text-zinc-600 rounded px-2 py-0.5"
                   >{{ event.category }}</span
@@ -281,6 +296,11 @@
                   <i class="fa-solid {{ modeIcon(event.mode) }} text-[10px]"></i>
                   {{ event.mode }}
                 </span>
+                @if (event.ticketPrice) {
+                  <span class="text-[11px] font-semibold bg-violet-100 text-violet-700 rounded px-2 py-0.5">
+                    <i class="fa-solid fa-ticket text-[9px] mr-0.5"></i> BDT {{ event.ticketPrice | number }}
+                  </span>
+                }
               </div>
 
               <!-- Title + description -->
@@ -328,14 +348,25 @@
                     <button
                       (click)="cancelRsvp(event)"
                       [disabled]="isRsvping(event.id)"
+                      [title]="!isPaidCancellationAllowed(event) ? 'Cancellation not allowed within 7 days of the event' : ''"
                       class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
                     >
                       @if (isRsvping(event.id)) {
                         <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                      } @else if (!isPaidCancellationAllowed(event)) {
+                        <i class="fa-solid fa-lock text-xs"></i>
                       } @else {
                         <i class="fa-solid fa-circle-check text-xs"></i>
                       }
                       Registered
+                    </button>
+                  } @else if (!isPaidRegistrationOpen(event)) {
+                    <button
+                      disabled
+                      class="shad-btn-outline w-full gap-2 text-sm h-9 opacity-50 cursor-not-allowed"
+                    >
+                      <i class="fa-solid fa-lock text-xs"></i>
+                      Registration Closed
                     </button>
                   } @else {
                     <button
@@ -348,7 +379,11 @@
                         Registering…
                       } @else {
                         <i class="fa-solid fa-ticket text-xs"></i>
-                        Register
+                        @if (event.ticketPrice) {
+                          Register &middot; BDT {{ event.ticketPrice | number }}
+                        } @else {
+                          Register
+                        }
                       }
                     </button>
                   }
@@ -390,7 +425,7 @@
               </span>
             </div>
             <div class="p-5 flex flex-col flex-1 gap-3">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <span
                   class="text-[11px] font-medium bg-amber-100 text-amber-700 rounded px-2 py-0.5"
                   >{{ event.category }}</span
@@ -399,6 +434,11 @@
                   <i class="fa-solid {{ modeIcon(event.mode) }} text-[10px]"></i>
                   {{ event.mode }}
                 </span>
+                @if (event.ticketPrice) {
+                  <span class="text-[11px] font-semibold bg-violet-100 text-violet-700 rounded px-2 py-0.5">
+                    <i class="fa-solid fa-ticket text-[9px] mr-0.5"></i> BDT {{ event.ticketPrice | number }}
+                  </span>
+                }
               </div>
               <div>
                 <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
@@ -435,14 +475,25 @@
                   <button
                     (click)="cancelRsvp(event)"
                     [disabled]="isRsvping(event.id)"
+                    [title]="!isPaidCancellationAllowed(event) ? 'Cancellation not allowed within 7 days of the event' : ''"
                     class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
                   >
                     @if (isRsvping(event.id)) {
                       <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                    } @else if (!isPaidCancellationAllowed(event)) {
+                      <i class="fa-solid fa-lock text-xs"></i>
                     } @else {
                       <i class="fa-solid fa-circle-check text-xs"></i>
                     }
                     Registered
+                  </button>
+                } @else if (!isPaidRegistrationOpen(event)) {
+                  <button
+                    disabled
+                    class="shad-btn-outline w-full gap-2 text-sm h-9 opacity-50 cursor-not-allowed"
+                  >
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    Registration Closed
                   </button>
                 } @else {
                   <button
@@ -455,7 +506,11 @@
                       Registering…
                     } @else {
                       <i class="fa-solid fa-ticket text-xs"></i>
-                      Register
+                      @if (event.ticketPrice) {
+                        Register &middot; BDT {{ event.ticketPrice | number }}
+                      } @else {
+                        Register
+                      }
                     }
                   </button>
                 }

@@ -100,7 +100,7 @@ export type ContactTicketStatus = 'open' | 'in_progress' | 'resolved';
 
 export type EventMode = 'In-Person' | 'Online' | 'Hybrid';
 export type EventStatus = 'upcoming' | 'ongoing' | 'past';
-export type RsvpStatus = 'registered' | 'cancelled';
+export type RsvpStatus = 'registered' | 'cancelled' | 'pending_payment';
 
 export interface ApiEvent {
   id: string;
@@ -121,6 +121,8 @@ export interface ApiEvent {
   featured: boolean;
   registrationUrl: string | null;
   sortOrder: number;
+  /** Ticket price in BDT. null or 0 = free event. */
+  ticketPrice: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -130,6 +132,8 @@ export interface EventRsvp {
   eventId: string;
   userId: string;
   status: RsvpStatus;
+  /** Present for paid-event RSVPs */
+  invoiceId: string | null;
   user?: { id: string; email: string; displayName: string | null; avatar: string | null };
   createdAt: string;
   updatedAt: string;
@@ -357,8 +361,8 @@ export class AdminService {
   }
 
   // ── Events RSVP (auth required) ─────────────────────────
-  rsvpEvent(id: string): Observable<{ message: string; rsvp: EventRsvp }> {
-    return this.http.post<{ message: string; rsvp: EventRsvp }>(`${this.eventsBase}/${id}/rsvp`, {});
+  rsvpEvent(id: string): Observable<{ message: string; rsvp: EventRsvp; invoiceId?: string; paymentUrl?: string }> {
+    return this.http.post<{ message: string; rsvp: EventRsvp; invoiceId?: string; paymentUrl?: string }>(`${this.eventsBase}/${id}/rsvp`, {});
   }
 
   cancelRsvpEvent(id: string): Observable<{ message: string }> {
@@ -378,7 +382,8 @@ export class AdminService {
     title: string; description: string; date: string; time: string;
     location: string; city: string; mode: EventMode; category: string;
     status: EventStatus; seats?: number | null; imageUrl?: string | null;
-    color?: string; featured?: boolean; registrationUrl?: string | null; sortOrder?: number;
+    color?: string; featured?: boolean; registrationUrl?: string | null;
+    sortOrder?: number; ticketPrice?: number | null;
   }): Observable<ApiEvent> {
     return this.http.post<ApiEvent>(`${this.adminBase}/events`, data);
   }
@@ -387,7 +392,8 @@ export class AdminService {
     title: string; description: string; date: string; time: string;
     location: string; city: string; mode: EventMode; category: string;
     status: EventStatus; seats: number | null; imageUrl: string | null;
-    color: string; featured: boolean; registrationUrl: string | null; sortOrder: number;
+    color: string; featured: boolean; registrationUrl: string | null;
+    sortOrder: number; ticketPrice: number | null;
   }>): Observable<ApiEvent> {
     return this.http.patch<ApiEvent>(`${this.adminBase}/events/${id}`, data);
   }
@@ -398,6 +404,10 @@ export class AdminService {
 
   adminListEventRsvps(id: string): Observable<EventRsvp[]> {
     return this.http.get<EventRsvp[]>(`${this.adminBase}/events/${id}/rsvps`);
+  }
+
+  adminConfirmEventRsvp(eventId: string, rsvpId: string): Observable<EventRsvp> {
+    return this.http.post<EventRsvp>(`${this.adminBase}/events/${eventId}/rsvps/${rsvpId}/confirm`, {});
   }
 
   // ── Bulk member import ───────────────────────────────────
