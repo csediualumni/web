@@ -53,6 +53,12 @@ export interface DesignationMapping {
   createdAt: string;
 }
 
+export interface ImportMembersResult {
+  created: number;
+  updated: number;
+  errors: { row: number; email: string; reason: string }[];
+}
+
 export interface NewsletterSubscription {
   id: string;
   email: string;
@@ -301,5 +307,12 @@ export class AdminService {
 
   adminRemoveDesignationMapping(id: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/designation-roles/${id}`);
+  }
+
+  // ── Bulk member import ───────────────────────────────────
+  importMembers(file: File): Observable<ImportMembersResult> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<ImportMembersResult>(`${this.adminBase}/users/import`, form);
   }
 }

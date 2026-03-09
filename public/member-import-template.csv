@@ -1,0 +1,3 @@
+email,displayName,batch,phone,jobTitle,company,industry,city,country,linkedin,github,twitter,website
+john.doe@example.com,John Doe,2018,+1234567890,Software Engineer,Acme Corp,Technology,Dhaka,Bangladesh,https://linkedin.com/in/johndoe,johndoe,johndoe,https://johndoe.dev
+jane.smith@example.com,Jane Smith,2019,,Product Manager,Example Ltd,Finance,Chittagong,Bangladesh,,,,

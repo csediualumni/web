@@ -1,6 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminService, AdminUser, Role } from '../../core/admin.service';
+import { AdminService, AdminUser, ImportMembersResult, Role } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { forkJoin } from 'rxjs';
 
@@ -11,11 +11,17 @@ import { forkJoin } from 'rxjs';
   templateUrl: './admin-users.component.html',
 })
 export class AdminUsersComponent implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   loading = signal(true);
   error = signal('');
   users = signal<AdminUser[]>([]);
   allRoles = signal<Role[]>([]);
   togglingRole = signal<Map<string, Set<string>>>(new Map());
+
+  importing = signal(false);
+  importResult = signal<ImportMembersResult | null>(null);
+  showImportErrors = signal(false);
 
   constructor(
     public auth: AuthService,
@@ -45,6 +51,34 @@ export class AdminUsersComponent implements OnInit {
 
   isTogglingRole(userId: string, roleId: string): boolean {
     return this.togglingRole().get(userId)?.has(roleId) ?? false;
+  }
+
+  triggerImport(): void {
+    this.fileInput.nativeElement.value = '';
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    this.importing.set(true);
+    this.importResult.set(null);
+    this.showImportErrors.set(false);
+    this.error.set('');
+
+    this.adminService.importMembers(file).subscribe({
+      next: (result) => {
+        this.importResult.set(result);
+        this.importing.set(false);
+        // Refresh user list to show newly imported members
+        this.adminService.listUsers().subscribe({ next: (u) => this.users.set(u) });
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Import failed. Please check the file and try again.');
+        this.importing.set(false);
+      },
+    });
   }
 
   toggleUserRole(user: AdminUser, roleId: string): void {
