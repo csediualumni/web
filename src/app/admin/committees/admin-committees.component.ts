@@ -1,11 +1,11 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService, Committee, CommitteeEntry, AdminUser } from '../../core/admin.service';
+import { AdminService, Committee, CommitteeEntry, AdminUser, DesignationMapping } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { colorFor, initialsFor } from '../../committee/committee.component';
 
-type View = 'list' | 'create' | 'edit' | 'members';
+type View = 'list' | 'create' | 'edit' | 'members' | 'designations';
 
 const DESIGNATIONS = [
   'President', 'Vice President', 'General Secretary', 'Joint Secretary',
@@ -49,6 +49,15 @@ export class AdminCommitteesComponent implements OnInit {
   addingMember         = signal(false);
   removingMemberIds    = signal<Set<string>>(new Set());
   userSearch           = signal('');
+
+  // Designation → Role mappings view
+  mappings            = signal<DesignationMapping[]>([]);
+  allRoles            = signal<{ id: string; name: string; description: string | null }[]>([]);
+  loadingMappings     = signal(false);
+  newMapDesignation   = signal('');
+  newMapRoleId        = signal('');
+  addingMapping       = signal(false);
+  deletingMappingIds  = signal<Set<string>>(new Set());
 
   filteredUsers = computed(() => {
     const q = this.userSearch().toLowerCase();
@@ -238,4 +247,74 @@ export class AdminCommitteesComponent implements OnInit {
     this.addMemberUserId.set(userId);
     this.userSearch.set(this.allUsers().find((u) => u.id === userId)?.displayName ?? userId);
   }
+
+  // ── Designation → Role Mappings ──────────────────────────────────────────
+
+  openDesignations(): void {
+    this.error.set(''); this.success.set('');
+    this.newMapDesignation.set('');
+    this.newMapRoleId.set('');
+    this.loadingMappings.set(true);
+    this.view.set('designations');
+
+    this.adminService.adminListDesignationMappings().subscribe({
+      next: (m) => { this.mappings.set(m); this.loadingMappings.set(false); },
+      error: () => { this.error.set('Failed to load designation mappings.'); this.loadingMappings.set(false); },
+    });
+    this.adminService.listRoles().subscribe({
+      next: (r) => this.allRoles.set(r),
+    });
+  }
+
+  addMapping(): void {
+    const designation = this.newMapDesignation().trim();
+    const roleId = this.newMapRoleId();
+    if (!designation || !roleId) { this.error.set('Designation and role are required.'); return; }
+    this.addingMapping.set(true);
+    this.error.set('');
+    this.adminService.adminSetDesignationMapping(designation, roleId).subscribe({
+      next: (m) => {
+        this.mappings.update((list) => {
+          const idx = list.findIndex((x) => x.id === m.id);
+          return idx >= 0 ? list.map((x) => x.id === m.id ? m : x) : [...list, m];
+        });
+        this.newMapDesignation.set('');
+        this.newMapRoleId.set('');
+        this.success.set('Mapping saved.');
+        this.addingMapping.set(false);
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Failed to save mapping.');
+        this.addingMapping.set(false);
+      },
+    });
+  }
+
+  updateMappingRole(m: DesignationMapping, roleId: string): void {
+    this.adminService.adminUpdateDesignationMapping(m.id, roleId).subscribe({
+      next: (updated) => {
+        this.mappings.update((list) => list.map((x) => x.id === updated.id ? updated : x));
+        this.success.set('Mapping updated.');
+      },
+      error: (err) => this.error.set(err?.error?.message ?? 'Failed to update mapping.'),
+    });
+  }
+
+  removeMapping(m: DesignationMapping): void {
+    if (!confirm(`Remove mapping for "${m.designation}"?`)) return;
+    this.deletingMappingIds.update((s) => new Set([...s, m.id]));
+    this.adminService.adminRemoveDesignationMapping(m.id).subscribe({
+      next: () => {
+        this.mappings.update((list) => list.filter((x) => x.id !== m.id));
+        this.deletingMappingIds.update((s) => { const n = new Set(s); n.delete(m.id); return n; });
+        this.success.set('Mapping removed.');
+      },
+      error: (err) => {
+        this.error.set(err?.error?.message ?? 'Failed to remove mapping.');
+        this.deletingMappingIds.update((s) => { const n = new Set(s); n.delete(m.id); return n; });
+      },
+    });
+  }
+
+  isDeletingMapping(id: string): boolean { return this.deletingMappingIds().has(id); }
 }

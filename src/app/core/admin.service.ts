@@ -45,6 +45,14 @@ export interface Committee {
   updatedAt: string;
 }
 
+export interface DesignationMapping {
+  id: string;
+  designation: string;
+  roleId: string | null;
+  role: { id: string; name: string; description: string | null } | null;
+  createdAt: string;
+}
+
 export interface NewsletterSubscription {
   id: string;
   email: string;
@@ -276,5 +284,22 @@ export class AdminService {
 
   adminRemoveCommitteeMember(memberId: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/committees/members/${memberId}`);
+  }
+
+  // ── Designation → Role mappings (admin) ──────────────────────────
+  adminListDesignationMappings(): Observable<DesignationMapping[]> {
+    return this.http.get<DesignationMapping[]>(`${this.adminBase}/designation-roles`);
+  }
+
+  adminSetDesignationMapping(designation: string, roleId: string): Observable<DesignationMapping> {
+    return this.http.post<DesignationMapping>(`${this.adminBase}/designation-roles`, { designation, roleId });
+  }
+
+  adminUpdateDesignationMapping(id: string, roleId: string): Observable<DesignationMapping> {
+    return this.http.patch<DesignationMapping>(`${this.adminBase}/designation-roles/${id}`, { roleId });
+  }
+
+  adminRemoveDesignationMapping(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/designation-roles/${id}`);
   }
 }
