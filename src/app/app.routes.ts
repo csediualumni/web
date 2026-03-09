@@ -98,6 +98,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/committees/admin-committees.component').then((m) => m.AdminCommitteesComponent),
       },
+      {
+        path: 'events',
+        loadComponent: () =>
+          import('./admin/events/admin-events.component').then((m) => m.AdminEventsComponent),
+      },
     ],
   },
   {

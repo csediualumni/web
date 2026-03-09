@@ -1,0 +1,490 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-lg font-semibold text-zinc-900">Events</h1>
+    <p class="text-sm text-zinc-500 mt-0.5">Create and manage alumni events and RSVP lists.</p>
+  </div>
+  @if (mode() === 'list' && auth.hasPermission('events:write')) {
+    <button
+      (click)="openCreate()"
+      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
+    >
+      <i class="fa-solid fa-plus text-xs"></i>
+      Add Event
+    </button>
+  }
+  @if (mode() === 'rsvps') {
+    <button
+      (click)="cancelForm()"
+      class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm gap-1.5"
+    >
+      <i class="fa-solid fa-arrow-left text-xs"></i>
+      Back to Events
+    </button>
+  }
+</div>
+
+<!-- Alerts -->
+@if (error()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- Create / Edit Form -->
+@if (mode() === 'create' || mode() === 'edit') {
+  <div class="shad-card p-6 mb-6">
+    <h2 class="text-base font-semibold text-zinc-900 mb-5">
+      {{ mode() === 'create' ? 'New Event' : 'Edit Event' }}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Title -->
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Title <span class="text-red-500">*</span></label>
+        <input
+          type="text"
+          [ngModel]="formTitle()"
+          (ngModelChange)="formTitle.set($event)"
+          placeholder="e.g. Grand Alumni Reunion 2027"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Description <span class="text-red-500">*</span></label>
+        <textarea
+          rows="3"
+          [ngModel]="formDescription()"
+          (ngModelChange)="formDescription.set($event)"
+          placeholder="A brief description of this event…"
+          class="shad-input w-full resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Date <span class="text-red-500">*</span></label>
+        <input
+          type="date"
+          [ngModel]="formDate()"
+          (ngModelChange)="formDate.set($event)"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Time -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Time <span class="text-red-500">*</span></label>
+        <input
+          type="text"
+          [ngModel]="formTime()"
+          (ngModelChange)="formTime.set($event)"
+          placeholder="e.g. 5:00 PM – 10:00 PM"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Location -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Location <span class="text-red-500">*</span></label>
+        <input
+          type="text"
+          [ngModel]="formLocation()"
+          (ngModelChange)="formLocation.set($event)"
+          placeholder="e.g. DIU Permanent Campus"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- City -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">City <span class="text-red-500">*</span></label>
+        <input
+          type="text"
+          [ngModel]="formCity()"
+          (ngModelChange)="formCity.set($event)"
+          placeholder="e.g. Dhaka"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Mode -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Mode</label>
+        <select
+          [ngModel]="formMode()"
+          (ngModelChange)="formMode.set($event)"
+          class="shad-input w-full"
+        >
+          @for (m of modes; track m) {
+            <option [value]="m">{{ m }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Category</label>
+        <select
+          [ngModel]="formCategory()"
+          (ngModelChange)="formCategory.set($event)"
+          class="shad-input w-full"
+        >
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Status</label>
+        <select
+          [ngModel]="formStatus()"
+          (ngModelChange)="formStatus.set($event)"
+          class="shad-input w-full"
+        >
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+        <p class="mt-1 text-xs text-zinc-400">Status is manually controlled — not auto-derived from date.</p>
+      </div>
+
+      <!-- Seats -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Total seats</label>
+        <input
+          type="number"
+          [ngModel]="formSeats()"
+          (ngModelChange)="formSeats.set($event === '' || $event === null ? null : +$event)"
+          min="1"
+          placeholder="Leave blank for unlimited"
+          class="shad-input w-full"
+        />
+        <p class="mt-1 text-xs text-zinc-400">Leave blank for unlimited capacity.</p>
+      </div>
+
+      <!-- Image URL -->
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Cover image</label>
+
+        <!-- Hidden file picker -->
+        <input
+          #imageFileInput
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          class="hidden"
+          (change)="onImageFileSelected($event)"
+        />
+
+        <!-- URL input + Upload button -->
+        <div class="flex gap-2">
+          <input
+            type="url"
+            [ngModel]="formImageUrl()"
+            (ngModelChange)="formImageUrl.set($event)"
+            placeholder="https://example.com/event-cover.jpg"
+            class="shad-input flex-1 min-w-0"
+          />
+          <button
+            type="button"
+            (click)="triggerImageUpload()"
+            [disabled]="uploadingImage()"
+            class="inline-flex items-center gap-1.5 rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          >
+            @if (uploadingImage()) {
+              <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+              </svg>
+              Uploading…
+            } @else {
+              <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Upload
+            }
+          </button>
+        </div>
+        <p class="mt-1 text-xs text-zinc-400">Optional. Upload an image or paste a URL. Leave blank to use a placeholder colour.</p>
+
+        <!-- Image preview -->
+        @if (formImageUrl()) {
+          <div class="mt-2">
+            <img
+              [src]="formImageUrl()"
+              alt="Cover preview"
+              class="h-28 w-full rounded-md object-cover border border-zinc-200"
+              (error)="$any($event.target).style.display='none'"
+            />
+          </div>
+        }
+      </div>
+
+      <!-- Color -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Placeholder colour</label>
+        <select
+          [ngModel]="formColor()"
+          (ngModelChange)="formColor.set($event)"
+          class="shad-input w-full"
+        >
+          <option value="bg-zinc-200">Grey</option>
+          <option value="bg-violet-100">Violet</option>
+          <option value="bg-sky-100">Sky</option>
+          <option value="bg-emerald-100">Emerald</option>
+          <option value="bg-amber-100">Amber</option>
+          <option value="bg-cyan-100">Cyan</option>
+          <option value="bg-lime-100">Lime</option>
+          <option value="bg-rose-100">Rose</option>
+          <option value="bg-red-100">Red</option>
+          <option value="bg-yellow-100">Yellow</option>
+          <option value="bg-indigo-100">Indigo</option>
+          <option value="bg-pink-100">Pink</option>
+        </select>
+        <p class="mt-1 text-xs text-zinc-400">Used when no cover image is set.</p>
+      </div>
+
+      <!-- Sort order -->
+      <div>
+        <label class="block text-sm font-medium text-zinc-700 mb-1">Sort order</label>
+        <input
+          type="number"
+          [ngModel]="formSortOrder()"
+          (ngModelChange)="formSortOrder.set(+$event)"
+          min="0"
+          class="shad-input w-full"
+        />
+        <p class="mt-1 text-xs text-zinc-400">Lower numbers appear first.</p>
+      </div>
+
+      <!-- Registration URL -->
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-zinc-700 mb-1">External registration URL</label>
+        <input
+          type="url"
+          [ngModel]="formRegistrationUrl()"
+          (ngModelChange)="formRegistrationUrl.set($event)"
+          placeholder="https://forms.google.com/…"
+          class="shad-input w-full"
+        />
+        <p class="mt-1 text-xs text-zinc-400">Optional. Leave blank to use the built-in RSVP system.</p>
+      </div>
+
+      <!-- Featured -->
+      <div class="sm:col-span-2">
+        <label class="flex items-center gap-2.5 cursor-pointer">
+          <input
+            type="checkbox"
+            [ngModel]="formFeatured()"
+            (ngModelChange)="formFeatured.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 text-blue-600"
+          />
+          <span class="text-sm font-medium text-zinc-700">Featured event</span>
+          <span class="text-xs text-zinc-400">(shown in the hero banner on the events page)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-6">
+      <button
+        (click)="save()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-5 h-9 text-sm gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        @if (saving()) {
+          <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+          Saving…
+        } @else {
+          <i class="fa-solid fa-floppy-disk text-xs"></i>
+          {{ mode() === 'create' ? 'Create' : 'Save Changes' }}
+        }
+      </button>
+      <button
+        (click)="cancelForm()"
+        class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+}
+
+<!-- RSVP List -->
+@if (mode() === 'rsvps' && viewingEvent()) {
+  <div class="shad-card p-6 mb-6">
+    <h2 class="text-base font-semibold text-zinc-900 mb-1">
+      RSVPs for "{{ viewingEvent()!.title }}"
+    </h2>
+    <p class="text-sm text-zinc-500 mb-5">
+      {{ viewingEvent()!.rsvpCount }} registered
+      @if (viewingEvent()!.seats !== null) {
+        / {{ viewingEvent()!.seats }} total seats
+      }
+    </p>
+
+    @if (rsvpsLoading()) {
+      <div class="space-y-3">
+        @for (_ of [1, 2, 3]; track $index) {
+          <div class="flex items-center gap-3 animate-pulse">
+            <div class="w-8 h-8 rounded-full bg-zinc-200"></div>
+            <div class="h-4 bg-zinc-200 rounded w-48"></div>
+          </div>
+        }
+      </div>
+    } @else if (rsvps().length === 0) {
+      <p class="text-sm text-zinc-400 py-6 text-center">No active registrations yet.</p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-zinc-100 text-xs text-zinc-500 text-left">
+              <th class="pb-2 pr-4 font-medium">#</th>
+              <th class="pb-2 pr-4 font-medium">Name</th>
+              <th class="pb-2 pr-4 font-medium">Email</th>
+              <th class="pb-2 font-medium">Registered at</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rsvp of rsvps(); track rsvp.id; let i = $index) {
+              <tr class="border-b border-zinc-50 text-zinc-700">
+                <td class="py-2.5 pr-4 text-zinc-400 text-xs">{{ i + 1 }}</td>
+                <td class="py-2.5 pr-4">{{ rsvp.user?.displayName || '—' }}</td>
+                <td class="py-2.5 pr-4 text-zinc-500 text-xs">{{ rsvp.user?.email }}</td>
+                <td class="py-2.5 text-zinc-400 text-xs">
+                  {{ rsvp.createdAt | date: 'MMM d, y, h:mm a' }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+}
+
+<!-- List -->
+@if (mode() === 'list') {
+  @if (loading()) {
+    <div class="space-y-3">
+      @for (_ of [1, 2, 3]; track $index) {
+        <div class="shad-card p-4 animate-pulse">
+          <div class="flex items-start justify-between gap-4">
+            <div class="space-y-2 flex-1">
+              <div class="h-4 bg-zinc-200 rounded w-1/3"></div>
+              <div class="h-3 bg-zinc-100 rounded w-2/3"></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-16 h-8 bg-zinc-200 rounded"></div>
+              <div class="w-16 h-8 bg-zinc-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (events().length === 0) {
+    <div class="shad-card p-10 text-center text-zinc-400">
+      <i class="fa-solid fa-calendar-xmark text-3xl mb-3 block"></i>
+      <p class="font-medium">No events yet.</p>
+      @if (auth.hasPermission('events:write')) {
+        <button (click)="openCreate()" class="mt-3 text-sm text-blue-600 hover:underline">
+          Create the first event
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-zinc-100 text-xs text-zinc-500 text-left">
+            <th class="pb-2 pr-4 font-medium">Title</th>
+            <th class="pb-2 pr-4 font-medium">Date</th>
+            <th class="pb-2 pr-4 font-medium">Mode</th>
+            <th class="pb-2 pr-4 font-medium">Category</th>
+            <th class="pb-2 pr-4 font-medium">Status</th>
+            <th class="pb-2 pr-4 font-medium">RSVPs</th>
+            <th class="pb-2 font-medium">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (event of events(); track event.id) {
+            <tr class="border-b border-zinc-50 text-zinc-700 hover:bg-zinc-50 transition-colors">
+              <td class="py-3 pr-4">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-medium">{{ event.title }}</span>
+                  @if (event.featured) {
+                    <span class="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded">Featured</span>
+                  }
+                </div>
+                <p class="text-xs text-zinc-400 mt-0.5 line-clamp-1">{{ event.location }}, {{ event.city }}</p>
+              </td>
+              <td class="py-3 pr-4 text-zinc-500 text-xs whitespace-nowrap">
+                {{ formatDate(event.date) }}
+              </td>
+              <td class="py-3 pr-4">
+                <span class="text-xs bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded">{{ event.mode }}</span>
+              </td>
+              <td class="py-3 pr-4">
+                <span class="text-xs text-zinc-500">{{ event.category }}</span>
+              </td>
+              <td class="py-3 pr-4">
+                @if (event.status === 'upcoming') {
+                  <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">upcoming</span>
+                } @else if (event.status === 'ongoing') {
+                  <span class="text-xs bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full">ongoing</span>
+                } @else {
+                  <span class="text-xs bg-zinc-100 text-zinc-500 font-medium px-2 py-0.5 rounded-full">past</span>
+                }
+              </td>
+              <td class="py-3 pr-4">
+                <button
+                  (click)="viewRsvps(event)"
+                  class="text-xs text-blue-600 hover:underline whitespace-nowrap"
+                >
+                  {{ event.rsvpCount }}
+                  @if (event.seats !== null) { / {{ event.seats }} }
+                  RSVPs
+                </button>
+              </td>
+              <td class="py-3">
+                <div class="flex items-center gap-2">
+                  @if (auth.hasPermission('events:write')) {
+                    <button
+                      (click)="openEdit(event)"
+                      class="shad-btn-ghost text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 h-7 px-2.5 text-xs gap-1"
+                    >
+                      <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                      Edit
+                    </button>
+                    <button
+                      (click)="deleteEvent(event)"
+                      [disabled]="deleting().has(event.id)"
+                      class="shad-btn-ghost text-red-500 hover:text-red-700 hover:bg-red-50 h-7 px-2.5 text-xs gap-1 disabled:opacity-50"
+                    >
+                      @if (deleting().has(event.id)) {
+                        <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
+                      } @else {
+                        <i class="fa-solid fa-trash text-[10px]"></i>
+                      }
+                      Delete
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

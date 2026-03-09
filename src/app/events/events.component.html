@@ -50,6 +50,20 @@
   </div>
 </section>
 
+<!-- ── Loading / Error ── -->
+@if (loading()) {
+  <div class="bg-zinc-50 py-24 text-center">
+    <i class="fa-solid fa-spinner animate-spin text-3xl text-zinc-400 mb-3 block"></i>
+    <p class="text-zinc-500 text-sm">Loading events…</p>
+  </div>
+}
+@if (!loading() && apiError()) {
+  <div class="bg-zinc-50 py-16 text-center px-4">
+    <i class="fa-solid fa-circle-exclamation text-4xl text-red-400 mb-3 block"></i>
+    <p class="text-zinc-700 font-semibold">{{ apiError() }}</p>
+  </div>
+}
+
 <!-- ── Featured Event ── -->
 @if (featuredEvent()) {
   <section class="bg-white border-b border-zinc-100 py-10">
@@ -61,13 +75,21 @@
         Featured Event
       </p>
       <div class="rounded-2xl border border-zinc-200 overflow-hidden lg:grid lg:grid-cols-5">
-        <!-- Placeholder image -->
+        <!-- Cover image or placeholder -->
         <div
           class="lg:col-span-2 {{
-            featuredEvent()!.color
-          }} min-h-[200px] flex items-center justify-center"
+            featuredEvent()!.imageUrl ? '' : featuredEvent()!.color
+          }} min-h-[200px] flex items-center justify-center overflow-hidden"
         >
-          <i class="fa-solid {{ featuredEvent()!.image }} text-7xl text-zinc-400"></i>
+          @if (featuredEvent()!.imageUrl) {
+            <img
+              [src]="featuredEvent()!.imageUrl"
+              [alt]="featuredEvent()!.title"
+              class="w-full h-full object-cover"
+            />
+          } @else {
+            <i class="fa-solid fa-calendar-days text-7xl text-zinc-400"></i>
+          }
         </div>
         <!-- Info -->
         <div class="lg:col-span-3 p-8 flex flex-col justify-center">
@@ -92,7 +114,7 @@
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
             <div class="flex items-center gap-2 text-sm text-zinc-600">
               <i class="fa-regular fa-calendar w-4 text-center text-zinc-400"></i>
-              {{ featuredEvent()!.date }}
+              {{ formatDate(featuredEvent()!.date) }}
             </div>
             <div class="flex items-center gap-2 text-sm text-zinc-600">
               <i class="fa-regular fa-clock w-4 text-center text-zinc-400"></i>
@@ -100,11 +122,16 @@
             </div>
             <div class="flex items-center gap-2 text-sm text-zinc-600">
               <i class="fa-solid fa-people-group w-4 text-center text-zinc-400"></i>
-              {{ featuredEvent()!.seatsLeft }} seats left
+              @if (featuredEvent()!.seatsLeft !== null) {
+                {{ featuredEvent()!.seatsLeft }} seats left
+              } @else {
+                Unlimited seats
+              }
             </div>
           </div>
           <!-- Occupancy bar -->
-          <div class="mb-6">
+          @if (featuredEvent()!.seats !== null) {
+            <div class="mb-6">
             <div class="flex justify-between text-xs text-zinc-500 mb-1">
               <span>{{ occupancyPercent(featuredEvent()!) }}% filled</span>
               <span>{{ featuredEvent()!.seatsLeft }} / {{ featuredEvent()!.seats }} remaining</span>
@@ -115,12 +142,37 @@
                 [style.width.%]="occupancyPercent(featuredEvent()!)"
               ></div>
             </div>
-          </div>
+            </div>
+          }
           <div class="flex gap-3">
-            <button class="shad-btn-primary gap-2">
-              <i class="fa-solid fa-ticket"></i>
-              Register Now
-            </button>
+            @if (isRegistered(featuredEvent()!.id)) {
+              <button
+                (click)="cancelRsvp(featuredEvent()!)"
+                [disabled]="isRsvping(featuredEvent()!.id)"
+                class="shad-btn-outline gap-2 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
+              >
+                @if (isRsvping(featuredEvent()!.id)) {
+                  <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                } @else {
+                  <i class="fa-solid fa-circle-check text-xs"></i>
+                }
+                Registered
+              </button>
+            } @else {
+              <button
+                (click)="register(featuredEvent()!)"
+                [disabled]="isRsvping(featuredEvent()!.id)"
+                class="shad-btn-primary gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                @if (isRsvping(featuredEvent()!.id)) {
+                  <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                  Registering…
+                } @else {
+                  <i class="fa-solid fa-ticket"></i>
+                  Register Now
+                }
+              </button>
+            }
             <button class="shad-btn-outline gap-2">
               <i class="fa-regular fa-bookmark"></i>
               Save
@@ -201,9 +253,13 @@
         <!-- Skip featured on upcoming tab since it's already shown above -->
         @if (!event.featured) {
           <div class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-            <!-- Placeholder image -->
-            <div class="h-40 {{ event.color }} flex items-center justify-center relative">
-              <i class="fa-solid {{ event.image }} text-5xl text-zinc-400"></i>
+            <!-- Cover image or placeholder -->
+            <div class="h-40 {{ event.imageUrl ? '' : event.color }} flex items-center justify-center relative overflow-hidden">
+              @if (event.imageUrl) {
+                <img [src]="event.imageUrl" [alt]="event.title" class="w-full h-full object-cover" />
+              } @else {
+                <i class="fa-solid fa-calendar-days text-5xl text-zinc-400"></i>
+              }
               <!-- Status badge -->
               <span
                 class="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full {{
@@ -239,11 +295,7 @@
               <div class="space-y-1.5">
                 <div class="flex items-center gap-2 text-xs text-zinc-500">
                   <i class="fa-regular fa-calendar w-3.5 text-center text-zinc-400"></i>
-                  {{ event.date }}
-                </div>
-                <div class="flex items-center gap-2 text-xs text-zinc-500">
-                  <i class="fa-regular fa-clock w-3.5 text-center text-zinc-400"></i>
-                  {{ event.time }}
+                  {{ formatDate(event.date) }}
                 </div>
                 <div class="flex items-center gap-2 text-xs text-zinc-500">
                   <i class="fa-solid fa-location-dot w-3.5 text-center text-zinc-400"></i>
@@ -252,7 +304,7 @@
               </div>
 
               <!-- Seats bar (upcoming only) -->
-              @if (event.status === 'upcoming' && event.seats && event.seatsLeft !== undefined) {
+              @if (event.status === 'upcoming' && event.seats !== null && event.seatsLeft !== null) {
                 <div class="mt-auto pt-3 border-t border-zinc-100">
                   <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
                     <span>{{ event.seatsLeft }} seats left</span>
@@ -271,11 +323,35 @@
 
               <!-- CTA -->
               <div class="mt-auto pt-3">
-                @if (event.status === 'upcoming') {
-                  <button class="shad-btn-primary w-full gap-2 text-sm h-9">
-                    <i class="fa-solid fa-ticket text-xs"></i>
-                    Register
-                  </button>
+                @if (event.status === 'upcoming' || event.status === 'ongoing') {
+                  @if (isRegistered(event.id)) {
+                    <button
+                      (click)="cancelRsvp(event)"
+                      [disabled]="isRsvping(event.id)"
+                      class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
+                    >
+                      @if (isRsvping(event.id)) {
+                        <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                      } @else {
+                        <i class="fa-solid fa-circle-check text-xs"></i>
+                      }
+                      Registered
+                    </button>
+                  } @else {
+                    <button
+                      (click)="register(event)"
+                      [disabled]="isRsvping(event.id)"
+                      class="shad-btn-primary w-full gap-2 text-sm h-9 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      @if (isRsvping(event.id)) {
+                        <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                        Registering…
+                      } @else {
+                        <i class="fa-solid fa-ticket text-xs"></i>
+                        Register
+                      }
+                    </button>
+                  }
                 } @else {
                   <button class="shad-btn-outline w-full gap-2 text-sm h-9" disabled>
                     <i class="fa-solid fa-circle-check text-xs"></i>
@@ -294,8 +370,12 @@
           <div
             class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col ring-2 ring-amber-300"
           >
-            <div class="h-40 {{ event.color }} flex items-center justify-center relative">
-              <i class="fa-solid {{ event.image }} text-5xl text-zinc-400"></i>
+            <div class="h-40 {{ event.imageUrl ? '' : event.color }} flex items-center justify-center relative overflow-hidden">
+              @if (event.imageUrl) {
+                <img [src]="event.imageUrl" [alt]="event.title" class="w-full h-full object-cover" />
+              } @else {
+                <i class="fa-solid fa-calendar-days text-5xl text-zinc-400"></i>
+              }
               <span
                 class="absolute top-3 left-3 text-xs font-semibold bg-amber-400 text-amber-900 px-2 py-0.5 rounded-full flex items-center gap-1"
               >
@@ -329,14 +409,14 @@
               <div class="space-y-1.5">
                 <div class="flex items-center gap-2 text-xs text-zinc-500">
                   <i class="fa-regular fa-calendar w-3.5 text-center text-zinc-400"></i>
-                  {{ event.date }}
+                  {{ formatDate(event.date) }}
                 </div>
                 <div class="flex items-center gap-2 text-xs text-zinc-500">
                   <i class="fa-solid fa-location-dot w-3.5 text-center text-zinc-400"></i>
                   {{ event.location }}
                 </div>
               </div>
-              @if (event.seats && event.seatsLeft !== undefined) {
+              @if (event.seats !== null && event.seatsLeft !== null) {
                 <div class="mt-auto pt-3 border-t border-zinc-100">
                   <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
                     <span>{{ event.seatsLeft }} seats left</span>
@@ -351,35 +431,39 @@
                 </div>
               }
               <div class="mt-auto pt-3">
-                <button class="shad-btn-primary w-full gap-2 text-sm h-9">
-                  <i class="fa-solid fa-ticket text-xs"></i>
-                  Register
-                </button>
+                @if (isRegistered(event.id)) {
+                  <button
+                    (click)="cancelRsvp(event)"
+                    [disabled]="isRsvping(event.id)"
+                    class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
+                  >
+                    @if (isRsvping(event.id)) {
+                      <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                    } @else {
+                      <i class="fa-solid fa-circle-check text-xs"></i>
+                    }
+                    Registered
+                  </button>
+                } @else {
+                  <button
+                    (click)="register(event)"
+                    [disabled]="isRsvping(event.id)"
+                    class="shad-btn-primary w-full gap-2 text-sm h-9 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    @if (isRsvping(event.id)) {
+                      <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+                      Registering…
+                    } @else {
+                      <i class="fa-solid fa-ticket text-xs"></i>
+                      Register
+                    }
+                  </button>
+                }
               </div>
             </div>
           </div>
         }
       }
-    </div>
-  </div>
-</section>
-
-<!-- ── Propose Event CTA ── -->
-<section class="bg-white py-16">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <div class="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-10">
-      <div class="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-4">
-        <i class="fa-solid fa-calendar-plus text-zinc-500 text-2xl"></i>
-      </div>
-      <h3 class="text-xl font-bold text-zinc-900 mb-2">Want to organise an event?</h3>
-      <p class="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
-        Have an idea for a reunion, seminar, or workshop? We'd love to help you make it happen.
-        Reach out and our team will support you.
-      </p>
-      <a routerLink="/contact" class="shad-btn-primary gap-2">
-        <i class="fa-solid fa-paper-plane"></i>
-        Propose an Event
-      </a>
     </div>
   </div>
 </section>

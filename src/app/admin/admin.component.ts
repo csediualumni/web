@@ -22,6 +22,7 @@ export class AdminComponent {
     { label: 'Contact Tickets', path: 'contact', icon: 'fa-headset' },
     { label: 'History / Milestones', path: 'milestones', icon: 'fa-timeline' },
     { label: 'Committees', path: 'committees', icon: 'fa-crown' },
+    { label: 'Events', path: 'events', icon: 'fa-calendar-days' },
   ];
 
   constructor(

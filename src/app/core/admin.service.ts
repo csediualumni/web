@@ -98,6 +98,43 @@ export interface Permission {
 
 export type ContactTicketStatus = 'open' | 'in_progress' | 'resolved';
 
+export type EventMode = 'In-Person' | 'Online' | 'Hybrid';
+export type EventStatus = 'upcoming' | 'ongoing' | 'past';
+export type RsvpStatus = 'registered' | 'cancelled';
+
+export interface ApiEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: string; // ISO date string
+  time: string;
+  location: string;
+  city: string;
+  mode: EventMode;
+  category: string;
+  status: EventStatus;
+  seats: number | null;
+  seatsLeft: number | null; // server-computed
+  rsvpCount: number;        // server-computed
+  imageUrl: string | null;
+  color: string;
+  featured: boolean;
+  registrationUrl: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EventRsvp {
+  id: string;
+  eventId: string;
+  userId: string;
+  status: RsvpStatus;
+  user?: { id: string; email: string; displayName: string | null; avatar: string | null };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ContactTicketComment {
   id: string;
   ticketId: string;
@@ -126,6 +163,7 @@ export class AdminService {
   private readonly newsletterBase = `${environment.apiUrl}/newsletter`;
   private readonly contactBase = `${environment.apiUrl}/contact`;
   private readonly milestonesBase = `${environment.apiUrl}/milestones`;
+  private readonly eventsBase = `${environment.apiUrl}/events`;
 
   constructor(private http: HttpClient) {}
 
@@ -309,10 +347,70 @@ export class AdminService {
     return this.http.delete<void>(`${this.adminBase}/designation-roles/${id}`);
   }
 
+  // ── Events (public) ─────────────────────────────────
+  getEvents(): Observable<ApiEvent[]> {
+    return this.http.get<ApiEvent[]>(this.eventsBase);
+  }
+
+  getEvent(id: string): Observable<ApiEvent> {
+    return this.http.get<ApiEvent>(`${this.eventsBase}/${id}`);
+  }
+
+  // ── Events RSVP (auth required) ─────────────────────────
+  rsvpEvent(id: string): Observable<{ message: string; rsvp: EventRsvp }> {
+    return this.http.post<{ message: string; rsvp: EventRsvp }>(`${this.eventsBase}/${id}/rsvp`, {});
+  }
+
+  cancelRsvpEvent(id: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.eventsBase}/${id}/rsvp`);
+  }
+
+  getMyRsvp(id: string): Observable<EventRsvp | null> {
+    return this.http.get<EventRsvp | null>(`${this.eventsBase}/${id}/rsvp`);
+  }
+
+  // ── Events (admin) ───────────────────────────────────
+  adminListEvents(): Observable<ApiEvent[]> {
+    return this.http.get<ApiEvent[]>(`${this.adminBase}/events`);
+  }
+
+  adminCreateEvent(data: {
+    title: string; description: string; date: string; time: string;
+    location: string; city: string; mode: EventMode; category: string;
+    status: EventStatus; seats?: number | null; imageUrl?: string | null;
+    color?: string; featured?: boolean; registrationUrl?: string | null; sortOrder?: number;
+  }): Observable<ApiEvent> {
+    return this.http.post<ApiEvent>(`${this.adminBase}/events`, data);
+  }
+
+  adminUpdateEvent(id: string, data: Partial<{
+    title: string; description: string; date: string; time: string;
+    location: string; city: string; mode: EventMode; category: string;
+    status: EventStatus; seats: number | null; imageUrl: string | null;
+    color: string; featured: boolean; registrationUrl: string | null; sortOrder: number;
+  }>): Observable<ApiEvent> {
+    return this.http.patch<ApiEvent>(`${this.adminBase}/events/${id}`, data);
+  }
+
+  adminDeleteEvent(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/events/${id}`);
+  }
+
+  adminListEventRsvps(id: string): Observable<EventRsvp[]> {
+    return this.http.get<EventRsvp[]>(`${this.adminBase}/events/${id}/rsvps`);
+  }
+
   // ── Bulk member import ───────────────────────────────────
   importMembers(file: File): Observable<ImportMembersResult> {
     const form = new FormData();
     form.append('file', file);
     return this.http.post<ImportMembersResult>(`${this.adminBase}/users/import`, form);
+  }
+
+  // ── Image upload ─────────────────────────────────────────
+  uploadEventImage(file: File): Observable<{ url: string }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<{ url: string }>(`${this.adminBase}/upload/image`, form);
   }
 }
