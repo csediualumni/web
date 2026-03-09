@@ -12,7 +12,7 @@ import {
   formatBDT,
 } from '../core/invoice.service';
 
-const BKASH_NUMBER = '01712-345678'; // Association's bKash number
+const BKASH_NUMBER = '01624-350761'; // Association's bKash number
 
 @Component({
   selector: 'app-payment',
