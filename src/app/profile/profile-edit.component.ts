@@ -49,7 +49,7 @@ const COUNTRIES = [
   templateUrl: './profile-edit.component.html',
 })
 export class ProfileEditComponent implements OnInit {
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
   readonly industries = INDUSTRIES;

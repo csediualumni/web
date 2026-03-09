@@ -36,6 +36,18 @@ export const routes: Routes = [
       import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
   {
+    path: 'membership/apply',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./membership/apply/membership-apply.component').then((m) => m.MembershipApplyComponent),
+  },
+  {
+    path: 'membership/status',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./membership/status/membership-status.component').then((m) => m.MembershipStatusComponent),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -66,6 +78,11 @@ export const routes: Routes = [
         path: 'newsletter',
         loadComponent: () =>
           import('./admin/newsletter/admin-newsletter.component').then((m) => m.AdminNewsletterComponent),
+      },
+      {
+        path: 'membership',
+        loadComponent: () =>
+          import('./admin/membership/admin-membership.component').then((m) => m.AdminMembershipComponent),
       },
       {
         path: 'contact',

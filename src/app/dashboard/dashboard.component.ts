@@ -2,6 +2,7 @@ import { Component, computed, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/auth.service';
+import { MembershipCardComponent, MemberCardData } from './membership-card/membership-card.component';
 
 export interface ActivityItem {
   icon: string;
@@ -20,7 +21,7 @@ export interface UpcomingEvent {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MembershipCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -55,8 +56,30 @@ export class DashboardComponent implements OnInit {
     return 'March 2026';
   });
 
+  readonly memberCardData = computed<MemberCardData | null>(() => {
+    const user = this.auth.currentUser();
+    if (!user?.memberId) return null;
+    const profile = user.profile as Record<string, unknown> | undefined;
+    return {
+      name: (profile?.['displayName'] as string | null) ?? user.email.split('@')[0],
+      memberId: user.memberId,
+      batch: (profile?.['batch'] as number | null) ?? null,
+      email: user.email,
+      jobTitle: (profile?.['jobTitle'] as string | null) ?? null,
+      company: (profile?.['company'] as string | null) ?? null,
+    };
+  });
+
   isAdmin(): boolean {
     return this.auth.hasPermission('users:read');
+  }
+
+  isGuest(): boolean {
+    return this.auth.isGuest();
+  }
+
+  isMember(): boolean {
+    return this.auth.isMember();
   }
 
   // ── Static demo data (replace with API calls when ready) ─────

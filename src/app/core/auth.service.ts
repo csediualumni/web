@@ -11,6 +11,7 @@ export interface AuthResponse {
     email: string;
     permissions: string[];
     roles: { id: string; name: string }[];
+    memberId: string | null;
   };
 }
 
@@ -63,6 +64,7 @@ export interface AuthUser {
   email: string;
   permissions: string[];
   roles: { id: string; name: string }[];
+  memberId: string | null;
   profile?: Partial<UserProfile>;
 }
 
@@ -119,6 +121,7 @@ export class AuthService {
         email,
         permissions: payload?.permissions ?? [],
         roles: payload?.roles ?? [],
+        memberId: payload?.memberId ?? null,
       },
     };
     this.persistSession(res);
@@ -144,6 +147,18 @@ export class AuthService {
 
   hasPermission(key: string): boolean {
     return this.currentUser()?.permissions.includes(key) ?? false;
+  }
+
+  hasRole(name: string): boolean {
+    return this.currentUser()?.roles.some((r) => r.name === name) ?? false;
+  }
+
+  isGuest(): boolean {
+    return this.hasRole('guest');
+  }
+
+  isMember(): boolean {
+    return this.hasRole('member');
   }
 
   // ──────────────────────────────────────────────
@@ -226,7 +241,7 @@ export class AuthService {
 
   private decodeJwt(
     token: string,
-  ): { permissions?: string[]; roles?: { id: string; name: string }[] } | null {
+  ): { permissions?: string[]; roles?: { id: string; name: string }[]; memberId?: string | null } | null {
     try {
       const payload = token.split('.')[1];
       return JSON.parse(atob(payload));

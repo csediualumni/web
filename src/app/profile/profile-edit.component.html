@@ -19,6 +19,12 @@
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Edit Your Profile</h1>
           <p class="text-zinc-400 text-sm mt-1">{{ email }}</p>
+          @if (auth.currentUser()?.memberId) {
+            <p class="text-xs font-mono text-emerald-300 mt-1.5 flex items-center gap-1">
+              <i class="fa-solid fa-id-card text-emerald-400 text-[10px]"></i>
+              {{ auth.currentUser()!.memberId }}
+            </p>
+          }
         </div>
 
         <!-- Completion ring -->

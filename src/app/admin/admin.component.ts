@@ -16,6 +16,7 @@ export class AdminComponent {
   navItems = [
     { label: 'Users', path: 'users', icon: 'fa-users' },
     { label: 'Roles & Permissions', path: 'roles', icon: 'fa-shield-halved' },
+    { label: 'Membership', path: 'membership', icon: 'fa-id-card' },
     { label: 'Invoices', path: 'invoices', icon: 'fa-file-invoice-dollar' },
     { label: 'Newsletter', path: 'newsletter', icon: 'fa-envelope' },
     { label: 'Contact Tickets', path: 'contact', icon: 'fa-headset' },

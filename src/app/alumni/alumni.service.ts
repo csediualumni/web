@@ -11,6 +11,7 @@ export interface PublicUser {
   displayName: string | null;
   avatar: string | null;
   email: string;
+  memberId: string | null;
   batch: number | null;
   bio: string | null;
   jobTitle: string | null;
@@ -47,6 +48,7 @@ export interface AlumnusExperience {
 export interface AlumnusMember {
   id: string;
   name: string;
+  memberId: string | null;
   batch: number | null;
   industry: string | null;
   country: string | null;
@@ -100,6 +102,7 @@ function toAlumnusMember(u: PublicUser): AlumnusMember {
   return {
     id: u.id,
     name: u.displayName || u.email,
+    memberId: u.memberId,
     batch: u.batch,
     industry: u.industry,
     country: u.country,

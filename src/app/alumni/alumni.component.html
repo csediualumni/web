@@ -206,6 +206,9 @@
                 </p>
                 <p class="text-xs text-zinc-500 truncate mt-0.5">{{ member.role }}</p>
                 <p class="text-xs font-medium text-zinc-700 truncate">{{ member.company }}</p>
+                @if (member.memberId) {
+                  <p class="text-[10px] font-mono text-emerald-700 mt-0.5 truncate"><i class="fa-solid fa-id-card mr-1"></i>{{ member.memberId }}</p>
+                }
               </div>
             </div>
 

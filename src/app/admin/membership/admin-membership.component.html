@@ -1,0 +1,327 @@
+<div class="h-full flex flex-col">
+  <!-- Page header -->
+  <div class="px-6 py-4 border-b border-zinc-200 bg-white flex-shrink-0">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <h2 class="text-base font-semibold text-zinc-900">Membership Requests</h2>
+        <p class="text-xs text-zinc-400 mt-0.5">Review and manage membership applications</p>
+      </div>
+      <button
+        (click)="loadRequests()"
+        class="shad-btn-outline text-xs gap-1.5"
+        [disabled]="loading()"
+      >
+        <i class="fa-solid fa-rotate-right text-xs" [class.fa-spin]="loading()"></i>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Alert banners -->
+  @if (success()) {
+    <div
+      class="mx-6 mt-4 flex items-start gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700"
+    >
+      <i class="fa-solid fa-circle-check mt-0.5 flex-shrink-0"></i>
+      {{ success() }}
+    </div>
+  }
+  @if (error()) {
+    <div
+      class="mx-6 mt-4 flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
+    >
+      <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Stats row -->
+  <div class="px-6 py-4 border-b border-zinc-100 bg-zinc-50/60 flex-shrink-0">
+    <div class="flex gap-4 flex-wrap text-xs">
+      <button
+        (click)="filterTab.set('all')"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-colors"
+        [class.bg-zinc-800]="filterTab() === 'all'"
+        [class.text-white]="filterTab() === 'all'"
+        [class.bg-zinc-100]="filterTab() !== 'all'"
+        [class.text-zinc-600]="filterTab() !== 'all'"
+      >
+        All ({{ countAll() }})
+      </button>
+      <button
+        (click)="filterTab.set('payment_required')"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-colors"
+        [class.bg-amber-600]="filterTab() === 'payment_required'"
+        [class.text-white]="filterTab() === 'payment_required'"
+        [class.bg-amber-100]="filterTab() !== 'payment_required'"
+        [class.text-amber-700]="filterTab() !== 'payment_required'"
+      >
+        Payment Required ({{ countPaymentRequired() }})
+      </button>
+      <button
+        (click)="filterTab.set('payment_submitted')"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-colors"
+        [class.bg-blue-600]="filterTab() === 'payment_submitted'"
+        [class.text-white]="filterTab() === 'payment_submitted'"
+        [class.bg-blue-100]="filterTab() !== 'payment_submitted'"
+        [class.text-blue-700]="filterTab() !== 'payment_submitted'"
+      >
+        Payment Submitted ({{ countPaymentSubmitted() }})
+      </button>
+      <button
+        (click)="filterTab.set('approved')"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-colors"
+        [class.bg-emerald-600]="filterTab() === 'approved'"
+        [class.text-white]="filterTab() === 'approved'"
+        [class.bg-emerald-100]="filterTab() !== 'approved'"
+        [class.text-emerald-700]="filterTab() !== 'approved'"
+      >
+        Approved ({{ countApproved() }})
+      </button>
+      <button
+        (click)="filterTab.set('rejected')"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-colors"
+        [class.bg-red-600]="filterTab() === 'rejected'"
+        [class.text-white]="filterTab() === 'rejected'"
+        [class.bg-red-100]="filterTab() !== 'rejected'"
+        [class.text-red-700]="filterTab() !== 'rejected'"
+      >
+        Rejected ({{ countRejected() }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- Applications list -->
+    <div
+      class="flex-1 overflow-y-auto"
+      [class.border-r]="selectedApp()"
+      [class.border-zinc-200]="selectedApp()"
+    >
+      @if (loading()) {
+        <div class="flex items-center justify-center gap-3 py-16 text-zinc-400 text-sm">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          Loading applications…
+        </div>
+      } @else if (filteredApps().length === 0) {
+        <div class="flex flex-col items-center justify-center gap-2 py-16 text-zinc-400">
+          <i class="fa-solid fa-id-card text-3xl mb-2"></i>
+          <p class="text-sm font-medium">No applications found</p>
+        </div>
+      } @else {
+        <ul class="divide-y divide-zinc-100">
+          @for (app of filteredApps(); track app.id) {
+            <li>
+              <button
+                (click)="selectApp(app)"
+                class="w-full text-left px-6 py-4 hover:bg-zinc-50 transition-colors"
+                [class.bg-blue-50]="selectedApp()?.id === app.id"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div
+                      class="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center text-xs font-bold text-zinc-600 flex-shrink-0 uppercase"
+                    >
+                      {{ (app.user?.displayName ?? app.user?.email ?? '?')[0] }}
+                    </div>
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium text-zinc-900 truncate">
+                        {{ app.user?.displayName ?? app.user?.email ?? app.userId }}
+                      </p>
+                      <p class="text-xs text-zinc-400 truncate">
+                        {{ app.user?.email }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                    <span
+                      class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium"
+                      [class]="statusClass(app.status)"
+                    >
+                      {{ statusLabel(app.status) }}
+                    </span>
+                    <span class="text-[10px] text-zinc-400">
+                      {{ app.createdAt | date: 'mediumDate' }}
+                    </span>
+                  </div>
+                </div>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Detail panel -->
+    @if (selectedApp()) {
+      <div class="w-96 flex-shrink-0 overflow-y-auto bg-white p-5 space-y-4">
+        <div class="flex items-start justify-between">
+          <h3 class="text-sm font-semibold text-zinc-800">Application Detail</h3>
+          <button
+            (click)="selectedApp.set(null)"
+            class="text-zinc-400 hover:text-zinc-700 w-6 h-6 flex items-center justify-center rounded hover:bg-zinc-100 cursor-pointer"
+          >
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <!-- User info -->
+        <div class="p-3 bg-zinc-50 rounded-lg space-y-1">
+          <p class="text-xs text-zinc-500 font-medium">Applicant</p>
+          <p class="text-sm font-semibold text-zinc-900">
+            {{ selectedApp()!.user?.displayName ?? '—' }}
+          </p>
+          <p class="text-xs text-zinc-500">{{ selectedApp()!.user?.email }}</p>
+        </div>
+
+        <!-- Member ID (approved only) -->
+        @if (selectedApp()!.status === 'approved' && selectedApp()!.memberId) {
+          <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">Member ID</p>
+            <p class="text-base font-mono font-bold text-emerald-900 tracking-wide">{{ selectedApp()!.memberId }}</p>
+          </div>
+        }
+
+        <!-- Status -->
+        <div>
+          <p class="text-xs text-zinc-500 font-medium mb-1.5">Status</p>
+          <span
+            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+            [class]="statusClass(selectedApp()!.status)"
+          >
+            {{ statusLabel(selectedApp()!.status) }}
+          </span>
+        </div>
+
+        <!-- Applied at -->
+        <div>
+          <p class="text-xs text-zinc-500 font-medium mb-0.5">Applied</p>
+          <p class="text-sm text-zinc-800">{{ selectedApp()!.createdAt | date: 'medium' }}</p>
+        </div>
+
+        <!-- Invoice / payment -->
+        @if (selectedApp()!.invoice) {
+          <div class="border border-zinc-100 rounded-lg p-3 space-y-2">
+            <p class="text-xs text-zinc-500 font-medium">Payment</p>
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-600">Amount</span>
+              <span class="font-semibold">৳{{ selectedApp()!.invoice!.totalAmount }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-zinc-600">Invoice Status</span>
+              <span class="capitalize">{{ selectedApp()!.invoice!.status }}</span>
+            </div>
+            @if (selectedApp()!.invoice!.payments.length) {
+              <div class="pt-2 border-t border-zinc-100 space-y-1.5">
+                <p class="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+                  Submissions
+                </p>
+                @for (p of selectedApp()!.invoice!.payments; track p.id) {
+                  <div class="flex justify-between text-xs">
+                    <span class="font-mono text-zinc-600">{{ p.transactionId }}</span>
+                    <span
+                      class="px-1.5 py-0.5 rounded font-medium capitalize"
+                      [class.bg-amber-100]="p.status === 'pending'"
+                      [class.text-amber-700]="p.status === 'pending'"
+                      [class.bg-emerald-100]="p.status === 'verified'"
+                      [class.text-emerald-700]="p.status === 'verified'"
+                      [class.bg-zinc-100]="p.status === 'refunded'"
+                      [class.text-zinc-600]="p.status === 'refunded'"
+                    >
+                      {{ p.status }}
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Rejection reason -->
+        @if (selectedApp()!.rejectionReason) {
+          <div class="p-3 bg-red-50 rounded-lg">
+            <p class="text-xs text-red-600 font-medium mb-1">Rejection Reason</p>
+            <p class="text-sm text-red-700">{{ selectedApp()!.rejectionReason }}</p>
+          </div>
+        }
+
+        <!-- Reviewed by -->
+        @if (selectedApp()!.reviewedAt) {
+          <div>
+            <p class="text-xs text-zinc-500 font-medium mb-0.5">Reviewed</p>
+            <p class="text-sm text-zinc-800">{{ selectedApp()!.reviewedAt | date: 'medium' }}</p>
+          </div>
+        }
+
+        <!-- Actions -->
+        @if (canApprove(selectedApp()!) || canReject(selectedApp()!)) {
+          <div class="pt-2 border-t border-zinc-100 space-y-2">
+            <p class="text-xs text-zinc-500 font-medium uppercase tracking-wider">Actions</p>
+            @if (canApprove(selectedApp()!)) {
+              <button
+                (click)="approve(selectedApp()!.id)"
+                [disabled]="submittingAction()"
+                class="w-full shad-btn-primary text-sm py-2.5 gap-2 disabled:opacity-50"
+              >
+                @if (submittingAction()) {
+                  <i class="fa-solid fa-spinner fa-spin"></i>
+                } @else {
+                  <i class="fa-solid fa-circle-check"></i>
+                }
+                Approve Membership
+              </button>
+            }
+            @if (canReject(selectedApp()!)) {
+              <button
+                (click)="openRejectModal(selectedApp()!.id)"
+                [disabled]="submittingAction()"
+                class="w-full text-sm py-2.5 px-4 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 font-medium transition-colors gap-2 flex items-center justify-center disabled:opacity-50"
+              >
+                <i class="fa-solid fa-circle-xmark"></i>
+                Reject Application
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Reject modal -->
+@if (showRejectModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+      <h3 class="text-base font-semibold text-zinc-900 mb-1">Reject Application</h3>
+      <p class="text-sm text-zinc-500 mb-4">
+        Please provide a reason for rejection. The applicant will be notified by email.
+      </p>
+      <textarea
+        [value]="rejectReason()"
+        (input)="rejectReason.set($any($event.target).value)"
+        rows="3"
+        placeholder="e.g. Unable to verify identity, please contact us…"
+        class="w-full border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-300 resize-none"
+      ></textarea>
+      <div class="flex gap-2 mt-4">
+        <button
+          (click)="closeRejectModal()"
+          class="flex-1 shad-btn-outline text-sm py-2.5"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="confirmReject()"
+          [disabled]="!rejectReason().trim() || submittingAction()"
+          class="flex-1 py-2.5 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          @if (submittingAction()) {
+            <i class="fa-solid fa-spinner fa-spin"></i>
+          }
+          Confirm Reject
+        </button>
+      </div>
+    </div>
+  </div>
+}

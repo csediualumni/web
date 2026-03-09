@@ -1,0 +1,224 @@
+<div class="min-h-screen bg-zinc-50 flex flex-col items-center justify-start py-12 px-4">
+  <div class="w-full max-w-xl">
+    <!-- Back link -->
+    <a
+      routerLink="/dashboard"
+      class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-800 mb-6 transition-colors"
+    >
+      <i class="fa-solid fa-arrow-left text-xs"></i>
+      Back to Dashboard
+    </a>
+
+    <h1 class="text-xl font-bold text-zinc-900 mb-6">Membership Application</h1>
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="shad-card p-8 flex items-center justify-center gap-3 text-zinc-400">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span class="text-sm">Loading your application…</span>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (error()) {
+      <div
+        class="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
+      >
+        <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+        {{ error() }}
+      </div>
+    }
+
+    <!-- Application details -->
+    @if (!loading() && !error() && application()) {
+      <!-- Status badge -->
+      <div class="shad-card p-6 mb-4">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+            [class]="
+              application()!.status === 'approved'
+                ? 'bg-emerald-100'
+                : application()!.status === 'rejected'
+                  ? 'bg-red-100'
+                  : application()!.status === 'payment_submitted'
+                    ? 'bg-blue-100'
+                    : 'bg-amber-100'
+            "
+          >
+            <i
+              class="fa-solid text-xl"
+              [class]="statusIcon()"
+              [class.text-emerald-600]="application()!.status === 'approved'"
+              [class.text-red-600]="application()!.status === 'rejected'"
+              [class.text-blue-600]="application()!.status === 'payment_submitted'"
+              [class.text-amber-600]="application()!.status === 'payment_required'"
+            ></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <h2 class="text-base font-semibold text-zinc-900">Application Status</h2>
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border"
+                [class]="statusClass()"
+              >
+                {{ statusLabel() }}
+              </span>
+            </div>
+            <p class="text-sm text-zinc-600 leading-relaxed">{{ statusDescription() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member ID card (shown once approved) -->
+      @if (application()!.status === 'approved' && application()!.memberId) {
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-4 flex items-center gap-4">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-id-card text-emerald-600"></i>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-0.5">Your Member ID</p>
+            <p class="text-lg font-mono font-bold text-emerald-900 tracking-wide">{{ application()!.memberId }}</p>
+            <p class="text-xs text-emerald-600 mt-0.5">Use this ID for events, programs, and alumni activities.</p>
+          </div>
+        </div>
+      }
+
+      <!-- Rejection reason -->
+      @if (application()!.status === 'rejected' && application()!.rejectionReason) {
+        <div
+          class="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl mb-4 text-sm text-red-700"
+        >
+          <i class="fa-solid fa-message mt-0.5 flex-shrink-0"></i>
+          <div>
+            <p class="font-medium mb-1">Reason</p>
+            <p>{{ application()!.rejectionReason }}</p>
+          </div>
+        </div>
+      }
+
+      <!-- Invoice / payment details -->
+      @if (application()!.invoice) {
+        <div class="shad-card p-5 mb-4">
+          <h3 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
+            Payment Details
+          </h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-zinc-500">Membership Fee</span>
+              <span class="font-semibold text-zinc-900"
+                >৳{{ application()!.invoice!.totalAmount }}</span
+              >
+            </div>
+            <div class="flex justify-between">
+              <span class="text-zinc-500">Invoice Status</span>
+              <span class="capitalize">{{ application()!.invoice!.status }}</span>
+            </div>
+            @if (application()!.invoice!.payments.length) {
+              <div class="pt-2 border-t border-zinc-100">
+                <p class="text-xs text-zinc-500 font-medium mb-2">Payment Submissions</p>
+                @for (
+                  payment of application()!.invoice!.payments;
+                  track payment.id
+                ) {
+                  <div
+                    class="flex items-center justify-between py-1.5 text-xs"
+                  >
+                    <span class="font-mono text-zinc-600">{{ payment.transactionId }}</span>
+                    <span
+                      class="px-2 py-0.5 rounded-full font-medium capitalize"
+                      [class.bg-amber-100]="payment.status === 'pending'"
+                      [class.text-amber-700]="payment.status === 'pending'"
+                      [class.bg-emerald-100]="payment.status === 'verified'"
+                      [class.text-emerald-700]="payment.status === 'verified'"
+                      [class.bg-red-100]="payment.status === 'rejected'"
+                      [class.text-red-700]="payment.status === 'rejected'"
+                      [class.bg-zinc-100]="payment.status === 'refunded'"
+                      [class.text-zinc-600]="payment.status === 'refunded'"
+                    >
+                      {{ payment.status }}
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- CTA: Pay now (if payment_required) -->
+      @if (application()!.status === 'payment_required') {
+        <a
+          [href]="paymentUrl"
+          class="shad-btn-primary w-full py-3 text-center text-sm font-semibold block mb-3"
+        >
+          <i class="fa-solid fa-mobile-screen-button mr-2"></i>
+          Pay ৳500 via bKash
+        </a>
+        <p class="text-xs text-zinc-400 text-center">
+          A payment link was also sent to your email address.
+        </p>
+      }
+
+      <!-- CTA: Go to dashboard (if approved) -->
+      @if (application()!.status === 'approved') {
+        <a
+          routerLink="/dashboard"
+          class="shad-btn-primary w-full py-3 text-center text-sm font-semibold block"
+        >
+          <i class="fa-solid fa-arrow-right mr-2"></i>
+          Explore as Member
+        </a>
+      }
+
+      <!-- Timeline -->
+      <div class="shad-card p-5 mt-4">
+        <h3 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Timeline</h3>
+        <div class="space-y-3">
+          <div class="flex items-start gap-3 text-sm">
+            <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+            <div>
+              <p class="font-medium text-zinc-800">Application Submitted</p>
+              <p class="text-xs text-zinc-400">
+                {{ application()!.createdAt | date: 'medium' }}
+              </p>
+            </div>
+          </div>
+          @if (
+            application()!.status === 'payment_submitted' ||
+            application()!.status === 'approved' ||
+            application()!.status === 'rejected'
+          ) {
+            <div class="flex items-start gap-3 text-sm">
+              <i
+                class="fa-solid fa-circle-check mt-0.5 flex-shrink-0"
+                [class.text-emerald-500]="application()!.status !== 'payment_required'"
+                [class.text-zinc-300]="application()!.status === 'payment_required'"
+              ></i>
+              <div>
+                <p class="font-medium text-zinc-800">Payment Submitted</p>
+              </div>
+            </div>
+          }
+          @if (application()!.reviewedAt) {
+            <div class="flex items-start gap-3 text-sm">
+              <i
+                class="fa-solid mt-0.5 flex-shrink-0"
+                [class.fa-circle-check]="application()!.status === 'approved'"
+                [class.text-emerald-500]="application()!.status === 'approved'"
+                [class.fa-circle-xmark]="application()!.status === 'rejected'"
+                [class.text-red-500]="application()!.status === 'rejected'"
+              ></i>
+              <div>
+                <p class="font-medium text-zinc-800 capitalize">{{ application()!.status }}</p>
+                <p class="text-xs text-zinc-400">
+                  {{ application()!.reviewedAt | date: 'medium' }}
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
