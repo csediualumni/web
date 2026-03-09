@@ -186,7 +186,7 @@ export class DashboardComponent implements OnInit {
   });
 
   goToAdmin(): void {
-    this.router.navigate(['/admin']);
+    this.router.navigate(['/manage']);
   }
 
   logout() {

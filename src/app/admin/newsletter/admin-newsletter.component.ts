@@ -66,8 +66,8 @@ export class AdminNewsletterComponent implements OnInit {
         this.subscriptions.set(subs);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Failed to load subscriptions.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load subscriptions.');
         this.loading.set(false);
       },
     });
@@ -100,8 +100,8 @@ export class AdminNewsletterComponent implements OnInit {
         );
         this._clearToggling(sub.id);
       },
-      error: () => {
-        this.error.set('Failed to update subscription.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to update subscription.');
         this._clearToggling(sub.id);
       },
     });
@@ -120,8 +120,8 @@ export class AdminNewsletterComponent implements OnInit {
         this.subscriptions.update((list) => list.filter((x) => x.id !== sub.id));
         this._clearDeleting(sub.id);
       },
-      error: () => {
-        this.error.set('Failed to delete subscription.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to delete subscription.');
         this._clearDeleting(sub.id);
       },
     });
@@ -151,7 +151,7 @@ export class AdminNewsletterComponent implements OnInit {
       },
       error: (err) => {
         this.sending.set(false);
-        this.error.set(err.error?.message ?? 'Failed to send newsletter.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to send newsletter.'));
       },
     });
   }

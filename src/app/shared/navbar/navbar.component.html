@@ -123,16 +123,14 @@
                   <i class="fa-solid fa-gauge-high w-4 text-center text-zinc-400"></i>
                   Dashboard
                 </a>
-                @if (isAdmin()) {
-                  <a
-                    routerLink="/admin"
-                    (click)="userDropdownOpen.set(false)"
-                    class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
-                  >
-                    <i class="fa-solid fa-gear w-4 text-center text-zinc-400"></i>
-                    Admin Panel
-                  </a>
-                }
+                <a
+                  routerLink="/manage"
+                  (click)="userDropdownOpen.set(false)"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+                >
+                  <i class="fa-solid fa-gear w-4 text-center text-zinc-400"></i>
+                  Manage
+                </a>
                 <div class="border-t border-zinc-100 mt-1 pt-1">
                   <button
                     (click)="logout()"
@@ -210,16 +208,14 @@
               <i class="fa-solid fa-gauge-high w-4 text-center text-zinc-400"></i>
               Dashboard
             </a>
-            @if (isAdmin()) {
-              <a
-                routerLink="/admin"
-                (click)="closeMobileMenu()"
-                class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
-              >
-                <i class="fa-solid fa-gear w-4 text-center text-zinc-400"></i>
-                Admin Panel
-              </a>
-            }
+            <a
+              routerLink="/manage"
+              (click)="closeMobileMenu()"
+              class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+            >
+              <i class="fa-solid fa-gear w-4 text-center text-zinc-400"></i>
+              Manage
+            </a>
             <button
               (click)="logout()"
               class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm text-red-600 hover:bg-red-50 transition-colors"

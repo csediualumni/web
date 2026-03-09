@@ -37,14 +37,14 @@ export class AdminRolesComponent implements OnInit {
             this.allPermissions.set(perms);
             this.loading.set(false);
           },
-          error: () => {
-            this.error.set('Failed to load permissions.');
+          error: (err) => {
+            this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load permissions.');
             this.loading.set(false);
           },
         });
       },
-      error: () => {
-        this.error.set('Failed to load roles.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load roles.');
         this.loading.set(false);
       },
     });
@@ -117,7 +117,7 @@ export class AdminRolesComponent implements OnInit {
         this._clearTogglingPerm(role.id, permId);
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to update permission.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update permission.'));
         this._clearTogglingPerm(role.id, permId);
       },
     });
@@ -144,7 +144,7 @@ export class AdminRolesComponent implements OnInit {
         this.creatingRole.set(false);
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to create role.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to create role.'));
         this.creatingRole.set(false);
       },
     });
@@ -164,7 +164,7 @@ export class AdminRolesComponent implements OnInit {
         this.deletingRoleId.set(null);
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to delete role.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to delete role.'));
         this.deletingRoleId.set(null);
       },
     });

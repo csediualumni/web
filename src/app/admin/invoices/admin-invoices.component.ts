@@ -44,8 +44,8 @@ export class AdminInvoicesComponent implements OnInit {
         this.invoices.set(data);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Failed to load invoices.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load invoices.');
         this.loading.set(false);
       },
     });
@@ -64,7 +64,7 @@ export class AdminInvoicesComponent implements OnInit {
         this.updatingInvoiceId.set(null);
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to update invoice.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update invoice.'));
         this.updatingInvoiceId.set(null);
       },
     });
@@ -112,7 +112,7 @@ export class AdminInvoicesComponent implements OnInit {
         this.updatingPaymentId.set(null);
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to update payment.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update payment.'));
         this.updatingPaymentId.set(null);
       },
     });

@@ -54,6 +54,7 @@ export interface UserProfile {
   website: string | null;
   skills: string[] | null;
   openToMentoring: boolean;
+  profileVisibility: boolean;
   experiences: ExperienceEntry[];
   educations: EducationEntry[];
   achievements: AchievementEntry[];

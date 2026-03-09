@@ -107,6 +107,7 @@ export class ProfileEditComponent implements OnInit {
       twitter: ['', [Validators.maxLength(255)]],
       website: ['', [Validators.maxLength(255)]],
       openToMentoring: [false],
+      profileVisibility: [false],
     });
 
     // Load latest profile from API
@@ -127,6 +128,7 @@ export class ProfileEditComponent implements OnInit {
           twitter: data.twitter ?? '',
           website: data.website ?? '',
           openToMentoring: data.openToMentoring ?? false,
+          profileVisibility: data.profileVisibility ?? false,
         });
         this.skills.set(data.skills ?? []);
         this.experiences.set(data.experiences ?? []);

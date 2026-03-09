@@ -74,8 +74,8 @@ export class AdminContactComponent implements OnInit {
         }
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Failed to load contact tickets.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load contact tickets.');
         this.loading.set(false);
       },
     });
@@ -109,8 +109,8 @@ export class AdminContactComponent implements OnInit {
         this.updatingStatus.set(false);
         setTimeout(() => this.success.set(''), 3000);
       },
-      error: () => {
-        this.error.set('Failed to update status.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to update status.');
         this.updatingStatus.set(false);
       },
     });
@@ -139,8 +139,8 @@ export class AdminContactComponent implements OnInit {
         this.success.set('Comment added. Email sent to contact person.');
         setTimeout(() => this.success.set(''), 3000);
       },
-      error: () => {
-        this.error.set('Failed to add comment.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to add comment.');
         this.addingComment.set(false);
       },
     });
@@ -155,8 +155,8 @@ export class AdminContactComponent implements OnInit {
         if (this.selectedTicket()?.id === ticket.id) this.selectedTicket.set(null);
         this.deleting.set(false);
       },
-      error: () => {
-        this.error.set('Failed to delete ticket.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to delete ticket.');
         this.deleting.set(false);
       },
     });

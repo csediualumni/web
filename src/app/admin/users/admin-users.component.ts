@@ -32,8 +32,8 @@ export class AdminUsersComponent implements OnInit {
         this.allRoles.set(roles);
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Failed to load users.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load users.');
         this.loading.set(false);
       },
     });
@@ -75,7 +75,7 @@ export class AdminUsersComponent implements OnInit {
         this._clearTogglingRole(user.id, roleId);
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to update role.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update role.'));
         this._clearTogglingRole(user.id, roleId);
       },
     });

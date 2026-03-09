@@ -736,6 +736,32 @@
             </p>
           </div>
         </label>
+
+        <hr class="border-zinc-100 my-4" />
+
+        <!-- Profile visibility -->
+        <label class="flex items-start gap-4 cursor-pointer group">
+          <div class="relative mt-0.5 flex-shrink-0">
+            <input formControlName="profileVisibility" type="checkbox" class="sr-only peer" />
+            <div
+              class="w-11 h-6 bg-zinc-200 peer-checked:bg-emerald-600 rounded-full transition-colors"
+            ></div>
+            <div
+              class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"
+            ></div>
+          </div>
+          <div>
+            <p
+              class="text-sm font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors"
+            >
+              Show profile in public alumni directory
+            </p>
+            <p class="text-xs text-zinc-500 mt-0.5 leading-relaxed">
+              When enabled, your profile card will appear in the public alumni list so other
+              visitors and alumni can find you. Your email address is never shown publicly.
+            </p>
+          </div>
+        </label>
       </div>
 
       <!-- ── Action bar ────────────────────────────────────────── -->

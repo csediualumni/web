@@ -71,8 +71,8 @@ export class AdminMembershipComponent implements OnInit {
         }
         this.loading.set(false);
       },
-      error: () => {
-        this.error.set('Failed to load membership requests.');
+      error: (err) => {
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load membership requests.');
         this.loading.set(false);
       },
     });
@@ -95,7 +95,7 @@ export class AdminMembershipComponent implements OnInit {
         this.loadRequests();
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to approve application.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to approve application.'));
         this.submittingAction.set(false);
       },
     });
@@ -134,7 +134,7 @@ export class AdminMembershipComponent implements OnInit {
         this.loadRequests();
       },
       error: (err) => {
-        this.error.set(err.error?.message ?? 'Failed to reject application.');
+        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to reject application.'));
         this.submittingAction.set(false);
         this.closeRejectModal();
       },
