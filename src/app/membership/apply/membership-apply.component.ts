@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -17,11 +17,9 @@ export class MembershipApplyComponent implements OnInit {
   loading = signal(false);
   error = signal('');
 
-  constructor(
-    public auth: AuthService,
-    private membership: MembershipService,
-    private router: Router,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly membership = inject(MembershipService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     // If the user already has an application, redirect to status page
@@ -62,9 +60,7 @@ export class MembershipApplyComponent implements OnInit {
         if (typeof msg === 'string' && msg.includes('active')) {
           this.error.set(msg);
         } else {
-          this.error.set(
-            'Something went wrong. Please try again or contact support.',
-          );
+          this.error.set('Something went wrong. Please try again or contact support.');
         }
       },
     });

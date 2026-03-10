@@ -38,7 +38,7 @@ export class AboutComponent implements OnInit {
     });
   }
 
-  colorFor    = colorFor;
+  colorFor = colorFor;
   initialsFor = initialsFor;
 
   readonly values = [

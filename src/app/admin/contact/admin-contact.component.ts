@@ -1,11 +1,7 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  AdminService,
-  ContactTicket,
-  ContactTicketStatus,
-} from '../../core/admin.service';
+import { AdminService, ContactTicket, ContactTicketStatus } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
@@ -51,10 +47,8 @@ export class AdminContactComponent implements OnInit {
   updatingStatus = signal(false);
   deleting = signal(false);
 
-  constructor(
-    public auth: AuthService,
-    private adminService: AdminService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.loadTickets();
@@ -75,7 +69,11 @@ export class AdminContactComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load contact tickets.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions to view this."
+            : 'Failed to load contact tickets.',
+        );
         this.loading.set(false);
       },
     });
@@ -102,15 +100,17 @@ export class AdminContactComponent implements OnInit {
     this.adminService.updateContactTicketStatus(ticket.id, status).subscribe({
       next: (updated) => {
         this.selectedTicket.set(updated);
-        this.tickets.update((list) =>
-          list.map((t) => (t.id === updated.id ? updated : t)),
-        );
+        this.tickets.update((list) => list.map((t) => (t.id === updated.id ? updated : t)));
         this.success.set(`Status updated to "${this.statusLabel(status)}".`);
         this.updatingStatus.set(false);
         setTimeout(() => this.success.set(''), 3000);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to update status.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : 'Failed to update status.',
+        );
         this.updatingStatus.set(false);
       },
     });
@@ -122,25 +122,23 @@ export class AdminContactComponent implements OnInit {
     if (!ticket || !body || this.addingComment()) return;
 
     const authorName =
-      this.auth.currentUser()?.profile?.displayName ||
-      this.auth.currentUser()?.email ||
-      'Admin';
+      this.auth.currentUser()?.profile?.displayName || this.auth.currentUser()?.email || 'Admin';
 
     this.addingComment.set(true);
     this.error.set('');
     this.adminService.addContactTicketComment(ticket.id, body, authorName).subscribe({
       next: (updated) => {
         this.selectedTicket.set(updated);
-        this.tickets.update((list) =>
-          list.map((t) => (t.id === updated.id ? updated : t)),
-        );
+        this.tickets.update((list) => list.map((t) => (t.id === updated.id ? updated : t)));
         this.newComment.set('');
         this.addingComment.set(false);
         this.success.set('Comment added. Email sent to contact person.');
         setTimeout(() => this.success.set(''), 3000);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to add comment.');
+        this.error.set(
+          err?.status === 403 ? "You don't have sufficient permissions." : 'Failed to add comment.',
+        );
         this.addingComment.set(false);
       },
     });
@@ -156,7 +154,11 @@ export class AdminContactComponent implements OnInit {
         this.deleting.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to delete ticket.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : 'Failed to delete ticket.',
+        );
         this.deleting.set(false);
       },
     });

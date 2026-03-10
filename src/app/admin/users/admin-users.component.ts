@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService, AdminUser, ImportMembersResult, Role } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
@@ -23,10 +23,8 @@ export class AdminUsersComponent implements OnInit {
   importResult = signal<ImportMembersResult | null>(null);
   showImportErrors = signal(false);
 
-  constructor(
-    public auth: AuthService,
-    private adminService: AdminService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly adminService = inject(AdminService);
 
   ngOnInit(): void {
     forkJoin({
@@ -39,7 +37,11 @@ export class AdminUsersComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load users.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions to view this."
+            : 'Failed to load users.',
+        );
         this.loading.set(false);
       },
     });
@@ -75,7 +77,9 @@ export class AdminUsersComponent implements OnInit {
         this.adminService.listUsers().subscribe({ next: (u) => this.users.set(u) });
       },
       error: (err) => {
-        this.error.set(err?.error?.message ?? 'Import failed. Please check the file and try again.');
+        this.error.set(
+          err?.error?.message ?? 'Import failed. Please check the file and try again.',
+        );
         this.importing.set(false);
       },
     });
@@ -109,7 +113,11 @@ export class AdminUsersComponent implements OnInit {
         this._clearTogglingRole(user.id, roleId);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update role.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to update role.'),
+        );
         this._clearTogglingRole(user.id, roleId);
       },
     });

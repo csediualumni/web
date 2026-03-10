@@ -1,7 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
   Validators,
   ReactiveFormsModule,
   AbstractControl,
@@ -26,22 +25,18 @@ function passwordStrength(control: AbstractControl): ValidationErrors | null {
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
-  form: FormGroup;
+  private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, passwordStrength]],
+  });
   loading = signal(false);
   currentYear = new Date().getFullYear();
   serverError = signal('');
   showPassword = signal(false);
-
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router,
-  ) {
-    this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, passwordStrength]],
-    });
-  }
 
   get email() {
     return this.form.get('email')!;
@@ -60,7 +55,7 @@ export class RegisterComponent {
     this.serverError.set('');
 
     const { email, password } = this.form.value;
-    this.auth.register(email, password).subscribe({
+    this.auth.register(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.loading.set(false);

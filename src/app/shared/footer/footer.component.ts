@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/admin.service';
@@ -13,11 +13,11 @@ export class FooterComponent {
   readonly currentYear = new Date().getFullYear();
 
   newsletterEmail = signal('');
-  subscribed  = signal(false);
+  subscribed = signal(false);
   subscribing = signal(false);
-  subError    = signal('');
+  subError = signal('');
 
-  constructor(private adminService: AdminService) {}
+  private readonly adminService = inject(AdminService);
 
   subscribeNewsletter() {
     const email = this.newsletterEmail().trim();

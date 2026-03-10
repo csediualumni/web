@@ -1,10 +1,11 @@
 <div class="max-w-5xl mx-auto space-y-6">
-
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <div>
       <h1 class="text-lg font-semibold text-zinc-900">Newsletter</h1>
-      <p class="text-sm text-zinc-500 mt-0.5">Manage subscriptions and send emails to subscribers.</p>
+      <p class="text-sm text-zinc-500 mt-0.5">
+        Manage subscriptions and send emails to subscribers.
+      </p>
     </div>
     <!-- Stats -->
     <div class="flex items-center gap-3 flex-wrap">
@@ -54,7 +55,9 @@
 
   <!-- Alert: error -->
   @if (error()) {
-    <div class="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+    <div
+      class="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700"
+    >
       <i class="fa-solid fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
       <span>{{ error() }}</span>
     </div>
@@ -62,7 +65,9 @@
 
   <!-- Alert: success -->
   @if (success()) {
-    <div class="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
+    <div
+      class="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-sm text-emerald-700"
+    >
       <i class="fa-solid fa-circle-check mt-0.5 flex-shrink-0"></i>
       <span>{{ success() }}</span>
     </div>
@@ -70,7 +75,6 @@
 
   <!-- ── TAB: Subscriptions ──────────────────────────────────────── -->
   @if (activeTab() === 'subscriptions') {
-
     <!-- Toolbar -->
     <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
       <input
@@ -81,7 +85,14 @@
         class="h-9 flex-1 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300"
       />
       <div class="flex gap-1 flex-shrink-0">
-        @for (opt of [{label:'All',value:'all'},{label:'Active',value:'active'},{label:'Inactive',value:'inactive'}]; track opt.value) {
+        @for (
+          opt of [
+            { label: 'All', value: 'all' },
+            { label: 'Active', value: 'active' },
+            { label: 'Inactive', value: 'inactive' },
+          ];
+          track opt.value
+        ) {
           <button
             (click)="filterStatus.set($any(opt.value))"
             class="px-3 h-9 rounded-md text-xs font-medium border transition-colors cursor-pointer"
@@ -91,7 +102,9 @@
             [class.bg-white]="filterStatus() !== opt.value"
             [class.text-zinc-600]="filterStatus() !== opt.value"
             [class.border-zinc-200]="filterStatus() !== opt.value"
-          >{{ opt.label }}</button>
+          >
+            {{ opt.label }}
+          </button>
         }
       </div>
     </div>
@@ -111,26 +124,50 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-zinc-100 bg-zinc-50">
-              <th class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Email</th>
-              <th class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide hidden sm:table-cell">Subscribed</th>
-              <th class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide">Status</th>
-              <th class="px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide text-right">Actions</th>
+              <th
+                class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide"
+              >
+                Email
+              </th>
+              <th
+                class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide hidden sm:table-cell"
+              >
+                Subscribed
+              </th>
+              <th
+                class="text-left px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide"
+              >
+                Status
+              </th>
+              <th
+                class="px-4 py-2.5 text-xs font-semibold text-zinc-500 uppercase tracking-wide text-right"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-100">
             @for (sub of filteredSubs(); track sub.id) {
               <tr class="hover:bg-zinc-50 transition-colors">
-                <td class="px-4 py-3 font-mono text-zinc-800 text-xs sm:text-sm truncate max-w-[220px]">{{ sub.email }}</td>
+                <td
+                  class="px-4 py-3 font-mono text-zinc-800 text-xs sm:text-sm truncate max-w-[220px]"
+                >
+                  {{ sub.email }}
+                </td>
                 <td class="px-4 py-3 text-zinc-500 text-xs hidden sm:table-cell whitespace-nowrap">
-                  {{ sub.subscribedAt | date:'mediumDate' }}
+                  {{ sub.subscribedAt | date: 'mediumDate' }}
                 </td>
                 <td class="px-4 py-3">
                   @if (sub.isActive) {
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-emerald-100 text-emerald-700"
+                    >
                       <i class="fa-solid fa-circle text-[6px]"></i> Active
                     </span>
                   } @else {
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-zinc-100 text-zinc-500">
+                    <span
+                      class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-zinc-100 text-zinc-500"
+                    >
                       <i class="fa-solid fa-circle text-[6px]"></i> Inactive
                     </span>
                   }
@@ -182,7 +219,6 @@
         </div>
       </div>
     }
-
   }
 
   <!-- ── TAB: Compose & Send ─────────────────────────────────────── -->
@@ -198,8 +234,13 @@
       <div class="p-6 space-y-5">
         <!-- Subject -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide">Subject</label>
+          <label
+            for="nl-subject"
+            class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide"
+            >Subject</label
+          >
           <input
+            id="nl-subject"
             type="text"
             placeholder="e.g. CSE DIU Alumni Newsletter – March 2026"
             [value]="subject()"
@@ -211,18 +252,27 @@
         <!-- Body -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
-            <label class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide">Message Body (HTML supported)</label>
+            <label
+              for="nl-body"
+              class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide"
+              >Message Body (HTML supported)</label
+            >
             <button
               (click)="previewHtml.update(v => !v)"
               class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer flex items-center gap-1"
             >
-              <i class="fa-solid" [class.fa-eye]="!previewHtml()" [class.fa-code]="previewHtml()"></i>
+              <i
+                class="fa-solid"
+                [class.fa-eye]="!previewHtml()"
+                [class.fa-code]="previewHtml()"
+              ></i>
               {{ previewHtml() ? 'Edit' : 'Preview' }}
             </button>
           </div>
 
           @if (!previewHtml()) {
             <textarea
+              id="nl-body"
               rows="14"
               placeholder="Write your newsletter content here. You can use plain text or HTML tags."
               [value]="htmlBody()"
@@ -238,10 +288,16 @@
         </div>
 
         <!-- Tips -->
-        <div class="rounded-lg bg-blue-50 border border-blue-100 px-4 py-3 text-xs text-blue-700 space-y-1">
+        <div
+          class="rounded-lg bg-blue-50 border border-blue-100 px-4 py-3 text-xs text-blue-700 space-y-1"
+        >
           <p class="font-semibold">Tips</p>
           <ul class="list-disc list-inside space-y-0.5 text-blue-600">
-            <li>You can use basic HTML: <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>, <code>&lt;a href="..."&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;p&gt;</code>.</li>
+            <li>
+              You can use basic HTML: <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>,
+              <code>&lt;a href="..."&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>,
+              <code>&lt;p&gt;</code>.
+            </li>
             <li>An unsubscribe link is automatically appended to every email.</li>
             <li>Emails are sent one by one; large lists may take a moment.</li>
           </ul>
@@ -250,7 +306,8 @@
         <!-- Actions -->
         <div class="flex items-center justify-between pt-2 border-t border-zinc-100">
           <span class="text-xs text-zinc-400">
-            Sending to <strong class="text-zinc-600">{{ activeCount() }}</strong> active subscriber(s)
+            Sending to <strong class="text-zinc-600">{{ activeCount() }}</strong> active
+            subscriber(s)
           </span>
           <button
             (click)="sendNewsletter()"
@@ -269,5 +326,4 @@
       </div>
     </div>
   }
-
 </div>

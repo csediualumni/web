@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -77,7 +77,7 @@ export class AuthService {
 
   readonly currentUser = signal<AuthUser | null>(this.loadUser());
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   // ──────────────────────────────────────────────
   // Email / Password
@@ -240,9 +240,11 @@ export class AuthService {
     return this.http.delete<void>(`${this.base}/me/achievements/${id}`);
   }
 
-  private decodeJwt(
-    token: string,
-  ): { permissions?: string[]; roles?: { id: string; name: string }[]; memberId?: string | null } | null {
+  private decodeJwt(token: string): {
+    permissions?: string[];
+    roles?: { id: string; name: string }[];
+    memberId?: string | null;
+  } | null {
     try {
       const payload = token.split('.')[1];
       return JSON.parse(atob(payload));

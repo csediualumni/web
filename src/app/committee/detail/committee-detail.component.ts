@@ -5,8 +5,13 @@ import { AdminService, Committee, CommitteeEntry } from '../../core/admin.servic
 import { colorFor, initialsFor } from '../committee.component';
 
 const DESIGNATION_ORDER: Record<string, number> = {
-  President: 0, 'Vice President': 1, 'General Secretary': 2,
-  'Joint Secretary': 3, Treasurer: 4, 'Assistant Treasurer': 5, 'Executive Member': 6,
+  President: 0,
+  'Vice President': 1,
+  'General Secretary': 2,
+  'Joint Secretary': 3,
+  Treasurer: 4,
+  'Assistant Treasurer': 5,
+  'Executive Member': 6,
 };
 
 @Component({
@@ -19,14 +24,17 @@ export class CommitteeDetailComponent implements OnInit {
   private readonly adminService = inject(AdminService);
   private readonly route = inject(ActivatedRoute);
 
-  loading   = signal(true);
-  error     = signal('');
+  loading = signal(true);
+  error = signal('');
   committee = signal<Committee | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.adminService.getCommittee(id).subscribe({
-      next: (data) => { this.committee.set(data); this.loading.set(false); },
+      next: (data) => {
+        this.committee.set(data);
+        this.loading.set(false);
+      },
       error: (err) => {
         this.error.set(err?.status === 404 ? 'Committee not found.' : 'Failed to load committee.');
         this.loading.set(false);
@@ -34,7 +42,7 @@ export class CommitteeDetailComponent implements OnInit {
     });
   }
 
-  colorFor    = colorFor;
+  colorFor = colorFor;
   initialsFor = initialsFor;
   readonly Boolean = Boolean;
 

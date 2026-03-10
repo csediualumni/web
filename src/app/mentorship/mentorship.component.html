@@ -188,7 +188,7 @@
 
           <form (ngSubmit)="submitForm()" #f="ngForm" class="space-y-5">
             <div>
-              <label class="block text-sm font-semibold text-zinc-700 mb-1">I want to be a *</label>
+              <p class="block text-sm font-semibold text-zinc-700 mb-1">I want to be a *</p>
               <div class="flex gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input
@@ -215,8 +215,11 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-semibold text-zinc-700 mb-1">Full Name *</label>
+                <label for="mnt-name" class="block text-sm font-semibold text-zinc-700 mb-1"
+                  >Full Name *</label
+                >
                 <input
+                  id="mnt-name"
                   type="text"
                   [(ngModel)]="form.name"
                   name="name"
@@ -225,8 +228,11 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-semibold text-zinc-700 mb-1">Email *</label>
+                <label for="mnt-email" class="block text-sm font-semibold text-zinc-700 mb-1"
+                  >Email *</label
+                >
                 <input
+                  id="mnt-email"
                   type="email"
                   [(ngModel)]="form.email"
                   name="email"
@@ -237,10 +243,11 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-zinc-700 mb-1"
+              <label for="mnt-batch" class="block text-sm font-semibold text-zinc-700 mb-1"
                 >Graduation Batch / Year *</label
               >
               <input
+                id="mnt-batch"
                 type="text"
                 [(ngModel)]="form.batch"
                 name="batch"
@@ -250,10 +257,11 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-zinc-700 mb-1"
+              <label for="mnt-area" class="block text-sm font-semibold text-zinc-700 mb-1"
                 >Area of Interest *</label
               >
               <select
+                id="mnt-area"
                 [(ngModel)]="form.area"
                 name="area"
                 class="w-full border border-zinc-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
@@ -266,8 +274,11 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-zinc-700 mb-1">Your Goals *</label>
+              <label for="mnt-goals" class="block text-sm font-semibold text-zinc-700 mb-1"
+                >Your Goals *</label
+              >
               <textarea
+                id="mnt-goals"
                 [(ngModel)]="form.goals"
                 name="goals"
                 rows="4"

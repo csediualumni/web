@@ -178,8 +178,12 @@
         <!-- Member ID (approved only) -->
         @if (selectedApp()!.status === 'approved' && selectedApp()!.memberId) {
           <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-            <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">Member ID</p>
-            <p class="text-base font-mono font-bold text-emerald-900 tracking-wide">{{ selectedApp()!.memberId }}</p>
+            <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">
+              Member ID
+            </p>
+            <p class="text-base font-mono font-bold text-emerald-900 tracking-wide">
+              {{ selectedApp()!.memberId }}
+            </p>
           </div>
         }
 
@@ -305,10 +309,7 @@
         class="w-full border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-300 resize-none"
       ></textarea>
       <div class="flex gap-2 mt-4">
-        <button
-          (click)="closeRejectModal()"
-          class="flex-1 shad-btn-outline text-sm py-2.5"
-        >
+        <button (click)="closeRejectModal()" class="flex-1 shad-btn-outline text-sm py-2.5">
           Cancel
         </button>
         <button

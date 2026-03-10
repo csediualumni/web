@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -11,28 +11,24 @@ import { AuthService } from '../../core/auth.service';
   templateUrl: './reset-password.component.html',
 })
 export class ResetPasswordComponent implements OnInit {
-  form: FormGroup;
+  private readonly fb = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
+
+  form = this.fb.group(
+    {
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirm: ['', [Validators.required]],
+    },
+    { validators: this.passwordsMatch },
+  );
   token = signal('');
   loading = signal(false);
   showPassword = signal(false);
   showConfirm = signal(false);
   success = signal('');
   error = signal('');
-
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private auth: AuthService,
-  ) {
-    this.form = this.fb.group(
-      {
-        password: ['', [Validators.required, Validators.minLength(8)]],
-        confirm: ['', [Validators.required]],
-      },
-      { validators: this.passwordsMatch },
-    );
-  }
 
   ngOnInit(): void {
     const t = this.route.snapshot.queryParamMap.get('token') ?? '';

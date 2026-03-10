@@ -1,8 +1,11 @@
-import { Component, computed, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/auth.service';
-import { MembershipCardComponent, MemberCardData } from './membership-card/membership-card.component';
+import {
+  MembershipCardComponent,
+  MemberCardData,
+} from './membership-card/membership-card.component';
 
 export interface ActivityItem {
   icon: string;
@@ -26,14 +29,12 @@ export interface UpcomingEvent {
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit {
-  constructor(
-    public auth: AuthService,
-    private router: Router,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   ngOnInit() {
     // Refresh profile data silently so the completion ring is accurate
-    this.auth.loadProfile().subscribe({ error: () => {} });
+    this.auth.loadProfile().subscribe({ error: () => undefined });
   }
 
   // ── Computed helpers ─────────────────────────────────────────

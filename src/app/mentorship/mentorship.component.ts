@@ -193,7 +193,7 @@ export class MentorshipComponent {
     }, 900);
   }
 
-  stars(rating: number): number[] {
+  stars(): number[] {
     return Array.from({ length: 5 }, (_, i) => i + 1);
   }
 }

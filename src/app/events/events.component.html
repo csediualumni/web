@@ -132,16 +132,18 @@
           <!-- Occupancy bar -->
           @if (featuredEvent()!.seats !== null) {
             <div class="mb-6">
-            <div class="flex justify-between text-xs text-zinc-500 mb-1">
-              <span>{{ occupancyPercent(featuredEvent()!) }}% filled</span>
-              <span>{{ featuredEvent()!.seatsLeft }} / {{ featuredEvent()!.seats }} remaining</span>
-            </div>
-            <div class="h-2 bg-zinc-100 rounded-full overflow-hidden">
-              <div
-                class="h-full bg-blue-600 rounded-full transition-all"
-                [style.width.%]="occupancyPercent(featuredEvent()!)"
-              ></div>
-            </div>
+              <div class="flex justify-between text-xs text-zinc-500 mb-1">
+                <span>{{ occupancyPercent(featuredEvent()!) }}% filled</span>
+                <span
+                  >{{ featuredEvent()!.seatsLeft }} / {{ featuredEvent()!.seats }} remaining</span
+                >
+              </div>
+              <div class="h-2 bg-zinc-100 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-blue-600 rounded-full transition-all"
+                  [style.width.%]="occupancyPercent(featuredEvent()!)"
+                ></div>
+              </div>
             </div>
           }
           <div class="flex gap-3">
@@ -149,7 +151,11 @@
               <button
                 (click)="cancelRsvp(featuredEvent()!)"
                 [disabled]="isRsvping(featuredEvent()!.id)"
-                [title]="!isPaidCancellationAllowed(featuredEvent()!) ? 'Cancellation not allowed within 7 days of the event' : ''"
+                [title]="
+                  !isPaidCancellationAllowed(featuredEvent()!)
+                    ? 'Cancellation not allowed within 7 days of the event'
+                    : ''
+                "
                 class="shad-btn-outline gap-2 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
               >
                 @if (isRsvping(featuredEvent()!.id)) {
@@ -162,10 +168,7 @@
                 Registered
               </button>
             } @else if (!isPaidRegistrationOpen(featuredEvent()!)) {
-              <button
-                disabled
-                class="shad-btn-outline gap-2 opacity-50 cursor-not-allowed"
-              >
+              <button disabled class="shad-btn-outline gap-2 opacity-50 cursor-not-allowed">
                 <i class="fa-solid fa-lock text-xs"></i>
                 Registration Closed
               </button>
@@ -269,9 +272,17 @@
         @if (!event.featured) {
           <div class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col">
             <!-- Cover image or placeholder -->
-            <div class="h-40 {{ event.imageUrl ? '' : event.color }} flex items-center justify-center relative overflow-hidden">
+            <div
+              class="h-40 {{
+                event.imageUrl ? '' : event.color
+              }} flex items-center justify-center relative overflow-hidden"
+            >
               @if (event.imageUrl) {
-                <img [src]="event.imageUrl" [alt]="event.title" class="w-full h-full object-cover" />
+                <img
+                  [src]="event.imageUrl"
+                  [alt]="event.title"
+                  class="w-full h-full object-cover"
+                />
               } @else {
                 <i class="fa-solid fa-calendar-days text-5xl text-zinc-400"></i>
               }
@@ -297,8 +308,11 @@
                   {{ event.mode }}
                 </span>
                 @if (event.ticketPrice) {
-                  <span class="text-[11px] font-semibold bg-violet-100 text-violet-700 rounded px-2 py-0.5">
-                    <i class="fa-solid fa-ticket text-[9px] mr-0.5"></i> BDT {{ event.ticketPrice | number }}
+                  <span
+                    class="text-[11px] font-semibold bg-violet-100 text-violet-700 rounded px-2 py-0.5"
+                  >
+                    <i class="fa-solid fa-ticket text-[9px] mr-0.5"></i> BDT
+                    {{ event.ticketPrice | number }}
                   </span>
                 }
               </div>
@@ -324,7 +338,9 @@
               </div>
 
               <!-- Seats bar (upcoming only) -->
-              @if (event.status === 'upcoming' && event.seats !== null && event.seatsLeft !== null) {
+              @if (
+                event.status === 'upcoming' && event.seats !== null && event.seatsLeft !== null
+              ) {
                 <div class="mt-auto pt-3 border-t border-zinc-100">
                   <div class="flex justify-between text-xs text-zinc-500 mb-1.5">
                     <span>{{ event.seatsLeft }} seats left</span>
@@ -348,7 +364,11 @@
                     <button
                       (click)="cancelRsvp(event)"
                       [disabled]="isRsvping(event.id)"
-                      [title]="!isPaidCancellationAllowed(event) ? 'Cancellation not allowed within 7 days of the event' : ''"
+                      [title]="
+                        !isPaidCancellationAllowed(event)
+                          ? 'Cancellation not allowed within 7 days of the event'
+                          : ''
+                      "
                       class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
                     >
                       @if (isRsvping(event.id)) {
@@ -405,9 +425,17 @@
           <div
             class="shad-card overflow-hidden hover:shadow-md transition-shadow flex flex-col ring-2 ring-amber-300"
           >
-            <div class="h-40 {{ event.imageUrl ? '' : event.color }} flex items-center justify-center relative overflow-hidden">
+            <div
+              class="h-40 {{
+                event.imageUrl ? '' : event.color
+              }} flex items-center justify-center relative overflow-hidden"
+            >
               @if (event.imageUrl) {
-                <img [src]="event.imageUrl" [alt]="event.title" class="w-full h-full object-cover" />
+                <img
+                  [src]="event.imageUrl"
+                  [alt]="event.title"
+                  class="w-full h-full object-cover"
+                />
               } @else {
                 <i class="fa-solid fa-calendar-days text-5xl text-zinc-400"></i>
               }
@@ -435,8 +463,11 @@
                   {{ event.mode }}
                 </span>
                 @if (event.ticketPrice) {
-                  <span class="text-[11px] font-semibold bg-violet-100 text-violet-700 rounded px-2 py-0.5">
-                    <i class="fa-solid fa-ticket text-[9px] mr-0.5"></i> BDT {{ event.ticketPrice | number }}
+                  <span
+                    class="text-[11px] font-semibold bg-violet-100 text-violet-700 rounded px-2 py-0.5"
+                  >
+                    <i class="fa-solid fa-ticket text-[9px] mr-0.5"></i> BDT
+                    {{ event.ticketPrice | number }}
                   </span>
                 }
               </div>
@@ -475,7 +506,11 @@
                   <button
                     (click)="cancelRsvp(event)"
                     [disabled]="isRsvping(event.id)"
-                    [title]="!isPaidCancellationAllowed(event) ? 'Cancellation not allowed within 7 days of the event' : ''"
+                    [title]="
+                      !isPaidCancellationAllowed(event)
+                        ? 'Cancellation not allowed within 7 days of the event'
+                        : ''
+                    "
                     class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
                   >
                     @if (isRsvping(event.id)) {

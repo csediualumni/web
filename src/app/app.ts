@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -21,7 +21,9 @@ export class App {
     return !url.startsWith('/auth/');
   });
 
-  constructor(private router: Router) {
+  private readonly router = inject(Router);
+
+  constructor() {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => this.currentUrl.set(e.urlAfterRedirects));

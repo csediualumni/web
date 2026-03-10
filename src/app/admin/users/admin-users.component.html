@@ -31,7 +31,8 @@
 
 <!-- Import result banner -->
 @if (importResult()) {
-  <div class="mb-4 px-4 py-3 rounded-md border text-sm"
+  <div
+    class="mb-4 px-4 py-3 rounded-md border text-sm"
     [class.bg-green-50]="importResult()!.errors.length === 0"
     [class.border-green-200]="importResult()!.errors.length === 0"
     [class.bg-amber-50]="importResult()!.errors.length > 0"
@@ -58,7 +59,8 @@
             <ul class="mt-2 space-y-0.5 max-h-40 overflow-y-auto">
               @for (e of importResult()!.errors; track e.row) {
                 <li class="text-[11px] text-red-700">
-                  Row {{ e.row }} <span class="text-zinc-500">({{ e.email || '—' }})</span>: {{ e.reason }}
+                  Row {{ e.row }} <span class="text-zinc-500">({{ e.email || '—' }})</span>:
+                  {{ e.reason }}
                 </li>
               }
             </ul>
@@ -68,7 +70,9 @@
       <button
         (click)="importResult.set(null)"
         class="text-zinc-400 hover:text-zinc-600 cursor-pointer text-sm leading-none flex-shrink-0"
-      >✕</button>
+      >
+        ✕
+      </button>
     </div>
   </div>
 }
@@ -85,7 +89,8 @@
               href="/member-import-template.csv"
               download
               class="text-[11px] text-zinc-400 hover:text-zinc-600 underline underline-offset-2 transition-colors"
-            >Download template</a>
+              >Download template</a
+            >
             <button
               (click)="triggerImport()"
               [disabled]="importing()"

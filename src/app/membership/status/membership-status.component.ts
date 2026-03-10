@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
@@ -15,11 +15,9 @@ export class MembershipStatusComponent implements OnInit {
   error = signal('');
   application = signal<MembershipApplication | null>(null);
 
-  constructor(
-    public auth: AuthService,
-    private membership: MembershipService,
-    private router: Router,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly membership = inject(MembershipService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.membership.getMyApplication().subscribe({

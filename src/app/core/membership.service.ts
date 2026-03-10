@@ -1,13 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export type MembershipStatus =
-  | 'payment_required'
-  | 'payment_submitted'
-  | 'approved'
-  | 'rejected';
+export type MembershipStatus = 'payment_required' | 'payment_submitted' | 'approved' | 'rejected';
 
 export interface MembershipInvoice {
   id: string;
@@ -53,7 +49,7 @@ export interface ApplyResponse {
 export class MembershipService {
   private readonly base = `${environment.apiUrl}/membership`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   /** Submit a new membership application */
   apply(): Observable<ApplyResponse> {

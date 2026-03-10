@@ -117,8 +117,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <!-- Full name -->
           <div class="sm:col-span-2">
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5"> Full Name </label>
+            <label for="pe-display-name" class="block text-sm font-medium text-zinc-700 mb-1.5">
+              Full Name
+            </label>
             <input
+              id="pe-display-name"
               formControlName="displayName"
               type="text"
               placeholder="e.g. Ariful Islam"
@@ -128,10 +131,11 @@
 
           <!-- Email (read-only) -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            <label for="pe-email" class="block text-sm font-medium text-zinc-700 mb-1.5">
               Email <span class="text-zinc-400 text-xs font-normal">(cannot change)</span>
             </label>
             <input
+              id="pe-email"
               [value]="email"
               type="email"
               readonly
@@ -141,8 +145,11 @@
 
           <!-- Phone -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Phone</label>
+            <label for="pe-phone" class="block text-sm font-medium text-zinc-700 mb-1.5"
+              >Phone</label
+            >
             <input
+              id="pe-phone"
               formControlName="phone"
               type="tel"
               placeholder="+880 1xxx xxxxxx"
@@ -152,10 +159,11 @@
 
           <!-- Graduation batch -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            <label for="pe-batch" class="block text-sm font-medium text-zinc-700 mb-1.5">
               Graduation Batch <span class="text-zinc-400 text-xs font-normal">(year)</span>
             </label>
             <input
+              id="pe-batch"
               formControlName="batch"
               type="number"
               placeholder="e.g. 2020"
@@ -176,8 +184,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <!-- Job title -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Job Title / Role</label>
+            <label for="pe-job-title" class="block text-sm font-medium text-zinc-700 mb-1.5"
+              >Job Title / Role</label
+            >
             <input
+              id="pe-job-title"
               formControlName="jobTitle"
               type="text"
               placeholder="e.g. Senior Software Engineer"
@@ -187,10 +198,11 @@
 
           <!-- Company -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5"
+            <label for="pe-company" class="block text-sm font-medium text-zinc-700 mb-1.5"
               >Company / Organisation</label
             >
             <input
+              id="pe-company"
               formControlName="company"
               type="text"
               placeholder="e.g. Google"
@@ -200,8 +212,10 @@
 
           <!-- Industry -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Industry</label>
-            <select formControlName="industry" class="shad-input w-full">
+            <label for="pe-industry" class="block text-sm font-medium text-zinc-700 mb-1.5"
+              >Industry</label
+            >
+            <select id="pe-industry" formControlName="industry" class="shad-input w-full">
               <option value="">Select industry…</option>
               @for (ind of industries; track ind) {
                 <option [value]="ind">{{ ind }}</option>
@@ -211,8 +225,9 @@
 
           <!-- City -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">City</label>
+            <label for="pe-city" class="block text-sm font-medium text-zinc-700 mb-1.5">City</label>
             <input
+              id="pe-city"
               formControlName="city"
               type="text"
               placeholder="e.g. Dhaka"
@@ -222,8 +237,10 @@
 
           <!-- Country -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">Country</label>
-            <select formControlName="country" class="shad-input w-full">
+            <label for="pe-country" class="block text-sm font-medium text-zinc-700 mb-1.5"
+              >Country</label
+            >
+            <select id="pe-country" formControlName="country" class="shad-input w-full">
               <option value="">Select country…</option>
               @for (c of countries; track c) {
                 <option [value]="c">{{ c }}</option>
@@ -239,10 +256,11 @@
           <i class="fa-solid fa-align-left text-zinc-400"></i> About / Bio
         </h2>
         <div>
-          <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+          <label for="pe-bio" class="block text-sm font-medium text-zinc-700 mb-1.5">
             Bio <span class="text-zinc-400 text-xs font-normal">(max 1000 characters)</span>
           </label>
           <textarea
+            id="pe-bio"
             formControlName="bio"
             rows="5"
             placeholder="Tell fellow alumni a bit about yourself — your journey, interests, and what you're working on…"
@@ -365,10 +383,11 @@
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                <label for="exp-title" class="block text-xs font-medium text-zinc-700 mb-1"
                   >Job Title / Role <span class="text-red-500">*</span></label
                 >
                 <input
+                  id="exp-title"
                   type="text"
                   [value]="d.title"
                   (input)="setExpField('title', $any($event.target).value)"
@@ -377,10 +396,11 @@
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                <label for="exp-company" class="block text-xs font-medium text-zinc-700 mb-1"
                   >Company <span class="text-red-500">*</span></label
                 >
                 <input
+                  id="exp-company"
                   type="text"
                   [value]="d.company"
                   (input)="setExpField('company', $any($event.target).value)"
@@ -389,10 +409,11 @@
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                <label for="exp-from" class="block text-xs font-medium text-zinc-700 mb-1"
                   >From <span class="text-red-500">*</span></label
                 >
                 <input
+                  id="exp-from"
                   type="text"
                   [value]="d.from"
                   (input)="setExpField('from', $any($event.target).value)"
@@ -401,8 +422,9 @@
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1">To</label>
+                <label for="exp-to" class="block text-xs font-medium text-zinc-700 mb-1">To</label>
                 <input
+                  id="exp-to"
                   type="text"
                   [value]="d.to"
                   (input)="setExpField('to', $any($event.target).value)"
@@ -497,10 +519,11 @@
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="sm:col-span-2">
-                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                <label for="edu-degree" class="block text-xs font-medium text-zinc-700 mb-1"
                   >Degree / Qualification <span class="text-red-500">*</span></label
                 >
                 <input
+                  id="edu-degree"
                   type="text"
                   [value]="d.degree"
                   (input)="setEduField('degree', $any($event.target).value)"
@@ -509,10 +532,11 @@
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1"
+                <label for="edu-institution" class="block text-xs font-medium text-zinc-700 mb-1"
                   >Institution <span class="text-red-500">*</span></label
                 >
                 <input
+                  id="edu-institution"
                   type="text"
                   [value]="d.institution"
                   (input)="setEduField('institution', $any($event.target).value)"
@@ -521,8 +545,11 @@
                 />
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-700 mb-1">Graduation Year</label>
+                <label for="edu-year" class="block text-xs font-medium text-zinc-700 mb-1"
+                  >Graduation Year</label
+                >
                 <input
+                  id="edu-year"
                   type="number"
                   [value]="d.year ?? ''"
                   (input)="setEduField('year', +$any($event.target).value || null)"
@@ -613,10 +640,11 @@
               {{ editingAchId() ? 'Edit Achievement' : 'New Achievement' }}
             </p>
             <div>
-              <label class="block text-xs font-medium text-zinc-700 mb-1"
+              <label for="ach-title" class="block text-xs font-medium text-zinc-700 mb-1"
                 >Achievement <span class="text-red-500">*</span></label
               >
               <input
+                id="ach-title"
                 type="text"
                 [value]="d.title"
                 (input)="setAchField('title', $any($event.target).value)"
@@ -655,10 +683,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <!-- LinkedIn -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            <label for="pe-linkedin" class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-brands fa-linkedin-in text-blue-600 mr-1"></i> LinkedIn URL
             </label>
             <input
+              id="pe-linkedin"
               formControlName="linkedin"
               type="url"
               placeholder="https://linkedin.com/in/your-profile"
@@ -668,10 +697,11 @@
 
           <!-- GitHub -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            <label for="pe-github" class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-brands fa-github text-zinc-700 mr-1"></i> GitHub URL
             </label>
             <input
+              id="pe-github"
               formControlName="github"
               type="url"
               placeholder="https://github.com/your-handle"
@@ -681,10 +711,11 @@
 
           <!-- Twitter / X -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            <label for="pe-twitter" class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-brands fa-x-twitter text-zinc-700 mr-1"></i> X / Twitter URL
             </label>
             <input
+              id="pe-twitter"
               formControlName="twitter"
               type="url"
               placeholder="https://twitter.com/your-handle"
@@ -694,10 +725,11 @@
 
           <!-- Website -->
           <div>
-            <label class="block text-sm font-medium text-zinc-700 mb-1.5">
+            <label for="pe-website" class="block text-sm font-medium text-zinc-700 mb-1.5">
               <i class="fa-solid fa-globe text-zinc-500 mr-1"></i> Personal Website
             </label>
             <input
+              id="pe-website"
               formControlName="website"
               type="url"
               placeholder="https://yourwebsite.com"

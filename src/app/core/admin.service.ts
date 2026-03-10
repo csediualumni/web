@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -115,7 +115,7 @@ export interface ApiEvent {
   status: EventStatus;
   seats: number | null;
   seatsLeft: number | null; // server-computed
-  rsvpCount: number;        // server-computed
+  rsvpCount: number; // server-computed
   imageUrl: string | null;
   color: string;
   featured: boolean;
@@ -169,7 +169,7 @@ export class AdminService {
   private readonly milestonesBase = `${environment.apiUrl}/milestones`;
   private readonly eventsBase = `${environment.apiUrl}/events`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   // ── Users ──────────────────────────────────────────────
   listUsers(): Observable<AdminUser[]> {
@@ -237,7 +237,10 @@ export class AdminService {
   }
 
   toggleNewsletterSubscription(id: string): Observable<NewsletterSubscription> {
-    return this.http.patch<NewsletterSubscription>(`${this.adminBase}/newsletter/subscriptions/${id}/toggle`, {});
+    return this.http.patch<NewsletterSubscription>(
+      `${this.adminBase}/newsletter/subscriptions/${id}/toggle`,
+      {},
+    );
   }
 
   deleteNewsletterSubscription(id: string): Observable<void> {
@@ -245,11 +248,19 @@ export class AdminService {
   }
 
   sendNewsletter(subject: string, htmlBody: string): Observable<{ sent: number }> {
-    return this.http.post<{ sent: number }>(`${this.adminBase}/newsletter/send`, { subject, htmlBody });
+    return this.http.post<{ sent: number }>(`${this.adminBase}/newsletter/send`, {
+      subject,
+      htmlBody,
+    });
   }
 
   // ── Contact Tickets (public submit) ────────────────────────
-  submitContactForm(data: { name: string; email: string; subject: string; message: string }): Observable<ContactTicket> {
+  submitContactForm(data: {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }): Observable<ContactTicket> {
     return this.http.post<ContactTicket>(this.contactBase, data);
   }
 
@@ -263,11 +274,16 @@ export class AdminService {
   }
 
   updateContactTicketStatus(id: string, status: ContactTicketStatus): Observable<ContactTicket> {
-    return this.http.patch<ContactTicket>(`${this.adminBase}/contact/tickets/${id}/status`, { status });
+    return this.http.patch<ContactTicket>(`${this.adminBase}/contact/tickets/${id}/status`, {
+      status,
+    });
   }
 
   addContactTicketComment(id: string, body: string, authorName: string): Observable<ContactTicket> {
-    return this.http.post<ContactTicket>(`${this.adminBase}/contact/tickets/${id}/comments`, { body, authorName });
+    return this.http.post<ContactTicket>(`${this.adminBase}/contact/tickets/${id}/comments`, {
+      body,
+      authorName,
+    });
   }
 
   deleteContactTicket(id: string): Observable<void> {
@@ -284,11 +300,19 @@ export class AdminService {
     return this.http.get<Milestone[]>(`${this.adminBase}/milestones`);
   }
 
-  adminCreateMilestone(data: { year: string; title: string; description: string; sortOrder?: number }): Observable<Milestone> {
+  adminCreateMilestone(data: {
+    year: string;
+    title: string;
+    description: string;
+    sortOrder?: number;
+  }): Observable<Milestone> {
     return this.http.post<Milestone>(`${this.adminBase}/milestones`, data);
   }
 
-  adminUpdateMilestone(id: string, data: Partial<{ year: string; title: string; description: string; sortOrder: number }>): Observable<Milestone> {
+  adminUpdateMilestone(
+    id: string,
+    data: Partial<{ year: string; title: string; description: string; sortOrder: number }>,
+  ): Observable<Milestone> {
     return this.http.patch<Milestone>(`${this.adminBase}/milestones/${id}`, data);
   }
 
@@ -310,11 +334,26 @@ export class AdminService {
     return this.http.get<Committee[]>(`${this.adminBase}/committees`);
   }
 
-  adminCreateCommittee(data: { term: string; sessionLabel: string; isCurrent?: boolean; theme?: string; sortOrder?: number }): Observable<Committee> {
+  adminCreateCommittee(data: {
+    term: string;
+    sessionLabel: string;
+    isCurrent?: boolean;
+    theme?: string;
+    sortOrder?: number;
+  }): Observable<Committee> {
     return this.http.post<Committee>(`${this.adminBase}/committees`, data);
   }
 
-  adminUpdateCommittee(id: string, data: Partial<{ term: string; sessionLabel: string; isCurrent: boolean; theme: string; sortOrder: number }>): Observable<Committee> {
+  adminUpdateCommittee(
+    id: string,
+    data: Partial<{
+      term: string;
+      sessionLabel: string;
+      isCurrent: boolean;
+      theme: string;
+      sortOrder: number;
+    }>,
+  ): Observable<Committee> {
     return this.http.patch<Committee>(`${this.adminBase}/committees/${id}`, data);
   }
 
@@ -322,12 +361,24 @@ export class AdminService {
     return this.http.delete<void>(`${this.adminBase}/committees/${id}`);
   }
 
-  adminAddCommitteeMember(committeeId: string, data: { userId: string; designation: string; sortOrder?: number; note?: string }): Observable<CommitteeEntry> {
-    return this.http.post<CommitteeEntry>(`${this.adminBase}/committees/${committeeId}/members`, data);
+  adminAddCommitteeMember(
+    committeeId: string,
+    data: { userId: string; designation: string; sortOrder?: number; note?: string },
+  ): Observable<CommitteeEntry> {
+    return this.http.post<CommitteeEntry>(
+      `${this.adminBase}/committees/${committeeId}/members`,
+      data,
+    );
   }
 
-  adminUpdateCommitteeMember(memberId: string, data: Partial<{ designation: string; sortOrder: number; note: string }>): Observable<CommitteeEntry> {
-    return this.http.patch<CommitteeEntry>(`${this.adminBase}/committees/members/${memberId}`, data);
+  adminUpdateCommitteeMember(
+    memberId: string,
+    data: Partial<{ designation: string; sortOrder: number; note: string }>,
+  ): Observable<CommitteeEntry> {
+    return this.http.patch<CommitteeEntry>(
+      `${this.adminBase}/committees/members/${memberId}`,
+      data,
+    );
   }
 
   adminRemoveCommitteeMember(memberId: string): Observable<void> {
@@ -340,11 +391,16 @@ export class AdminService {
   }
 
   adminSetDesignationMapping(designation: string, roleId: string): Observable<DesignationMapping> {
-    return this.http.post<DesignationMapping>(`${this.adminBase}/designation-roles`, { designation, roleId });
+    return this.http.post<DesignationMapping>(`${this.adminBase}/designation-roles`, {
+      designation,
+      roleId,
+    });
   }
 
   adminUpdateDesignationMapping(id: string, roleId: string): Observable<DesignationMapping> {
-    return this.http.patch<DesignationMapping>(`${this.adminBase}/designation-roles/${id}`, { roleId });
+    return this.http.patch<DesignationMapping>(`${this.adminBase}/designation-roles/${id}`, {
+      roleId,
+    });
   }
 
   adminRemoveDesignationMapping(id: string): Observable<void> {
@@ -361,8 +417,15 @@ export class AdminService {
   }
 
   // ── Events RSVP (auth required) ─────────────────────────
-  rsvpEvent(id: string): Observable<{ message: string; rsvp: EventRsvp; invoiceId?: string; paymentUrl?: string }> {
-    return this.http.post<{ message: string; rsvp: EventRsvp; invoiceId?: string; paymentUrl?: string }>(`${this.eventsBase}/${id}/rsvp`, {});
+  rsvpEvent(
+    id: string,
+  ): Observable<{ message: string; rsvp: EventRsvp; invoiceId?: string; paymentUrl?: string }> {
+    return this.http.post<{
+      message: string;
+      rsvp: EventRsvp;
+      invoiceId?: string;
+      paymentUrl?: string;
+    }>(`${this.eventsBase}/${id}/rsvp`, {});
   }
 
   cancelRsvpEvent(id: string): Observable<{ message: string }> {
@@ -379,22 +442,47 @@ export class AdminService {
   }
 
   adminCreateEvent(data: {
-    title: string; description: string; date: string; time: string;
-    location: string; city: string; mode: EventMode; category: string;
-    status: EventStatus; seats?: number | null; imageUrl?: string | null;
-    color?: string; featured?: boolean; registrationUrl?: string | null;
-    sortOrder?: number; ticketPrice?: number | null;
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    location: string;
+    city: string;
+    mode: EventMode;
+    category: string;
+    status: EventStatus;
+    seats?: number | null;
+    imageUrl?: string | null;
+    color?: string;
+    featured?: boolean;
+    registrationUrl?: string | null;
+    sortOrder?: number;
+    ticketPrice?: number | null;
   }): Observable<ApiEvent> {
     return this.http.post<ApiEvent>(`${this.adminBase}/events`, data);
   }
 
-  adminUpdateEvent(id: string, data: Partial<{
-    title: string; description: string; date: string; time: string;
-    location: string; city: string; mode: EventMode; category: string;
-    status: EventStatus; seats: number | null; imageUrl: string | null;
-    color: string; featured: boolean; registrationUrl: string | null;
-    sortOrder: number; ticketPrice: number | null;
-  }>): Observable<ApiEvent> {
+  adminUpdateEvent(
+    id: string,
+    data: Partial<{
+      title: string;
+      description: string;
+      date: string;
+      time: string;
+      location: string;
+      city: string;
+      mode: EventMode;
+      category: string;
+      status: EventStatus;
+      seats: number | null;
+      imageUrl: string | null;
+      color: string;
+      featured: boolean;
+      registrationUrl: string | null;
+      sortOrder: number;
+      ticketPrice: number | null;
+    }>,
+  ): Observable<ApiEvent> {
     return this.http.patch<ApiEvent>(`${this.adminBase}/events/${id}`, data);
   }
 
@@ -407,7 +495,10 @@ export class AdminService {
   }
 
   adminConfirmEventRsvp(eventId: string, rsvpId: string): Observable<EventRsvp> {
-    return this.http.post<EventRsvp>(`${this.adminBase}/events/${eventId}/rsvps/${rsvpId}/confirm`, {});
+    return this.http.post<EventRsvp>(
+      `${this.adminBase}/events/${eventId}/rsvps/${rsvpId}/confirm`,
+      {},
+    );
   }
 
   // ── Bulk member import ───────────────────────────────────

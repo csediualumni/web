@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  OnChanges,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
 
 export interface MemberCardData {
   name: string;
@@ -23,11 +16,7 @@ export interface MemberCardData {
     <div class="flex flex-col items-stretch gap-3">
       <!-- Card canvas preview -->
       <div class="relative rounded-xl overflow-hidden shadow-2xl" style="aspect-ratio:1.586">
-        <canvas
-          #cardCanvas
-          class="w-full h-full block"
-          style="border-radius:12px"
-        ></canvas>
+        <canvas #cardCanvas class="w-full h-full block" style="border-radius:12px"></canvas>
         <!-- shimmer when not yet drawn -->
         <div
           class="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-emerald-950 rounded-xl -z-10"
@@ -86,9 +75,9 @@ export class MembershipCardComponent implements AfterViewInit, OnChanges {
 
     // ── 1. Background gradient ────────────────────────────────
     const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, '#0c1445');   // deep navy
+    bg.addColorStop(0, '#0c1445'); // deep navy
     bg.addColorStop(0.5, '#0f2057');
-    bg.addColorStop(1, '#083344');   // dark teal
+    bg.addColorStop(1, '#083344'); // dark teal
     ctx.fillStyle = bg;
     this.roundRect(ctx, 0, 0, W, H, 24);
     ctx.fill();
@@ -98,9 +87,9 @@ export class MembershipCardComponent implements AfterViewInit, OnChanges {
 
     // ── 3. Left accent stripe ─────────────────────────────────
     const stripe = ctx.createLinearGradient(0, 0, 0, H);
-    stripe.addColorStop(0, '#34d399');  // emerald-400
+    stripe.addColorStop(0, '#34d399'); // emerald-400
     stripe.addColorStop(0.5, '#059669');
-    stripe.addColorStop(1, '#fbbf24');  // amber-400
+    stripe.addColorStop(1, '#fbbf24'); // amber-400
     ctx.fillStyle = stripe;
     this.roundRect(ctx, 0, 0, 10, H, [24, 0, 0, 24]);
     ctx.fill();
@@ -156,10 +145,16 @@ export class MembershipCardComponent implements AfterViewInit, OnChanges {
     ctx.lineWidth = 1;
     const step = 40;
     for (let x = 0; x < W; x += step) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+      ctx.stroke();
     }
     for (let y = 0; y < H; y += step) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
     }
     ctx.restore();
   }
@@ -227,9 +222,12 @@ export class MembershipCardComponent implements AfterViewInit, OnChanges {
     // ID value box
     ctx.font = 'bold 28px "Courier New", monospace';
     const tw = ctx.measureText(id).width;
-    const boxPx = 20, boxPy = 10;
-    const bx = 44, by = idY + 2;
-    const bw = tw + boxPx * 2, bh = 28 + boxPy * 2;
+    const boxPx = 20,
+      boxPy = 10;
+    const bx = 44,
+      by = idY + 2;
+    const bw = tw + boxPx * 2,
+      bh = 28 + boxPy * 2;
 
     ctx.fillStyle = 'rgba(255,255,255,0.1)';
     this.roundRect(ctx, bx, by, bw, bh, 8);
@@ -310,14 +308,18 @@ export class MembershipCardComponent implements AfterViewInit, OnChanges {
 
   private roundRect(
     ctx: CanvasRenderingContext2D,
-    x: number, y: number, w: number, h: number,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
     radii: number | number[],
   ) {
-    const r = typeof radii === 'number'
-      ? [radii, radii, radii, radii]
-      : radii.length === 2
-        ? [radii[0], radii[1], radii[0], radii[1]]
-        : radii;
+    const r =
+      typeof radii === 'number'
+        ? [radii, radii, radii, radii]
+        : radii.length === 2
+          ? [radii[0], radii[1], radii[0], radii[1]]
+          : radii;
     ctx.beginPath();
     ctx.moveTo(x + r[0], y);
     ctx.lineTo(x + w - r[1], y);

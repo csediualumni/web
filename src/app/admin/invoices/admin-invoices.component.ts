@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   InvoiceService,
@@ -27,10 +27,8 @@ export class AdminInvoicesComponent implements OnInit {
   paymentDraftStatus = signal<Map<string, PaymentStatus>>(new Map());
   paymentAdminNote = signal<Map<string, string>>(new Map());
 
-  constructor(
-    public auth: AuthService,
-    private invoiceService: InvoiceService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly invoiceService = inject(InvoiceService);
 
   ngOnInit(): void {
     this.loadInvoices();
@@ -45,7 +43,11 @@ export class AdminInvoicesComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load invoices.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions to view this."
+            : 'Failed to load invoices.',
+        );
         this.loading.set(false);
       },
     });
@@ -64,7 +66,11 @@ export class AdminInvoicesComponent implements OnInit {
         this.updatingInvoiceId.set(null);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update invoice.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to update invoice.'),
+        );
         this.updatingInvoiceId.set(null);
       },
     });
@@ -112,7 +118,11 @@ export class AdminInvoicesComponent implements OnInit {
         this.updatingPaymentId.set(null);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update payment.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to update payment.'),
+        );
         this.updatingPaymentId.set(null);
       },
     });

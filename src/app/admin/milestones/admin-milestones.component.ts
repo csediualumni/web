@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, Milestone } from '../../core/admin.service';
@@ -29,10 +29,8 @@ export class AdminMilestonesComponent implements OnInit {
   formDescription = signal('');
   formSortOrder = signal(0);
 
-  constructor(
-    public auth: AuthService,
-    private adminService: AdminService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.load();
@@ -110,7 +108,11 @@ export class AdminMilestonesComponent implements OnInit {
     req.subscribe({
       next: (saved) => {
         if (id === null) {
-          this.milestones.update((list) => [...list, saved].sort((a, b) => a.sortOrder - b.sortOrder || a.year.localeCompare(b.year)));
+          this.milestones.update((list) =>
+            [...list, saved].sort(
+              (a, b) => a.sortOrder - b.sortOrder || a.year.localeCompare(b.year),
+            ),
+          );
           this.success.set('Milestone created.');
         } else {
           this.milestones.update((list) =>

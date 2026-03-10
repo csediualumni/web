@@ -21,7 +21,7 @@
     <div class="h-10 w-64 bg-zinc-100 rounded animate-pulse mb-3"></div>
     <div class="h-5 w-48 bg-zinc-100 rounded animate-pulse mb-10"></div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+      @for (_ of [1, 2, 3, 4, 5, 6, 7, 8]; track $index) {
         <div class="bg-white border border-zinc-100 rounded-2xl p-5 animate-pulse">
           <div class="flex items-start gap-3 mb-3">
             <div class="w-12 h-12 rounded-xl bg-zinc-100 flex-shrink-0"></div>
@@ -37,10 +37,11 @@
   <div class="max-w-xl mx-auto px-4 py-24 text-center">
     <i class="fa-solid fa-circle-exclamation text-4xl text-red-400 mb-4"></i>
     <p class="text-zinc-600 mb-4">{{ error() }}</p>
-    <a routerLink="/committee" class="text-blue-600 hover:underline text-sm">← Back to Committees</a>
+    <a routerLink="/committee" class="text-blue-600 hover:underline text-sm"
+      >← Back to Committees</a
+    >
   </div>
 } @else if (committee(); as c) {
-
   <!-- Hero / header -->
   <section
     class="relative overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-16 md:py-20"
@@ -87,7 +88,10 @@
         >
           <a [routerLink]="['/alumni', president.user.id]" class="flex-shrink-0">
             <div
-              [class]="'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' + colorFor(president.user.id)"
+              [class]="
+                'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' +
+                colorFor(president.user.id)
+              "
             >
               {{ initialsFor(president.user.displayName, president.user.email) }}
             </div>
@@ -143,7 +147,10 @@
           >
             <div class="flex items-start gap-3 mb-3">
               <div
-                [class]="'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' + colorFor(entry.user.id)"
+                [class]="
+                  'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' +
+                  colorFor(entry.user.id)
+                "
               >
                 {{ initialsFor(entry.user.displayName, entry.user.email) }}
               </div>
@@ -155,7 +162,9 @@
                 </span>
               </div>
             </div>
-            <h4 class="text-sm font-bold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight">
+            <h4
+              class="text-sm font-bold text-zinc-900 group-hover:text-blue-700 transition-colors leading-tight"
+            >
               {{ entry.user.displayName || entry.user.email }}
             </h4>
             @if (entry.user.jobTitle) {
@@ -181,5 +190,5 @@
       </div>
     </div>
   </section>
-
-} <!-- end @else if committee -->
+}
+<!-- end @else if committee -->

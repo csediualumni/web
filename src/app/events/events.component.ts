@@ -1,6 +1,6 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AdminService, ApiEvent, EventMode, EventStatus } from '../core/admin.service';
 import { AuthService } from '../core/auth.service';
 
@@ -51,27 +51,17 @@ export class EventsComponent implements OnInit {
   filteredEvents = computed(() => {
     const tab = this.activeTab();
     const cat = this.activeCategory();
-    return this.events().filter(
-      (e) => e.status === tab && (cat === 'All' || e.category === cat),
-    );
+    return this.events().filter((e) => e.status === tab && (cat === 'All' || e.category === cat));
   });
 
-  featuredEvent = computed(() =>
-    this.events().find((e) => e.featured && e.status === 'upcoming'),
-  );
+  featuredEvent = computed(() => this.events().find((e) => e.featured && e.status === 'upcoming'));
 
-  upcomingCount = computed(
-    () => this.events().filter((e) => e.status === 'upcoming').length,
-  );
-  pastCount = computed(
-    () => this.events().filter((e) => e.status === 'past').length,
-  );
+  upcomingCount = computed(() => this.events().filter((e) => e.status === 'upcoming').length);
+  pastCount = computed(() => this.events().filter((e) => e.status === 'past').length);
 
-  constructor(
-    private readonly adminService: AdminService,
-    public readonly auth: AuthService,
-    private readonly router: Router,
-  ) {}
+  private readonly adminService = inject(AdminService);
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.adminService.getEvents().subscribe({
@@ -208,11 +198,7 @@ export class EventsComponent implements OnInit {
   }
 
   modeIcon(mode: EventMode): string {
-    return mode === 'Online'
-      ? 'fa-wifi'
-      : mode === 'Hybrid'
-        ? 'fa-layer-group'
-        : 'fa-location-dot';
+    return mode === 'Online' ? 'fa-wifi' : mode === 'Hybrid' ? 'fa-layer-group' : 'fa-location-dot';
   }
 
   statusBadge(e: ApiEvent): { label: string; classes: string } {

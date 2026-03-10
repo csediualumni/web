@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
 import {
@@ -42,17 +42,11 @@ export class AdminMembershipComponent implements OnInit {
   countPaymentSubmitted = computed(
     () => this.applications().filter((a) => a.status === 'payment_submitted').length,
   );
-  countApproved = computed(
-    () => this.applications().filter((a) => a.status === 'approved').length,
-  );
-  countRejected = computed(
-    () => this.applications().filter((a) => a.status === 'rejected').length,
-  );
+  countApproved = computed(() => this.applications().filter((a) => a.status === 'approved').length);
+  countRejected = computed(() => this.applications().filter((a) => a.status === 'rejected').length);
 
-  constructor(
-    public auth: AuthService,
-    private membership: MembershipService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly membership = inject(MembershipService);
 
   ngOnInit(): void {
     this.loadRequests();
@@ -72,7 +66,11 @@ export class AdminMembershipComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load membership requests.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions to view this."
+            : 'Failed to load membership requests.',
+        );
         this.loading.set(false);
       },
     });
@@ -95,7 +93,11 @@ export class AdminMembershipComponent implements OnInit {
         this.loadRequests();
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to approve application.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to approve application.'),
+        );
         this.submittingAction.set(false);
       },
     });
@@ -134,7 +136,11 @@ export class AdminMembershipComponent implements OnInit {
         this.loadRequests();
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to reject application.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to reject application.'),
+        );
         this.submittingAction.set(false);
         this.closeRejectModal();
       },

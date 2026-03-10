@@ -238,13 +238,13 @@
                 </p>
                 <div
                   class="flex items-center gap-2"
-                  [class.text-emerald-600]="password.value?.length >= 8"
-                  [class.text-zinc-400]="!(password.value?.length >= 8)"
+                  [class.text-emerald-600]="password.value.length >= 8"
+                  [class.text-zinc-400]="!(password.value.length >= 8)"
                 >
                   <i
                     class="fa-solid text-[10px]"
-                    [class.fa-circle-check]="password.value?.length >= 8"
-                    [class.fa-circle]="!(password.value?.length >= 8)"
+                    [class.fa-circle-check]="password.value.length >= 8"
+                    [class.fa-circle]="!(password.value.length >= 8)"
                   ></i>
                   <span class="text-xs">At least 8 characters</span>
                 </div>

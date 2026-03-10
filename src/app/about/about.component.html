@@ -168,7 +168,9 @@
       ></div>
 
       @if (milestonesError()) {
-        <div class="flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div
+          class="flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+        >
           <i class="fa-solid fa-circle-exclamation shrink-0"></i>
           <span>Failed to load history milestones. Please try again later.</span>
         </div>
@@ -177,8 +179,12 @@
         <div class="space-y-10">
           @for (_ of [1, 2, 3]; track $index) {
             <div class="relative flex gap-4 sm:gap-0 items-start">
-              <div class="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:top-0">
-                <div class="w-10 h-10 rounded-full bg-zinc-200 animate-pulse border-4 border-white shadow-sm"></div>
+              <div
+                class="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2 sm:top-0"
+              >
+                <div
+                  class="w-10 h-10 rounded-full bg-zinc-200 animate-pulse border-4 border-white shadow-sm"
+                ></div>
               </div>
               <div class="sm:w-[calc(50%-36px)] ml-6 sm:ml-0 sm:pr-8">
                 <div class="shad-card p-5 space-y-2">
@@ -192,7 +198,9 @@
           }
         </div>
       } @else if (milestones()!.length === 0) {
-        <p class="text-center text-sm text-zinc-400 py-8">No history milestones have been added yet.</p>
+        <p class="text-center text-sm text-zinc-400 py-8">
+          No history milestones have been added yet.
+        </p>
       } @else {
         <div class="space-y-10">
           @for (milestone of milestones()!; track milestone.id; let isEven = $even) {
@@ -253,7 +261,7 @@
     @if (committeeLoading()) {
       <!-- Skeleton -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        @for (_ of [1,2,3,4]; track $index) {
+        @for (_ of [1, 2, 3, 4]; track $index) {
           <div class="shad-card p-6 text-center animate-pulse">
             <div class="w-16 h-16 rounded-full bg-zinc-100 mx-auto mb-4"></div>
             <div class="h-4 w-28 bg-zinc-100 rounded mx-auto mb-2"></div>
@@ -264,7 +272,9 @@
     } @else if (currentCommittee() && currentCommittee()!.members.length > 0) {
       <!-- Dynamic current committee members -->
       <div class="mb-4 flex items-center justify-between">
-        <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full">
+        <div
+          class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full"
+        >
           <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
           Committee {{ currentCommittee()!.term }} — Currently Serving
         </div>
@@ -282,14 +292,21 @@
             class="shad-card p-6 text-center hover:shadow-md transition-shadow group cursor-pointer"
           >
             <div
-              [class]="'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl text-white group-hover:scale-110 transition-transform ' + colorFor(entry.user.id)"
+              [class]="
+                'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl text-white group-hover:scale-110 transition-transform ' +
+                colorFor(entry.user.id)
+              "
             >
               {{ initialsFor(entry.user.displayName, entry.user.email) }}
             </div>
-            <h3 class="text-sm font-semibold text-zinc-900 mb-0.5 group-hover:text-blue-700 transition-colors">
+            <h3
+              class="text-sm font-semibold text-zinc-900 mb-0.5 group-hover:text-blue-700 transition-colors"
+            >
               {{ entry.user.displayName || entry.user.email }}
             </h3>
-            <span class="inline-block text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5">
+            <span
+              class="inline-block text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5"
+            >
               {{ entry.designation }}
             </span>
             @if (entry.user.jobTitle) {

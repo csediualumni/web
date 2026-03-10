@@ -4,8 +4,14 @@ import { RouterLink } from '@angular/router';
 import { AdminService, Committee, CommitteeEntry } from '../core/admin.service';
 
 const AVATAR_COLORS = [
-  'bg-sky-600', 'bg-blue-600', 'bg-violet-600', 'bg-emerald-600',
-  'bg-rose-600', 'bg-amber-600', 'bg-indigo-600', 'bg-teal-600',
+  'bg-sky-600',
+  'bg-blue-600',
+  'bg-violet-600',
+  'bg-emerald-600',
+  'bg-rose-600',
+  'bg-amber-600',
+  'bg-indigo-600',
+  'bg-teal-600',
 ];
 
 export function colorFor(id: string): string {
@@ -23,8 +29,13 @@ export function initialsFor(displayName: string | null, email: string): string {
 }
 
 const DESIGNATION_ORDER: Record<string, number> = {
-  President: 0, 'Vice President': 1, 'General Secretary': 2,
-  'Joint Secretary': 3, Treasurer: 4, 'Assistant Treasurer': 5, 'Executive Member': 6,
+  President: 0,
+  'Vice President': 1,
+  'General Secretary': 2,
+  'Joint Secretary': 3,
+  Treasurer: 4,
+  'Assistant Treasurer': 5,
+  'Executive Member': 6,
 };
 
 @Component({
@@ -37,20 +48,26 @@ export class CommitteeComponent implements OnInit {
   private readonly adminService = inject(AdminService);
 
   loading = signal(true);
-  error   = signal('');
-  all     = signal<Committee[]>([]);
+  error = signal('');
+  all = signal<Committee[]>([]);
 
   current = computed(() => this.all().find((c) => c.isCurrent) ?? null);
-  past    = computed(() => this.all().filter((c) => !c.isCurrent));
+  past = computed(() => this.all().filter((c) => !c.isCurrent));
 
   ngOnInit(): void {
     this.adminService.getCommittees().subscribe({
-      next: (data) => { this.all.set(data); this.loading.set(false); },
-      error: () => { this.error.set('Failed to load committees.'); this.loading.set(false); },
+      next: (data) => {
+        this.all.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to load committees.');
+        this.loading.set(false);
+      },
     });
   }
 
-  colorFor    = colorFor;
+  colorFor = colorFor;
   initialsFor = initialsFor;
   readonly Boolean = Boolean;
 
@@ -60,5 +77,3 @@ export class CommitteeComponent implements OnInit {
     );
   }
 }
-
-

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -81,7 +81,7 @@ export function formatBDT(amount: number): string {
 export class InvoiceService {
   private readonly base = `${environment.apiUrl}/invoices`;
 
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   // ── Public ────────────────────────────────────────────────────
   create(dto: CreateInvoiceDto): Observable<Invoice> {

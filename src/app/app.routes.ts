@@ -38,13 +38,17 @@ export const routes: Routes = [
     path: 'membership/apply',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./membership/apply/membership-apply.component').then((m) => m.MembershipApplyComponent),
+      import('./membership/apply/membership-apply.component').then(
+        (m) => m.MembershipApplyComponent,
+      ),
   },
   {
     path: 'membership/status',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./membership/status/membership-status.component').then((m) => m.MembershipStatusComponent),
+      import('./membership/status/membership-status.component').then(
+        (m) => m.MembershipStatusComponent,
+      ),
   },
   {
     path: 'profile',
@@ -76,12 +80,16 @@ export const routes: Routes = [
       {
         path: 'newsletter',
         loadComponent: () =>
-          import('./admin/newsletter/admin-newsletter.component').then((m) => m.AdminNewsletterComponent),
+          import('./admin/newsletter/admin-newsletter.component').then(
+            (m) => m.AdminNewsletterComponent,
+          ),
       },
       {
         path: 'membership',
         loadComponent: () =>
-          import('./admin/membership/admin-membership.component').then((m) => m.AdminMembershipComponent),
+          import('./admin/membership/admin-membership.component').then(
+            (m) => m.AdminMembershipComponent,
+          ),
       },
       {
         path: 'contact',
@@ -91,12 +99,16 @@ export const routes: Routes = [
       {
         path: 'milestones',
         loadComponent: () =>
-          import('./admin/milestones/admin-milestones.component').then((m) => m.AdminMilestonesComponent),
+          import('./admin/milestones/admin-milestones.component').then(
+            (m) => m.AdminMilestonesComponent,
+          ),
       },
       {
         path: 'committees',
         loadComponent: () =>
-          import('./admin/committees/admin-committees.component').then((m) => m.AdminCommitteesComponent),
+          import('./admin/committees/admin-committees.component').then(
+            (m) => m.AdminCommitteesComponent,
+          ),
       },
       {
         path: 'events',
@@ -126,7 +138,9 @@ export const routes: Routes = [
   {
     path: 'committee/:id',
     loadComponent: () =>
-      import('./committee/detail/committee-detail.component').then((m) => m.CommitteeDetailComponent),
+      import('./committee/detail/committee-detail.component').then(
+        (m) => m.CommitteeDetailComponent,
+      ),
   },
   {
     path: 'events',

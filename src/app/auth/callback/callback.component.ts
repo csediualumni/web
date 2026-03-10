@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
@@ -13,11 +13,9 @@ import { AuthService } from '../../core/auth.service';
 export class AuthCallbackComponent implements OnInit {
   error = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private auth: AuthService,
-    private router: Router,
-  ) {}
+  private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {

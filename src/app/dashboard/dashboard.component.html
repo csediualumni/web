@@ -226,9 +226,13 @@
 
           <!-- Member ID badge -->
           @if (auth.currentUser()?.memberId) {
-            <div class="flex items-center justify-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 mb-3">
+            <div
+              class="flex items-center justify-center gap-1.5 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 mb-3"
+            >
               <i class="fa-solid fa-id-card text-emerald-600 text-xs"></i>
-              <span class="text-xs font-mono font-semibold text-emerald-800 tracking-wide">{{ auth.currentUser()!.memberId }}</span>
+              <span class="text-xs font-mono font-semibold text-emerald-800 tracking-wide">{{
+                auth.currentUser()!.memberId
+              }}</span>
             </div>
           }
 

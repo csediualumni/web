@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, Role, Permission } from '../../core/admin.service';
@@ -23,10 +23,8 @@ export class AdminRolesComponent implements OnInit {
   deletingRoleId = signal<string | null>(null);
   togglingPerm = signal<Map<string, Set<string>>>(new Map());
 
-  constructor(
-    public auth: AuthService,
-    private adminService: AdminService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.adminService.listRoles().subscribe({
@@ -38,13 +36,21 @@ export class AdminRolesComponent implements OnInit {
             this.loading.set(false);
           },
           error: (err) => {
-            this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load permissions.');
+            this.error.set(
+              err?.status === 403
+                ? "You don't have sufficient permissions to view this."
+                : 'Failed to load permissions.',
+            );
             this.loading.set(false);
           },
         });
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load roles.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions to view this."
+            : 'Failed to load roles.',
+        );
         this.loading.set(false);
       },
     });
@@ -117,7 +123,11 @@ export class AdminRolesComponent implements OnInit {
         this._clearTogglingPerm(role.id, permId);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to update permission.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to update permission.'),
+        );
         this._clearTogglingPerm(role.id, permId);
       },
     });
@@ -144,7 +154,11 @@ export class AdminRolesComponent implements OnInit {
         this.creatingRole.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to create role.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to create role.'),
+        );
         this.creatingRole.set(false);
       },
     });
@@ -164,7 +178,11 @@ export class AdminRolesComponent implements OnInit {
         this.deletingRoleId.set(null);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to delete role.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to delete role.'),
+        );
         this.deletingRoleId.set(null);
       },
     });

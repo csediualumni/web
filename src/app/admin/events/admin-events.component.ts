@@ -1,8 +1,14 @@
-import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
-import { AdminService, ApiEvent, EventRsvp, EventMode, EventStatus } from '../../core/admin.service';
+import {
+  AdminService,
+  ApiEvent,
+  EventRsvp,
+  EventMode,
+  EventStatus,
+} from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 
 type Mode = 'list' | 'create' | 'edit' | 'rsvps';
@@ -38,7 +44,7 @@ export class AdminEventsComponent implements OnInit {
   editingId = signal<string | null>(null);
   formTitle = signal('');
   formDescription = signal('');
-  formDate = signal('');      // ISO date "YYYY-MM-DD"
+  formDate = signal(''); // ISO date "YYYY-MM-DD"
   formTime = signal('');
   formLocation = signal('');
   formCity = signal('');
@@ -58,10 +64,8 @@ export class AdminEventsComponent implements OnInit {
   readonly statuses = STATUSES;
   readonly categories = CATEGORIES;
 
-  constructor(
-    public auth: AuthService,
-    private adminService: AdminService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.load();
@@ -219,7 +223,9 @@ export class AdminEventsComponent implements OnInit {
       next: (saved) => {
         if (id === null) {
           this.events.update((list) =>
-            [...list, saved].sort((a, b) => a.sortOrder - b.sortOrder || a.date.localeCompare(b.date)),
+            [...list, saved].sort(
+              (a, b) => a.sortOrder - b.sortOrder || a.date.localeCompare(b.date),
+            ),
           );
           this.success.set('Event created.');
         } else {
@@ -297,11 +303,20 @@ export class AdminEventsComponent implements OnInit {
     this.adminService.adminConfirmEventRsvp(eventId, rsvp.id).subscribe({
       next: (updated) => {
         this.rsvps.update((list) => list.map((r) => (r.id === updated.id ? updated : r)));
-        this.confirmingRsvp.update((s) => { const n = new Set(s); n.delete(rsvp.id); return n; });
+        this.confirmingRsvp.update((s) => {
+          const n = new Set(s);
+          n.delete(rsvp.id);
+          return n;
+        });
       },
       error: (err) => {
         this.error.set(err?.error?.message ?? 'Failed to confirm RSVP.');
-        this.confirmingRsvp.update((s) => { const n = new Set(s); n.delete(rsvp.id); return n; });
+        this.confirmingRsvp.update((s) => {
+          const n = new Set(s);
+          n.delete(rsvp.id);
+          return n;
+        });
       },
     });
-  }}
+  }
+}

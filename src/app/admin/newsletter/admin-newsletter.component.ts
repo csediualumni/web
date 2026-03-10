@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, NewsletterSubscription } from '../../core/admin.service';
@@ -14,24 +14,24 @@ type Tab = 'subscriptions' | 'compose';
 })
 export class AdminNewsletterComponent implements OnInit {
   activeTab = signal<Tab>('subscriptions');
-  loading    = signal(true);
-  error      = signal('');
-  success    = signal('');
+  loading = signal(true);
+  error = signal('');
+  success = signal('');
 
   subscriptions = signal<NewsletterSubscription[]>([]);
-  toggling      = signal<Set<string>>(new Set());
-  deleting      = signal<Set<string>>(new Set());
+  toggling = signal<Set<string>>(new Set());
+  deleting = signal<Set<string>>(new Set());
 
   // Compose form
-  subject  = signal('');
+  subject = signal('');
   htmlBody = signal('');
-  sending  = signal(false);
+  sending = signal(false);
   previewHtml = signal(false);
-  sendResult  = signal<{ sent: number } | null>(null);
+  sendResult = signal<{ sent: number } | null>(null);
 
   // Filter & search
   filterStatus = signal<'all' | 'active' | 'inactive'>('all');
-  searchText   = signal('');
+  searchText = signal('');
 
   filteredSubs = computed(() => {
     const status = this.filterStatus();
@@ -46,13 +46,11 @@ export class AdminNewsletterComponent implements OnInit {
     });
   });
 
-  totalCount  = computed(() => this.subscriptions().length);
+  totalCount = computed(() => this.subscriptions().length);
   activeCount = computed(() => this.subscriptions().filter((s) => s.isActive).length);
 
-  constructor(
-    public auth: AuthService,
-    private adminService: AdminService,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.loadSubscriptions();
@@ -67,7 +65,11 @@ export class AdminNewsletterComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions to view this.' : 'Failed to load subscriptions.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions to view this."
+            : 'Failed to load subscriptions.',
+        );
         this.loading.set(false);
       },
     });
@@ -95,13 +97,15 @@ export class AdminNewsletterComponent implements OnInit {
 
     this.adminService.toggleNewsletterSubscription(sub.id).subscribe({
       next: (updated) => {
-        this.subscriptions.update((list) =>
-          list.map((x) => (x.id === sub.id ? updated : x)),
-        );
+        this.subscriptions.update((list) => list.map((x) => (x.id === sub.id ? updated : x)));
         this._clearToggling(sub.id);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to update subscription.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : 'Failed to update subscription.',
+        );
         this._clearToggling(sub.id);
       },
     });
@@ -121,7 +125,11 @@ export class AdminNewsletterComponent implements OnInit {
         this._clearDeleting(sub.id);
       },
       error: (err) => {
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : 'Failed to delete subscription.');
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : 'Failed to delete subscription.',
+        );
         this._clearDeleting(sub.id);
       },
     });
@@ -151,7 +159,11 @@ export class AdminNewsletterComponent implements OnInit {
       },
       error: (err) => {
         this.sending.set(false);
-        this.error.set(err?.status === 403 ? 'You don\'t have sufficient permissions.' : (err.error?.message ?? 'Failed to send newsletter.'));
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to send newsletter.'),
+        );
       },
     });
   }

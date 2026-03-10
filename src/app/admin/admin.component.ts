@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/auth.service';
@@ -25,10 +25,8 @@ export class AdminComponent {
     { label: 'Events', path: 'events', icon: 'fa-calendar-days' },
   ];
 
-  constructor(
-    public auth: AuthService,
-    private router: Router,
-  ) {}
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   goBack(): void {
     this.router.navigate(['/dashboard']);

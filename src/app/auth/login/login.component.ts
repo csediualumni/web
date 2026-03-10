@@ -1,5 +1,5 @@
-import { Component, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
@@ -11,7 +11,14 @@ import { AuthService } from '../../core/auth.service';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  form: FormGroup;
+  private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
+  });
   loading = signal(false);
   currentYear = new Date().getFullYear();
   serverError = signal('');
@@ -23,17 +30,6 @@ export class LoginComponent {
   forgotLoading = signal(false);
   forgotSuccess = signal('');
   forgotError = signal('');
-
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private router: Router,
-  ) {
-    this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
-    });
-  }
 
   get email() {
     return this.form.get('email')!;
@@ -52,7 +48,7 @@ export class LoginComponent {
     this.serverError.set('');
 
     const { email, password } = this.form.value;
-    this.auth.login(email, password).subscribe({
+    this.auth.login(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.loading.set(false);

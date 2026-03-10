@@ -17,13 +17,17 @@
 
 <!-- Alerts -->
 @if (error()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
     <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
     <span>{{ error() }}</span>
   </div>
 }
 @if (success()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
     <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
     <span>{{ success() }}</span>
   </div>
@@ -39,8 +43,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <!-- Year -->
       <div>
-        <label class="block text-sm font-medium text-zinc-700 mb-1">Year <span class="text-red-500">*</span></label>
+        <label for="ms-year" class="block text-sm font-medium text-zinc-700 mb-1"
+          >Year <span class="text-red-500">*</span></label
+        >
         <input
+          id="ms-year"
           type="text"
           [ngModel]="formYear()"
           (ngModelChange)="formYear.set($event)"
@@ -51,8 +58,9 @@
 
       <!-- Sort order -->
       <div>
-        <label class="block text-sm font-medium text-zinc-700 mb-1">Sort order</label>
+        <label for="ms-sort" class="block text-sm font-medium text-zinc-700 mb-1">Sort order</label>
         <input
+          id="ms-sort"
           type="number"
           [ngModel]="formSortOrder()"
           (ngModelChange)="formSortOrder.set(+$event)"
@@ -64,8 +72,11 @@
 
       <!-- Title -->
       <div class="sm:col-span-2">
-        <label class="block text-sm font-medium text-zinc-700 mb-1">Title <span class="text-red-500">*</span></label>
+        <label for="ms-title" class="block text-sm font-medium text-zinc-700 mb-1"
+          >Title <span class="text-red-500">*</span></label
+        >
         <input
+          id="ms-title"
           type="text"
           [ngModel]="formTitle()"
           (ngModelChange)="formTitle.set($event)"
@@ -76,8 +87,11 @@
 
       <!-- Description -->
       <div class="sm:col-span-2">
-        <label class="block text-sm font-medium text-zinc-700 mb-1">Description <span class="text-red-500">*</span></label>
+        <label for="ms-desc" class="block text-sm font-medium text-zinc-700 mb-1"
+          >Description <span class="text-red-500">*</span></label
+        >
         <textarea
+          id="ms-desc"
           rows="3"
           [ngModel]="formDescription()"
           (ngModelChange)="formDescription.set($event)"
@@ -137,7 +151,9 @@
         <i class="fa-solid fa-timeline text-zinc-400 text-lg"></i>
       </div>
       <p class="text-sm font-medium text-zinc-700">No milestones yet</p>
-      <p class="text-xs text-zinc-400 mt-1">Add the first history milestone to show on the About page.</p>
+      <p class="text-xs text-zinc-400 mt-1">
+        Add the first history milestone to show on the About page.
+      </p>
     </div>
   } @else {
     <div class="space-y-3">
@@ -146,7 +162,9 @@
           <div class="flex items-start justify-between gap-4">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1 flex-wrap">
-                <span class="inline-block text-xs font-bold text-white bg-blue-700 rounded px-2 py-0.5">
+                <span
+                  class="inline-block text-xs font-bold text-white bg-blue-700 rounded px-2 py-0.5"
+                >
                   {{ m.year }}
                 </span>
                 <span class="text-xs text-zinc-400">order: {{ m.sortOrder }}</span>
