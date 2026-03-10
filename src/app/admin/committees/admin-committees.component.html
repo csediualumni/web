@@ -221,7 +221,7 @@
               (ngModelChange)="addMemberDesignation.set($event)"
               class="shad-input w-full text-sm"
             >
-              @for (d of designations; track d) {
+              @for (d of designations(); track d) {
                 <option [value]="d">{{ d }}</option>
               }
             </select>

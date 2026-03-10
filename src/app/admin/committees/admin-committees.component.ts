@@ -61,6 +61,7 @@ export class AdminCommitteesComponent implements OnInit {
   addingMember = signal(false);
   removingMemberIds = signal<Set<string>>(new Set());
   userSearch = signal('');
+  designations = signal<string[]>(DESIGNATIONS);
 
   // Designation → Role mappings view
   mappings = signal<DesignationMapping[]>([]);
@@ -84,7 +85,6 @@ export class AdminCommitteesComponent implements OnInit {
     return sel ? [...sel.members].sort((a, b) => a.sortOrder - b.sortOrder) : [];
   });
 
-  designations = DESIGNATIONS;
   colorFor = colorFor;
   initialsFor = initialsFor;
 
@@ -110,6 +110,18 @@ export class AdminCommitteesComponent implements OnInit {
     });
     this.adminService.listUsers().subscribe({
       next: (u) => this.allUsers.set(u),
+    });
+    this.adminService.adminListDesignationMappings().subscribe({
+      next: (mappings) => {
+        const fromApi = mappings.map((m) => m.designation).filter(Boolean);
+        if (fromApi.length > 0) {
+          this.designations.set(fromApi);
+          // Reset default selection to first designation if current default isn't in the list
+          if (!fromApi.includes(this.addMemberDesignation())) {
+            this.addMemberDesignation.set(fromApi[0]);
+          }
+        }
+      },
     });
   }
 
@@ -139,7 +151,7 @@ export class AdminCommitteesComponent implements OnInit {
   openMembers(c: Committee): void {
     this.selected.set(c);
     this.addMemberUserId.set('');
-    this.addMemberDesignation.set('President');
+    this.addMemberDesignation.set(this.designations()[0] ?? 'President');
     this.addMemberSortOrder.set(c.members.length);
     this.userSearch.set('');
     this.error.set('');
