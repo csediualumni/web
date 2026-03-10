@@ -25,6 +25,7 @@ export class AdminComponent {
     { label: 'Events', path: 'events', icon: 'fa-calendar-days' },
     { label: 'Campaigns', path: 'campaigns', icon: 'fa-hand-holding-heart' },
     { label: 'Gallery', path: 'gallery', icon: 'fa-images' },
+    { label: 'News', path: 'news', icon: 'fa-newspaper' },
   ];
 
   readonly auth = inject(AuthService);

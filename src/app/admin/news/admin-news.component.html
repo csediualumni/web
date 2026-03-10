@@ -1,0 +1,348 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-lg font-semibold text-zinc-900">News Articles</h1>
+    <p class="text-sm text-zinc-500 mt-0.5">Manage news and announcements shown on the News page.</p>
+  </div>
+  @if (mode() === 'list' && auth.hasPermission('news:write')) {
+    <button
+      (click)="openCreate()"
+      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
+    >
+      <i class="fa-solid fa-plus text-xs"></i>
+      New Article
+    </button>
+  }
+</div>
+
+<!-- Alerts -->
+@if (error()) {
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- Create / Edit Form -->
+@if (mode() === 'create' || mode() === 'edit') {
+  <div class="shad-card p-6 mb-6">
+    <h2 class="text-base font-semibold text-zinc-900 mb-5">
+      {{ mode() === 'create' ? 'New Article' : 'Edit Article' }}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- Title -->
+      <div class="sm:col-span-2">
+        <label for="na-title" class="block text-sm font-medium text-zinc-700 mb-1">
+          Title <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="na-title"
+          type="text"
+          [ngModel]="formTitle()"
+          (ngModelChange)="formTitle.set($event)"
+          placeholder="Article headline"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Summary -->
+      <div class="sm:col-span-2">
+        <label for="na-summary" class="block text-sm font-medium text-zinc-700 mb-1">
+          Summary <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          id="na-summary"
+          rows="2"
+          [ngModel]="formSummary()"
+          (ngModelChange)="formSummary.set($event)"
+          placeholder="Short description shown on the card (1–2 sentences)"
+          class="shad-input w-full resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Body -->
+      <div class="sm:col-span-2">
+        <label for="na-body" class="block text-sm font-medium text-zinc-700 mb-1">
+          Full Body <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          id="na-body"
+          rows="6"
+          [ngModel]="formBody()"
+          (ngModelChange)="formBody.set($event)"
+          placeholder="Full article text. Use blank lines to separate paragraphs."
+          class="shad-input w-full resize-y"
+        ></textarea>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label for="na-category" class="block text-sm font-medium text-zinc-700 mb-1">
+          Category <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="na-category"
+          [ngModel]="formCategory()"
+          (ngModelChange)="formCategory.set($event)"
+          class="shad-input w-full"
+        >
+          @for (cat of categoryOptions; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Author -->
+      <div>
+        <label for="na-author" class="block text-sm font-medium text-zinc-700 mb-1">
+          Author <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="na-author"
+          type="text"
+          [ngModel]="formAuthor()"
+          (ngModelChange)="formAuthor.set($event)"
+          placeholder="e.g. Platform Team"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label for="na-date" class="block text-sm font-medium text-zinc-700 mb-1">
+          Date (display text) <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="na-date"
+          type="text"
+          [ngModel]="formDate()"
+          (ngModelChange)="formDate.set($event)"
+          placeholder="e.g. March 10, 2026"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Read Time -->
+      <div>
+        <label for="na-readtime" class="block text-sm font-medium text-zinc-700 mb-1">
+          Read Time <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="na-readtime"
+          type="text"
+          [ngModel]="formReadTime()"
+          (ngModelChange)="formReadTime.set($event)"
+          placeholder="e.g. 3 min read"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Icon -->
+      <div>
+        <label for="na-icon" class="block text-sm font-medium text-zinc-700 mb-1">
+          FontAwesome Icon <span class="text-red-500">*</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <div
+            class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+            [class]="formColor()"
+          >
+            <i class="fa-solid {{ formIcon() }} text-zinc-700"></i>
+          </div>
+          <input
+            id="na-icon"
+            type="text"
+            [ngModel]="formIcon()"
+            (ngModelChange)="formIcon.set($event)"
+            placeholder="fa-newspaper"
+            class="shad-input flex-1"
+          />
+        </div>
+        <p class="text-xs text-zinc-400 mt-1">
+          Use any
+          <a href="https://fontawesome.com/icons" target="_blank" class="underline">Font Awesome 6 solid</a>
+          icon name, e.g. <code>fa-rocket</code>.
+        </p>
+      </div>
+
+      <!-- Colour -->
+      <div>
+        <p class="block text-sm font-medium text-zinc-700 mb-1">
+          Card Colour <span class="text-red-500">*</span>
+        </p>
+        <div class="flex flex-wrap gap-2">
+          @for (opt of colorOptions; track opt.value) {
+            <button
+              type="button"
+              (click)="formColor.set(opt.value)"
+              class="w-8 h-8 rounded-lg border-2 transition-all"
+              [class]="opt.value"
+              [class.border-zinc-900]="formColor() === opt.value"
+              [class.border-transparent]="formColor() !== opt.value"
+              [title]="opt.label"
+            ></button>
+          }
+        </div>
+        <p class="text-xs text-zinc-400 mt-1">Selected: <code>{{ formColor() }}</code></p>
+      </div>
+
+      <!-- Flags -->
+      <div class="sm:col-span-2 flex flex-wrap gap-6">
+        <label for="na-pinned" class="flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            id="na-pinned"
+            type="checkbox"
+            [ngModel]="formPinned()"
+            (ngModelChange)="formPinned.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 accent-violet-600"
+          />
+          <div>
+            <span class="text-sm font-medium text-zinc-700">Pinned</span>
+            <p class="text-xs text-zinc-400">Sorts to top of all lists</p>
+          </div>
+        </label>
+
+        <label for="na-featured" class="flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            id="na-featured"
+            type="checkbox"
+            [ngModel]="formFeatured()"
+            (ngModelChange)="formFeatured.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 accent-violet-600"
+          />
+          <div>
+            <span class="text-sm font-medium text-zinc-700">Featured</span>
+            <p class="text-xs text-zinc-400">Shown in the Featured section at the top</p>
+          </div>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
+      <button
+        (click)="save()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50"
+      >
+        @if (saving()) {
+          <i class="fa-solid fa-spinner fa-spin text-xs"></i> Saving…
+        } @else {
+          <i class="fa-solid fa-check text-xs"></i>
+          {{ mode() === 'create' ? 'Create Article' : 'Save Changes' }}
+        }
+      </button>
+      <button
+        (click)="cancelForm()"
+        [disabled]="saving()"
+        class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Article List -->
+@if (mode() === 'list') {
+  @if (loading()) {
+    <div class="flex items-center justify-center py-20 text-zinc-400 gap-3">
+      <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+      <span class="text-sm">Loading…</span>
+    </div>
+  } @else if (articles().length === 0) {
+    <div class="text-center py-20 text-zinc-400">
+      <i class="fa-solid fa-newspaper text-4xl mb-3 opacity-30"></i>
+      <p class="text-sm">No news articles yet. Click <strong>New Article</strong> to add one.</p>
+    </div>
+  } @else {
+    <div class="shad-card overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-zinc-50 border-b border-zinc-200">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500">Title</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">Category</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">Author</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Date</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Flags</th>
+            <th class="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-100">
+          @for (article of articles(); track article.id) {
+            <tr class="hover:bg-zinc-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-zinc-900 max-w-xs">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-7 h-7 rounded-md flex items-center justify-center shrink-0 text-zinc-600"
+                    [class]="article.color"
+                  >
+                    <i class="fa-solid {{ article.icon }} text-xs"></i>
+                  </div>
+                  <span class="truncate">{{ article.title }}</span>
+                </div>
+              </td>
+              <td class="px-4 py-3 hidden sm:table-cell">
+                <span class="text-xs font-medium rounded-full px-2.5 py-1" [class]="categoryBadgeClass(article.category)">
+                  {{ article.category }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-zinc-500 hidden md:table-cell">{{ article.author }}</td>
+              <td class="px-4 py-3 text-zinc-500 hidden lg:table-cell">{{ article.date }}</td>
+              <td class="px-4 py-3 hidden lg:table-cell">
+                <div class="flex gap-1.5">
+                  @if (article.pinned) {
+                    <span class="text-xs bg-zinc-100 text-zinc-600 border border-zinc-200 rounded-full px-2 py-0.5">
+                      <i class="fa-solid fa-thumbtack mr-1"></i>Pinned
+                    </span>
+                  }
+                  @if (article.featured) {
+                    <span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-full px-2 py-0.5">
+                      <i class="fa-solid fa-star mr-1"></i>Featured
+                    </span>
+                  }
+                </div>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  @if (auth.hasPermission('news:write')) {
+                    <button
+                      (click)="openEdit(article)"
+                      class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600"
+                    >
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button
+                      (click)="delete(article)"
+                      [disabled]="isDeleting(article.id)"
+                      class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                    >
+                      @if (isDeleting(article.id)) {
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                      } @else {
+                        <i class="fa-solid fa-trash"></i>
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

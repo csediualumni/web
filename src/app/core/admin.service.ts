@@ -60,7 +60,6 @@ export interface ImportMembersResult {
 }
 
 export type CampaignStatus = 'active' | 'completed' | 'upcoming';
-
 export interface AdminCampaign {
   id: number;
   title: string;
@@ -194,6 +193,47 @@ export interface ContactTicket {
   comments: ContactTicketComment[];
   createdAt: string;
   updatedAt: string;
+}
+
+export type NewsCategory =
+  | 'Announcement'
+  | 'Achievement'
+  | 'Events'
+  | 'Research'
+  | 'Career'
+  | 'Community';
+
+export interface AdminNewsArticle {
+  id: string;
+  title: string;
+  summary: string;
+  body: string;
+  category: NewsCategory;
+  author: string;
+  date: string;
+  readTime: string;
+  icon: string;
+  color: string;
+  pinned: boolean;
+  featured: boolean;
+  sortOrder: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaveNewsArticleDto {
+  title: string;
+  summary: string;
+  body: string;
+  category: NewsCategory;
+  author: string;
+  date: string;
+  readTime: string;
+  icon: string;
+  color: string;
+  pinned?: boolean;
+  featured?: boolean;
+  sortOrder?: number | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -569,5 +609,24 @@ export class AdminService {
 
   adminDeleteCampaign(id: number): Observable<void> {
     return this.http.delete<void>(`${this.campaignsBase}/${id}`);
+  }
+
+  // ── News ──────────────────────────────────────────────────────
+  private readonly newsBase = `${environment.apiUrl}/news`;
+
+  listNewsArticles(): Observable<AdminNewsArticle[]> {
+    return this.http.get<AdminNewsArticle[]>(this.newsBase);
+  }
+
+  adminCreateNewsArticle(dto: SaveNewsArticleDto): Observable<AdminNewsArticle> {
+    return this.http.post<AdminNewsArticle>(this.newsBase, dto);
+  }
+
+  adminUpdateNewsArticle(id: string, dto: Partial<SaveNewsArticleDto>): Observable<AdminNewsArticle> {
+    return this.http.patch<AdminNewsArticle>(`${this.newsBase}/${id}`, dto);
+  }
+
+  adminDeleteNewsArticle(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.newsBase}/${id}`);
   }
 }

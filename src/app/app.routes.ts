@@ -129,6 +129,13 @@ export const routes: Routes = [
             (m) => m.AdminGalleryComponent,
           ),
       },
+      {
+        path: 'news',
+        loadComponent: () =>
+          import('./admin/news/admin-news.component').then(
+            (m) => m.AdminNewsComponent,
+          ),
+      },
     ],
   },
   {
