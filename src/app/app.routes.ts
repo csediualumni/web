@@ -136,6 +136,34 @@ export const routes: Routes = [
             (m) => m.AdminNewsComponent,
           ),
       },
+      {
+        path: 'research',
+        loadComponent: () =>
+          import('./admin/research/admin-research.component').then(
+            (m) => m.AdminResearchComponent,
+          ),
+      },
+      {
+        path: 'mentors',
+        loadComponent: () =>
+          import('./admin/mentors/admin-mentors.component').then(
+            (m) => m.AdminMentorsComponent,
+          ),
+      },
+      {
+        path: 'scholarships',
+        loadComponent: () =>
+          import('./admin/scholarships/admin-scholarships.component').then(
+            (m) => m.AdminScholarshipsComponent,
+          ),
+      },
+      {
+        path: 'jobs',
+        loadComponent: () =>
+          import('./admin/jobs/admin-jobs.component').then(
+            (m) => m.AdminJobsComponent,
+          ),
+      },
     ],
   },
   {

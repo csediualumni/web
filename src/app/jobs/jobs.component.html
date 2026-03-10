@@ -48,7 +48,7 @@
         (change)="selectedIndustry.set($any($event.target).value)"
       >
         <option value="">All Industries</option>
-        @for (ind of industries; track ind) {
+        @for (ind of industries(); track ind) {
           <option [value]="ind">{{ ind }}</option>
         }
       </select>
@@ -58,7 +58,7 @@
         (change)="selectedExperience.set($any($event.target).value)"
       >
         <option value="">All Experience Levels</option>
-        @for (e of experienceLevels; track e) {
+        @for (e of experienceLevels(); track e) {
           <option [value]="e">{{ e }}</option>
         }
       </select>

@@ -236,6 +236,176 @@ export interface SaveNewsArticleDto {
   sortOrder?: number | null;
 }
 
+// ── Research ─────────────────────────────────────────────────────
+
+export type VenueType = 'journal' | 'conference' | 'preprint';
+
+export interface AdminResearchPaper {
+  id: string;
+  title: string;
+  authors: string[];
+  abstract: string;
+  year: number;
+  venue: string;
+  venueType: VenueType;
+  tags: string[];
+  doi: string | null;
+  link: string;
+  citations: number;
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaveResearchPaperDto {
+  title: string;
+  authors: string[];
+  abstract: string;
+  year: number;
+  venue: string;
+  venueType: VenueType;
+  tags?: string[];
+  doi?: string | null;
+  link: string;
+  citations?: number;
+  featured?: boolean;
+}
+
+// ── Mentorship ───────────────────────────────────────────────────
+
+export interface AdminMentor {
+  id: string;
+  name: string;
+  batch: number;
+  role: string;
+  company: string;
+  country: string;
+  city: string;
+  initials: string | null;
+  color: string | null;
+  expertise: string[];
+  bio: string;
+  availability: string;
+  mentees: number;
+  rating: number;
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaveMentorDto {
+  name: string;
+  batch: number;
+  role: string;
+  company: string;
+  country: string;
+  city: string;
+  initials?: string | null;
+  color?: string | null;
+  expertise?: string[];
+  bio: string;
+  availability: string;
+  mentees?: number;
+  rating?: number;
+  featured?: boolean;
+}
+
+export type ApplicationStatus = 'pending' | 'reviewing' | 'accepted' | 'rejected';
+
+export interface AdminMentorApplication {
+  id: string;
+  name: string;
+  email: string;
+  batch: number | null;
+  area: string;
+  goals: string;
+  type: string;
+  status: ApplicationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ── Scholarships ─────────────────────────────────────────────────
+
+export interface AdminScholarship {
+  id: string;
+  title: string;
+  provider: string;
+  amount: string;
+  currency: string;
+  deadline: string;
+  eligibility: string;
+  level: string;
+  country: string;
+  type: string;
+  description: string;
+  tags: string[];
+  link: string;
+  featured: boolean;
+  urgent: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaveScholarshipDto {
+  title: string;
+  provider: string;
+  amount: string;
+  currency: string;
+  deadline: string;
+  eligibility: string;
+  level: string;
+  country: string;
+  type: string;
+  description: string;
+  tags?: string[];
+  link: string;
+  featured?: boolean;
+  urgent?: boolean;
+}
+
+// ── Jobs ────────────────────────────────────────────────────────
+
+export type AdminJobType = 'Full-time' | 'Part-time' | 'Internship' | 'Remote' | 'Contract';
+
+export interface AdminJobPosting {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  country: string;
+  type: AdminJobType;
+  industry: string;
+  experience: string;
+  salary: string | null;
+  posted: string;
+  deadline: string;
+  description: string;
+  skills: string[];
+  featured: boolean;
+  postedById: string | null;
+  postedBy: { id: string; displayName: string | null; email: string } | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaveJobPostingDto {
+  title: string;
+  company: string;
+  location: string;
+  country: string;
+  type: AdminJobType;
+  industry: string;
+  experience: string;
+  salary?: string | null;
+  posted: string;
+  deadline: string;
+  description: string;
+  skills?: string[];
+  featured?: boolean;
+  postedById?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminService {
   private readonly adminBase = `${environment.apiUrl}/admin`;
@@ -628,5 +798,89 @@ export class AdminService {
 
   adminDeleteNewsArticle(id: string): Observable<void> {
     return this.http.delete<void>(`${this.newsBase}/${id}`);
+  }
+
+  // ── Research ──────────────────────────────────────────────────
+  private readonly researchBase = `${environment.apiUrl}/research`;
+
+  listResearchPapers(): Observable<AdminResearchPaper[]> {
+    return this.http.get<AdminResearchPaper[]>(this.researchBase);
+  }
+
+  adminCreateResearchPaper(dto: SaveResearchPaperDto): Observable<AdminResearchPaper> {
+    return this.http.post<AdminResearchPaper>(this.researchBase, dto);
+  }
+
+  adminUpdateResearchPaper(id: string, dto: Partial<SaveResearchPaperDto>): Observable<AdminResearchPaper> {
+    return this.http.patch<AdminResearchPaper>(`${this.researchBase}/${id}`, dto);
+  }
+
+  adminDeleteResearchPaper(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.researchBase}/${id}`);
+  }
+
+  // ── Mentors ───────────────────────────────────────────────────
+  private readonly mentorsBase = `${environment.apiUrl}/mentors`;
+
+  listMentors(): Observable<AdminMentor[]> {
+    return this.http.get<AdminMentor[]>(this.mentorsBase);
+  }
+
+  adminCreateMentor(dto: SaveMentorDto): Observable<AdminMentor> {
+    return this.http.post<AdminMentor>(this.mentorsBase, dto);
+  }
+
+  adminUpdateMentor(id: string, dto: Partial<SaveMentorDto>): Observable<AdminMentor> {
+    return this.http.patch<AdminMentor>(`${this.mentorsBase}/${id}`, dto);
+  }
+
+  adminDeleteMentor(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.mentorsBase}/${id}`);
+  }
+
+  listMentorApplications(): Observable<AdminMentorApplication[]> {
+    return this.http.get<AdminMentorApplication[]>(`${this.mentorsBase}/admin/applications`);
+  }
+
+  updateApplicationStatus(id: string, status: ApplicationStatus): Observable<AdminMentorApplication> {
+    return this.http.patch<AdminMentorApplication>(`${this.mentorsBase}/admin/applications/${id}/status`, { status });
+  }
+
+  // ── Scholarships ──────────────────────────────────────────────
+  private readonly scholarshipsBase = `${environment.apiUrl}/scholarships`;
+
+  listScholarships(): Observable<AdminScholarship[]> {
+    return this.http.get<AdminScholarship[]>(this.scholarshipsBase);
+  }
+
+  adminCreateScholarship(dto: SaveScholarshipDto): Observable<AdminScholarship> {
+    return this.http.post<AdminScholarship>(this.scholarshipsBase, dto);
+  }
+
+  adminUpdateScholarship(id: string, dto: Partial<SaveScholarshipDto>): Observable<AdminScholarship> {
+    return this.http.patch<AdminScholarship>(`${this.scholarshipsBase}/${id}`, dto);
+  }
+
+  adminDeleteScholarship(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.scholarshipsBase}/${id}`);
+  }
+
+  // ── Jobs ──────────────────────────────────────────────────────
+  private readonly jobsBase = `${environment.apiUrl}/jobs`;
+
+  listJobPostings(): Observable<AdminJobPosting[]> {
+    return this.http.get<AdminJobPosting[]>(this.jobsBase);
+  }
+
+  adminCreateJobPosting(dto: SaveJobPostingDto): Observable<AdminJobPosting> {
+    return this.http.post<AdminJobPosting>(this.jobsBase, dto);
+  }
+
+  adminUpdateJobPosting(id: string, dto: Partial<SaveJobPostingDto>): Observable<AdminJobPosting> {
+    return this.http.patch<AdminJobPosting>(`${this.jobsBase}/${id}`, dto);
+  }
+
+  adminDeleteJobPosting(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.jobsBase}/${id}`);
   }
 }

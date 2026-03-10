@@ -1,23 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-export interface Mentor {
-  id: number;
-  name: string;
-  batch: number;
-  role: string;
-  company: string;
-  country: string;
-  city: string;
-  expertise: string[];
-  bio: string;
-  initials: string;
-  color: string;
-  availability: string;
-  mentees: number;
-  rating: number;
-}
+import { MentorshipService } from './mentorship.service';
+import type { Mentor, ApplyMentorshipDto } from './mentorship.service';
 
 interface MentorshipForm {
   name: string;
@@ -34,7 +19,13 @@ interface MentorshipForm {
   imports: [CommonModule, FormsModule],
   templateUrl: './mentorship.component.html',
 })
-export class MentorshipComponent {
+export class MentorshipComponent implements OnInit {
+  private readonly mentorshipSvc = inject(MentorshipService);
+
+  loading = signal(true);
+  error = signal('');
+  mentors = signal<Mentor[]>([]);
+
   readonly areas = [
     'Software Engineering',
     'Data Science & AI',
@@ -52,128 +43,21 @@ export class MentorshipComponent {
   submitted = signal(false);
   submitting = signal(false);
   formError = signal('');
-
-  readonly mentors: Mentor[] = [
-    {
-      id: 1,
-      name: 'Ariful Islam',
-      batch: 2018,
-      role: 'Senior Software Engineer',
-      company: 'Samsung R&D',
-      country: 'Bangladesh',
-      city: 'Dhaka',
-      availability: '2 hrs/week',
-      expertise: ['Java', 'System Design', 'Backend Engineering', 'Career Guidance'],
-      bio: 'Backend engineer with 8 years at Samsung. Passionate about helping junior devs navigate the backend landscape and break into top-tier tech.',
-      initials: 'AI',
-      color: 'bg-sky-600',
-      mentees: 12,
-      rating: 4.9,
-    },
-    {
-      id: 2,
-      name: 'Nusrat Jahan',
-      batch: 2019,
-      role: 'ML Engineer',
-      company: 'Google',
-      country: 'USA',
-      city: 'San Francisco',
-      availability: '1 hr/week',
-      expertise: ['Machine Learning', 'Python', 'MLOps', 'Research'],
-      bio: 'ML engineer at Google working on large-scale AI systems. Mentor specialising in ML career paths, PhD applications, and technical interview prep.',
-      initials: 'NJ',
-      color: 'bg-violet-600',
-      mentees: 8,
-      rating: 5.0,
-    },
-    {
-      id: 3,
-      name: 'Mahmudul Hasan',
-      batch: 2016,
-      role: 'DevOps Lead',
-      company: 'Thoughtworks',
-      country: 'UK',
-      city: 'London',
-      availability: '3 hrs/week',
-      expertise: ['Kubernetes', 'AWS', 'DevOps Culture', 'Architecture'],
-      bio: 'DevOps lead helping companies scale engineering practices. Loves mentoring on cloud careers, infrastructure design, and developer productivity.',
-      initials: 'MH',
-      color: 'bg-emerald-600',
-      mentees: 15,
-      rating: 4.8,
-    },
-    {
-      id: 4,
-      name: 'Sadia Rahman',
-      batch: 2020,
-      role: 'Product Manager',
-      company: 'Shopify',
-      country: 'Canada',
-      city: 'Toronto',
-      availability: '2 hrs/week',
-      expertise: ['Product Strategy', 'Agile', 'Career Switching to PM', 'UX'],
-      bio: 'PM at Shopify with a background in engineering. Specialises in guiding developers who want to transition into product management roles.',
-      initials: 'SR',
-      color: 'bg-rose-600',
-      mentees: 9,
-      rating: 4.7,
-    },
-    {
-      id: 5,
-      name: 'Rakibul Islam',
-      batch: 2015,
-      role: 'Co-Founder & CTO',
-      company: 'TechVenture BD',
-      country: 'Bangladesh',
-      city: 'Dhaka',
-      availability: '2 hrs/week',
-      expertise: ['Entrepreneurship', 'System Design', 'Startup Strategy', 'Leadership'],
-      bio: 'Serial entrepreneur and CTO who has built and scaled two tech startups in Bangladesh. Mentors aspiring founders on idea validation, hiring, and fundraising.',
-      initials: 'RI',
-      color: 'bg-teal-600',
-      mentees: 20,
-      rating: 4.9,
-    },
-    {
-      id: 6,
-      name: 'Nafis Hossain',
-      batch: 2014,
-      role: 'PhD Researcher',
-      company: 'MIT CSAIL',
-      country: 'USA',
-      city: 'Boston',
-      availability: '1.5 hrs/week',
-      expertise: ['Computer Vision', 'PhD Applications', 'Research Writing', 'NLP'],
-      bio: 'Researcher at MIT CSAIL focusing on computer vision. Guides alumni through PhD applications, research methodology, and academic publishing.',
-      initials: 'NH',
-      color: 'bg-cyan-600',
-      mentees: 7,
-      rating: 5.0,
-    },
-  ];
+  submitError = signal('');
 
   readonly steps = [
-    {
-      icon: 'fa-file-signature',
-      title: 'Apply',
-      desc: 'Fill in the mentorship request form with your goals, area of interest, and preferred format.',
-    },
-    {
-      icon: 'fa-user-check',
-      title: 'Get Matched',
-      desc: 'Our team reviews your application and matches you with the most suitable mentor within 5–7 days.',
-    },
-    {
-      icon: 'fa-handshake',
-      title: 'Connect',
-      desc: 'Receive an introduction email. Schedule your first session and kick off the mentorship journey.',
-    },
-    {
-      icon: 'fa-chart-line',
-      title: 'Grow',
-      desc: 'Engage in regular sessions at your chosen cadence. Track progress and reach your goals.',
-    },
+    { icon: 'fa-file-signature', title: 'Apply', desc: 'Fill in the mentorship request form with your goals, area of interest, and preferred format.' },
+    { icon: 'fa-user-check', title: 'Get Matched', desc: 'Our team reviews your application and matches you with the most suitable mentor within 5–7 days.' },
+    { icon: 'fa-handshake', title: 'Connect', desc: 'Receive an introduction email. Schedule your first session and kick off the mentorship journey.' },
+    { icon: 'fa-chart-line', title: 'Grow', desc: 'Engage in regular sessions at your chosen cadence. Track progress and reach your goals.' },
   ];
+
+  ngOnInit(): void {
+    this.mentorshipSvc.getMentors().subscribe({
+      next: (data) => { this.mentors.set(data); this.loading.set(false); },
+      error: () => { this.error.set('Failed to load mentors.'); this.loading.set(false); },
+    });
+  }
 
   submitForm() {
     this.formError.set('');
@@ -187,13 +71,26 @@ export class MentorshipComponent {
       return;
     }
     this.submitting.set(true);
-    setTimeout(() => {
-      this.submitting.set(false);
-      this.submitted.set(true);
-    }, 900);
+    const dto: ApplyMentorshipDto = {
+      name: name.trim(), email: email.trim(),
+      batch: batch ? +batch : null,
+      area, goals: goals.trim(), type: this.form.type,
+    };
+    this.mentorshipSvc.apply(dto).subscribe({
+      next: () => { this.submitting.set(false); this.submitted.set(true); },
+      error: (err: any) => {
+        this.submitError.set(err?.error?.message ?? 'Failed to submit. Please try again.');
+        this.submitting.set(false);
+      },
+    });
   }
 
-  stars(): number[] {
-    return Array.from({ length: 5 }, (_, i) => i + 1);
+  getInitials(mentor: Mentor): string {
+    if (mentor.initials) return mentor.initials;
+    return mentor.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
   }
+
+  getColor(mentor: Mentor): string { return mentor.color ?? 'bg-slate-600'; }
+
+  stars(): number[] { return Array.from({ length: 5 }, (_, i) => i + 1); }
 }

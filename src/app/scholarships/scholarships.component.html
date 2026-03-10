@@ -13,7 +13,7 @@
     </p>
     <!-- Stats -->
     <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6">
-      @for (s of stats; track s.label) {
+      @for (s of stats(); track s.label) {
         <div class="bg-white/10 rounded-2xl p-5">
           <i [class]="'fa-solid ' + s.icon + ' text-2xl text-amber-400 mb-2 block'"></i>
           <div class="text-2xl font-bold">{{ s.value }}</div>
@@ -32,7 +32,7 @@
     <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
       <div class="flex flex-wrap gap-2">
         <span class="text-sm text-zinc-500 self-center mr-1">Level:</span>
-        @for (l of levels; track l) {
+        @for (l of levels(); track l) {
           <button
             (click)="setLevel(l)"
             class="text-sm px-4 py-1.5 rounded-full border transition-colors"
@@ -48,7 +48,7 @@
       </div>
       <div class="flex flex-wrap gap-2 sm:ml-auto">
         <span class="text-sm text-zinc-500 self-center mr-1">Country:</span>
-        @for (c of countries; track c) {
+        @for (c of countries(); track c) {
           <button
             (click)="setCountry(c)"
             class="text-sm px-4 py-1.5 rounded-full border transition-colors"

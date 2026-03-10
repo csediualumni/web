@@ -1,0 +1,280 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-lg font-semibold text-zinc-900">Job Board</h1>
+    <p class="text-sm text-zinc-500 mt-0.5">Manage job postings shown on the Job Board page.</p>
+  </div>
+  @if (mode() === 'list' && auth.hasPermission('jobs:write')) {
+    <button
+      (click)="openCreate()"
+      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
+    >
+      <i class="fa-solid fa-plus text-xs"></i>
+      New Job Posting
+    </button>
+  }
+</div>
+
+<!-- Alerts -->
+@if (error()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- Create / Edit Form -->
+@if (mode() === 'create' || mode() === 'edit') {
+  <div class="shad-card p-6 mb-6">
+    <h2 class="text-base font-semibold text-zinc-900 mb-5">
+      {{ mode() === 'create' ? 'New Job Posting' : 'Edit Job Posting' }}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- Title -->
+      <div class="sm:col-span-2">
+        <label for="jb-title" class="block text-sm font-medium text-zinc-700 mb-1">
+          Job Title <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-title" type="text"
+          [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)"
+          placeholder="e.g. Software Engineer"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Company -->
+      <div>
+        <label for="jb-company" class="block text-sm font-medium text-zinc-700 mb-1">
+          Company <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-company" type="text"
+          [ngModel]="formCompany()" (ngModelChange)="formCompany.set($event)"
+          placeholder="e.g. Google"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label for="jb-type" class="block text-sm font-medium text-zinc-700 mb-1">
+          Job Type <span class="text-red-500">*</span>
+        </label>
+        <select id="jb-type"
+          [ngModel]="formType()" (ngModelChange)="formType.set($event)"
+          class="shad-input w-full">
+          @for (jt of jobTypes; track jt) {
+            <option [value]="jt">{{ jt }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <label for="jb-location" class="block text-sm font-medium text-zinc-700 mb-1">
+          Location <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-location" type="text"
+          [ngModel]="formLocation()" (ngModelChange)="formLocation.set($event)"
+          placeholder="e.g. Dhaka, Bangladesh"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Country -->
+      <div>
+        <label for="jb-country" class="block text-sm font-medium text-zinc-700 mb-1">
+          Country <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-country" type="text"
+          [ngModel]="formCountry()" (ngModelChange)="formCountry.set($event)"
+          placeholder="e.g. Bangladesh"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Industry -->
+      <div>
+        <label for="jb-industry" class="block text-sm font-medium text-zinc-700 mb-1">
+          Industry <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-industry" type="text"
+          [ngModel]="formIndustry()" (ngModelChange)="formIndustry.set($event)"
+          placeholder="e.g. Technology, Finance"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Experience -->
+      <div>
+        <label for="jb-exp" class="block text-sm font-medium text-zinc-700 mb-1">
+          Experience Level <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-exp" type="text"
+          [ngModel]="formExperience()" (ngModelChange)="formExperience.set($event)"
+          placeholder="e.g. Mid Level, Senior"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Salary -->
+      <div>
+        <label for="jb-salary" class="block text-sm font-medium text-zinc-700 mb-1">Salary (optional)</label>
+        <input id="jb-salary" type="text"
+          [ngModel]="formSalary()" (ngModelChange)="formSalary.set($event)"
+          placeholder="e.g. $80k–$100k"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Posted date -->
+      <div>
+        <label for="jb-posted" class="block text-sm font-medium text-zinc-700 mb-1">
+          Posted Date (display text) <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-posted" type="text"
+          [ngModel]="formPosted()" (ngModelChange)="formPosted.set($event)"
+          placeholder="e.g. March 10, 2026"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Deadline -->
+      <div>
+        <label for="jb-deadline" class="block text-sm font-medium text-zinc-700 mb-1">
+          Application Deadline (display text) <span class="text-red-500">*</span>
+        </label>
+        <input id="jb-deadline" type="text"
+          [ngModel]="formDeadline()" (ngModelChange)="formDeadline.set($event)"
+          placeholder="e.g. April 30, 2026"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Description -->
+      <div class="sm:col-span-2">
+        <label for="jb-desc" class="block text-sm font-medium text-zinc-700 mb-1">
+          Job Description <span class="text-red-500">*</span>
+        </label>
+        <textarea id="jb-desc" rows="5"
+          [ngModel]="formDescription()" (ngModelChange)="formDescription.set($event)"
+          placeholder="Full job description"
+          class="shad-input w-full resize-y"></textarea>
+      </div>
+
+      <!-- Skills -->
+      <div>
+        <label for="jb-skills" class="block text-sm font-medium text-zinc-700 mb-1">Skills</label>
+        <input id="jb-skills" type="text"
+          [ngModel]="formSkills()" (ngModelChange)="formSkills.set($event)"
+          placeholder="Comma-separated, e.g. Python, React"
+          class="shad-input w-full" />
+      </div>
+
+      <!-- Posted By User ID -->
+      <div>
+        <label for="jb-postedBy" class="block text-sm font-medium text-zinc-700 mb-1">Posted By (User ID)</label>
+        <input id="jb-postedBy" type="text"
+          [ngModel]="formPostedById()" (ngModelChange)="formPostedById.set($event)"
+          placeholder="User UUID (optional)"
+          class="shad-input w-full" />
+        <p class="text-xs text-zinc-400 mt-1">Leave blank if not linked to a user account.</p>
+      </div>
+
+      <!-- Featured -->
+      <div class="sm:col-span-2">
+        <label for="jb-featured" class="flex items-center gap-2.5 cursor-pointer select-none">
+          <input id="jb-featured" type="checkbox"
+            [ngModel]="formFeatured()" (ngModelChange)="formFeatured.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 accent-violet-600" />
+          <div>
+            <span class="text-sm font-medium text-zinc-700">Featured</span>
+            <p class="text-xs text-zinc-400">Highlighted at the top of the Job Board</p>
+          </div>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
+      <button (click)="save()" [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50">
+        @if (saving()) {
+          <i class="fa-solid fa-spinner fa-spin text-xs"></i> Saving…
+        } @else {
+          <i class="fa-solid fa-check text-xs"></i>
+          {{ mode() === 'create' ? 'Create Posting' : 'Save Changes' }}
+        }
+      </button>
+      <button (click)="cancelForm()" [disabled]="saving()"
+        class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50">
+        Cancel
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Job List -->
+@if (mode() === 'list') {
+  @if (loading()) {
+    <div class="flex items-center justify-center py-20 text-zinc-400 gap-3">
+      <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+      <span class="text-sm">Loading…</span>
+    </div>
+  } @else if (jobs().length === 0) {
+    <div class="text-center py-20 text-zinc-400">
+      <i class="fa-solid fa-briefcase text-4xl mb-3 opacity-30"></i>
+      <p class="text-sm">No job postings yet. Click <strong>New Job Posting</strong> to add one.</p>
+    </div>
+  } @else {
+    <div class="shad-card overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-zinc-50 border-b border-zinc-200">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500">Job</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">Type</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">Company</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Deadline</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Posted By</th>
+            <th class="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-100">
+          @for (job of jobs(); track job.id) {
+            <tr class="hover:bg-zinc-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-zinc-900 max-w-xs">
+                <span class="truncate block">{{ job.title }}</span>
+                <span class="text-xs text-zinc-400">{{ job.location }}</span>
+              </td>
+              <td class="px-4 py-3 hidden sm:table-cell">
+                <span class="text-xs font-medium rounded-full px-2.5 py-1" [class]="typeBadgeClass(job.type)">
+                  {{ job.type }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-zinc-500 hidden md:table-cell">{{ job.company }}</td>
+              <td class="px-4 py-3 text-zinc-500 hidden lg:table-cell">{{ job.deadline }}</td>
+              <td class="px-4 py-3 text-zinc-500 hidden lg:table-cell">{{ postedByLabel(job) }}</td>
+              <td class="px-4 py-3 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  @if (auth.hasPermission('jobs:write')) {
+                    <button (click)="openEdit(job)"
+                      class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button (click)="delete(job)" [disabled]="isDeleting(job.id)"
+                      class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50">
+                      @if (isDeleting(job.id)) {
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                      } @else {
+                        <i class="fa-solid fa-trash"></i>
+                      }
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

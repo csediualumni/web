@@ -26,6 +26,10 @@ export class AdminComponent {
     { label: 'Campaigns', path: 'campaigns', icon: 'fa-hand-holding-heart' },
     { label: 'Gallery', path: 'gallery', icon: 'fa-images' },
     { label: 'News', path: 'news', icon: 'fa-newspaper' },
+    { label: 'Research', path: 'research', icon: 'fa-microscope' },
+    { label: 'Mentors', path: 'mentors', icon: 'fa-chalkboard-user' },
+    { label: 'Scholarships', path: 'scholarships', icon: 'fa-graduation-cap' },
+    { label: 'Job Board', path: 'jobs', icon: 'fa-briefcase' },
   ];
 
   readonly auth = inject(AuthService);

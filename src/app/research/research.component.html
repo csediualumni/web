@@ -39,14 +39,14 @@
         [value]="activeYear()"
         (change)="setYear($any($event.target).value)"
       >
-        @for (y of years; track y) {
+        @for (y of years(); track y) {
           <option [value]="y">{{ y === 'All' ? 'All Years' : y }}</option>
         }
       </select>
     </div>
     <!-- Topic pills -->
     <div class="flex flex-wrap gap-2">
-      @for (tag of allTags; track tag) {
+      @for (tag of allTags(); track tag) {
         <button
           (click)="setTag(tag)"
           class="text-xs px-3.5 py-1.5 rounded-full border transition-colors"
