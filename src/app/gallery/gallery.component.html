@@ -21,6 +21,15 @@
       Reunions, convocations, workshops, and everything in between — the moments that make our
       community.
     </p>
+    @if (canManage()) {
+      <a
+        routerLink="/manage/gallery"
+        class="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-sm font-medium transition-colors"
+      >
+        <i class="fa-solid fa-pen-to-square text-xs"></i>
+        Manage Gallery
+      </a>
+    }
   </div>
 </section>
 
@@ -28,7 +37,7 @@
 <section class="bg-white border-b border-zinc-100 sticky top-16 z-30">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center gap-2 py-3 overflow-x-auto scrollbar-hide">
-      @for (cat of categories; track cat) {
+      @for (cat of categories(); track cat) {
         <button
           (click)="setCategory(cat)"
           class="flex-shrink-0 px-4 h-8 rounded-full text-sm font-medium transition-colors"
@@ -45,99 +54,158 @@
   </div>
 </section>
 
-<!-- ── Grid ── -->
-<section class="bg-zinc-50 py-12 lg:py-16">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    @if (filteredItems().length === 0) {
-      <div class="text-center py-20 text-zinc-400">
-        <i class="fa-solid fa-images text-5xl mb-4 block"></i>
-        <p class="text-base font-medium">No photos in this category yet.</p>
-      </div>
-    }
-
-    <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
-      @for (item of filteredItems(); track item.id) {
-        <div
-          class="break-inside-avoid rounded-xl overflow-hidden border border-zinc-200 bg-white cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all group"
-          (click)="openLightbox(item)"
-          role="button"
-          [attr.aria-label]="'View ' + item.title"
-          tabindex="0"
-          (keydown.enter)="openLightbox(item)"
-        >
-          <!-- Placeholder tile (replace with <img> when real photos available) -->
-          <div
-            class="aspect-[4/3] {{
-              item.color
-            }} flex flex-col items-center justify-center gap-3 relative"
-          >
-            <i
-              class="fa-solid {{
-                item.placeholder
-              }} text-4xl text-zinc-400 group-hover:scale-110 transition-transform"
-            ></i>
-            <!-- Hover overlay -->
-            <div
-              class="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/20 transition-colors flex items-center justify-center"
-            >
-              <i
-                class="fa-solid fa-magnifying-glass-plus text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity"
-              ></i>
+<!-- ── Loading skeleton ── -->
+@if (loading()) {
+  <section class="bg-zinc-50 py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+        @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+          <div class="break-inside-avoid rounded-xl overflow-hidden border border-zinc-200 bg-white animate-pulse">
+            <div class="aspect-[4/3] bg-zinc-200"></div>
+            <div class="p-3 space-y-2">
+              <div class="h-3 bg-zinc-200 rounded w-3/4"></div>
+              <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
             </div>
           </div>
-          <div class="p-3">
-            <p class="text-sm font-semibold text-zinc-900 leading-tight">{{ item.title }}</p>
-            <div class="flex items-center gap-2 mt-1">
-              <span class="text-xs text-zinc-500 bg-zinc-100 rounded px-1.5 py-0.5">{{
-                item.category
-              }}</span>
-              <span class="text-xs text-zinc-400">{{ item.year }}</span>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<!-- ── Error ── -->
+@if (error()) {
+  <section class="bg-zinc-50 py-20">
+    <div class="max-w-xl mx-auto px-4 text-center text-zinc-500">
+      <i class="fa-solid fa-circle-exclamation text-4xl mb-3 block text-rose-400"></i>
+      <p>{{ error() }}</p>
+    </div>
+  </section>
+}
+
+<!-- ── Album Grid ── -->
+@if (!loading() && !error()) {
+  <section class="bg-zinc-50 py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      @if (filteredAlbums().length === 0) {
+        <div class="text-center py-20 text-zinc-400">
+          <i class="fa-solid fa-images text-5xl mb-4 block"></i>
+          <p class="text-base font-medium">No albums in this category yet.</p>
+        </div>
+      }
+
+      <!-- Albums -->
+      @for (album of filteredAlbums(); track album.id) {
+        <div class="mb-10">
+          <!-- Album header -->
+          <div class="flex items-center gap-3 mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-zinc-900">{{ album.title }}</h2>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">{{ album.category }}</span>
+                <span class="text-xs text-zinc-400">{{ album.year }}</span>
+                @if (album.description) {
+                  <span class="text-xs text-zinc-500">— {{ album.description }}</span>
+                }
+              </div>
             </div>
+            <span class="ml-auto text-xs text-zinc-400">{{ album.items.length }} {{ album.items.length === 1 ? 'item' : 'items' }}</span>
+          </div>
+
+          @if (album.items.length === 0) {
+            <div class="rounded-xl border border-dashed border-zinc-200 bg-white py-10 text-center text-zinc-400 text-sm">
+              <i class="fa-solid fa-image text-2xl mb-2 block"></i>
+              No media yet in this album.
+            </div>
+          }
+
+          <!-- Items grid -->
+          <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+            @for (item of album.items; track item.id) {
+              <div
+                class="break-inside-avoid rounded-xl overflow-hidden border border-zinc-200 bg-white cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+                (click)="openLightbox(item, album)"
+                role="button"
+                [attr.aria-label]="item.caption ?? album.title"
+                tabindex="0"
+                (keydown.enter)="openLightbox(item, album)"
+              >
+                <!-- Media tile -->
+                <div class="aspect-[4/3] bg-zinc-100 relative overflow-hidden">
+                  @if (item.type === 'image') {
+                    <img
+                      [src]="item.url"
+                      [alt]="item.caption ?? album.title"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <!-- Video thumbnail -->
+                    @if (getVideoThumb(item)) {
+                      <img
+                        [src]="getVideoThumb(item)!"
+                        [alt]="item.caption ?? 'Video'"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    } @else {
+                      <div class="w-full h-full bg-zinc-200 flex items-center justify-center">
+                        <i class="fa-solid fa-film text-4xl text-zinc-400"></i>
+                      </div>
+                    }
+                    <!-- Play badge -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                      <div class="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
+                      </div>
+                    </div>
+                  }
+                  <!-- Hover overlay -->
+                  <div
+                    class="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/20 transition-colors flex items-center justify-center"
+                  >
+                    <i
+                      class="fa-solid fa-magnifying-glass-plus text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity"
+                    ></i>
+                  </div>
+                </div>
+                @if (item.caption) {
+                  <div class="px-3 py-2">
+                    <p class="text-xs text-zinc-600 leading-snug">{{ item.caption }}</p>
+                  </div>
+                }
+              </div>
+            }
           </div>
         </div>
       }
-    </div>
 
-    <!-- Count -->
-    <p class="text-center mt-10 text-sm text-zinc-400">
-      Showing {{ filteredItems().length }} of {{ items.length }} photos
-    </p>
-  </div>
-</section>
-
-<!-- ── Upload CTA ── -->
-<section class="bg-white py-16">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <div class="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 p-10">
-      <div class="w-14 h-14 rounded-full bg-zinc-100 flex items-center justify-center mx-auto mb-4">
-        <i class="fa-solid fa-camera text-zinc-500 text-2xl"></i>
-      </div>
-      <h3 class="text-xl font-bold text-zinc-900 mb-2">Have photos to share?</h3>
-      <p class="text-zinc-500 text-sm mb-6 max-w-sm mx-auto">
-        Submit your event and reunion photos and we'll add them to the gallery for the whole
-        community to enjoy.
-      </p>
-      <a routerLink="/contact" class="shad-btn-primary gap-2">
-        <i class="fa-solid fa-upload"></i>
-        Submit Your Photos
-      </a>
+      <!-- Count -->
+      @if (filteredAlbums().length > 0) {
+        <p class="text-center mt-4 text-sm text-zinc-400">
+          Showing {{ totalItems() }} of {{ allItemsCount() }} media items
+        </p>
+      }
     </div>
-  </div>
-</section>
+  </section>
+
+
+}
 
 <!-- ── Lightbox ── -->
 @if (lightboxItem()) {
   <div
-    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
     (click)="closeLightbox()"
     (keydown.escape)="closeLightbox()"
     role="dialog"
     aria-modal="true"
-    [attr.aria-label]="lightboxItem()!.title"
+    [attr.aria-label]="lightboxItem()!.caption ?? lightboxAlbum()?.title ?? 'Media'"
   >
     <!-- Panel -->
     <div
-      class="relative max-w-2xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl"
+      class="relative max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl"
       (click)="$event.stopPropagation()"
       (keydown)="$event.stopPropagation()"
       tabindex="0"
@@ -167,25 +235,57 @@
         <i class="fa-solid fa-chevron-right text-sm"></i>
       </button>
 
-      <!-- Image area -->
-      <div class="aspect-video {{ lightboxItem()!.color }} flex items-center justify-center">
-        <i class="fa-solid {{ lightboxItem()!.placeholder }} text-7xl text-zinc-400"></i>
-      </div>
+      <!-- Media area -->
+      @if (lightboxItem()!.type === 'image') {
+        <div class="aspect-video bg-zinc-100 flex items-center justify-center">
+          <img
+            [src]="lightboxItem()!.url"
+            [alt]="lightboxItem()!.caption ?? lightboxAlbum()?.title ?? 'Gallery image'"
+            class="max-w-full max-h-full object-contain"
+          />
+        </div>
+      } @else {
+        <div class="aspect-video bg-black">
+          @if (isYoutube(lightboxItem()!.url)) {
+            <iframe
+              [src]="getYoutubeEmbedUrl(lightboxItem()!.url)"
+              class="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              title="YouTube video"
+            ></iframe>
+          } @else if (isVimeo(lightboxItem()!.url)) {
+            <iframe
+              [src]="getVimeoEmbedUrl(lightboxItem()!.url)"
+              class="w-full h-full"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+              title="Vimeo video"
+            ></iframe>
+          } @else {
+            <video [src]="lightboxItem()!.url" controls class="w-full h-full"></video>
+          }
+        </div>
+      }
 
       <!-- Info -->
       <div class="p-5">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <h3 class="text-base font-bold text-zinc-900">{{ lightboxItem()!.title }}</h3>
-            <p class="text-sm text-zinc-500 mt-1 leading-relaxed">
-              {{ lightboxItem()!.description }}
-            </p>
+            <h3 class="text-base font-bold text-zinc-900">
+              {{ lightboxItem()!.caption ?? lightboxAlbum()?.title ?? 'Untitled' }}
+            </h3>
+            @if (lightboxAlbum()) {
+              <p class="text-sm text-zinc-500 mt-1">{{ lightboxAlbum()!.title }}</p>
+            }
           </div>
           <div class="flex flex-col items-end gap-1 flex-shrink-0">
-            <span class="text-xs font-medium bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded">{{
-              lightboxItem()!.category
-            }}</span>
-            <span class="text-xs text-zinc-400">{{ lightboxItem()!.year }}</span>
+            @if (lightboxAlbum()) {
+              <span class="text-xs font-medium bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded">{{
+                lightboxAlbum()!.category
+              }}</span>
+              <span class="text-xs text-zinc-400">{{ lightboxAlbum()!.year }}</span>
+            }
           </div>
         </div>
       </div>

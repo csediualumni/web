@@ -1,0 +1,473 @@
+<!-- ── Header ── -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    @if (mode() === 'albums') {
+      <h1 class="text-lg font-semibold text-zinc-900">Gallery</h1>
+      <p class="text-sm text-zinc-500 mt-0.5">Manage photo albums and media items shown on the Gallery page.</p>
+    } @else if (mode() === 'album-form') {
+      <h1 class="text-lg font-semibold text-zinc-900">{{ editingAlbumId() ? 'Edit Album' : 'New Album' }}</h1>
+      <p class="text-sm text-zinc-500 mt-0.5">Fill in the album details below.</p>
+    } @else if (mode() === 'album-detail' && activeAlbum()) {
+      <div class="flex items-center gap-2">
+        <button (click)="mode.set('albums')" class="text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer">
+          <i class="fa-solid fa-arrow-left text-sm"></i>
+        </button>
+        <div>
+          <h1 class="text-lg font-semibold text-zinc-900">{{ activeAlbum()!.title }}</h1>
+          <p class="text-sm text-zinc-500 mt-0.5">{{ activeAlbum()!.category }} · {{ activeAlbum()!.year }} · {{ activeAlbum()!.items.length }} items</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (mode() === 'albums') {
+    <button
+      (click)="openCreate()"
+      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
+    >
+      <i class="fa-solid fa-plus text-xs"></i>
+      New Album
+    </button>
+  }
+  @if (mode() === 'album-form') {
+    <button (click)="cancelForm()" class="shad-btn-secondary px-4 h-9 text-sm">Cancel</button>
+  }
+  @if (mode() === 'album-detail') {
+    <div class="flex gap-2">
+      <button
+        (click)="openEdit(activeAlbum()!)"
+        class="shad-btn-secondary px-3 h-9 text-sm gap-1.5"
+      >
+        <i class="fa-solid fa-pen text-xs"></i>
+        Edit
+      </button>
+      <label
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2 cursor-pointer"
+        [class.opacity-60]="uploadingFile()"
+      >
+        <i class="fa-solid fa-upload text-xs"></i>
+        {{ uploadingFile() ? 'Uploading…' : 'Upload Image' }}
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          class="hidden"
+          [disabled]="uploadingFile()"
+          (change)="onFileSelected($event)"
+        />
+      </label>
+      <button
+        (click)="showAddItem.set(!showAddItem())"
+        class="shad-btn-secondary px-3 h-9 text-sm gap-1.5"
+      >
+        <i class="fa-solid fa-link text-xs"></i>
+        Add Video
+      </button>
+    </div>
+  }
+</div>
+
+<!-- ── Alerts ── -->
+@if (error()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════
+     ALBUMS LIST
+═══════════════════════════════════════════════════════════════ -->
+@if (mode() === 'albums') {
+  @if (loading()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="shad-card p-0 overflow-hidden animate-pulse">
+          <div class="aspect-video bg-zinc-200"></div>
+          <div class="p-4 space-y-2">
+            <div class="h-4 bg-zinc-200 rounded w-2/3"></div>
+            <div class="h-3 bg-zinc-100 rounded w-1/3"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (albums().length === 0) {
+    <div class="text-center py-20 text-zinc-400">
+      <i class="fa-solid fa-images text-5xl mb-4 block"></i>
+      <p class="text-sm">No albums yet. Create your first album to get started.</p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (album of albums(); track album.id) {
+        <div class="shad-card p-0 overflow-hidden group">
+          <!-- Cover -->
+          <div
+            class="aspect-video bg-zinc-100 relative cursor-pointer overflow-hidden"
+            (click)="openDetail(album)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="openDetail(album)"
+          >
+            @if (album.coverImageUrl) {
+              <img
+                [src]="album.coverImageUrl"
+                [alt]="album.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            } @else if (album.items.length > 0 && album.items[0].type === 'image') {
+              <img
+                [src]="album.items[0].url"
+                [alt]="album.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            } @else {
+              <div class="w-full h-full flex flex-col items-center justify-center text-zinc-300 gap-2">
+                <i class="fa-solid fa-images text-4xl"></i>
+                <span class="text-xs">No cover image</span>
+              </div>
+            }
+            <!-- Item count badge -->
+            <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">
+              {{ album.items.length }} {{ album.items.length === 1 ? 'item' : 'items' }}
+            </div>
+            @if (!album.isPublished) {
+              <div class="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide">
+                Draft
+              </div>
+            }
+          </div>
+          <!-- Info -->
+          <div class="p-4">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <h3 class="text-sm font-semibold text-zinc-900 truncate">{{ album.title }}</h3>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <span class="text-[11px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">{{ album.category }}</span>
+                  <span class="text-[11px] text-zinc-400">{{ album.year }}</span>
+                </div>
+                @if (album.description) {
+                  <p class="text-xs text-zinc-500 mt-1 line-clamp-2">{{ album.description }}</p>
+                }
+              </div>
+              <div class="flex gap-1 flex-shrink-0">
+                <button
+                  (click)="openEdit(album)"
+                  class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+                  title="Edit album"
+                >
+                  <i class="fa-solid fa-pen text-xs"></i>
+                </button>
+                <button
+                  (click)="deleteAlbum(album)"
+                  [disabled]="deleting().has(album.id)"
+                  class="w-7 h-7 flex items-center justify-center rounded-md text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                  title="Delete album"
+                >
+                  @if (deleting().has(album.id)) {
+                    <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+                  } @else {
+                    <i class="fa-solid fa-trash text-xs"></i>
+                  }
+                </button>
+              </div>
+            </div>
+            <button
+              (click)="openDetail(album)"
+              class="mt-3 w-full text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-1 cursor-pointer"
+            >
+              <i class="fa-solid fa-images text-[10px]"></i>
+              Manage media
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}
+
+<!-- ══════════════════════════════════════════════════════════════
+     ALBUM FORM
+═══════════════════════════════════════════════════════════════ -->
+@if (mode() === 'album-form') {
+  <div class="shad-card p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- Title -->
+      <div class="sm:col-span-2">
+        <label for="alb-title" class="block text-sm font-medium text-zinc-700 mb-1">
+          Title <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="alb-title"
+          type="text"
+          [ngModel]="formTitle()"
+          (ngModelChange)="formTitle.set($event)"
+          placeholder="e.g. Grand Reunion 2025"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="sm:col-span-2">
+        <label for="alb-description" class="block text-sm font-medium text-zinc-700 mb-1">Description</label>
+        <textarea
+          id="alb-description"
+          rows="3"
+          [ngModel]="formDescription()"
+          (ngModelChange)="formDescription.set($event)"
+          placeholder="Short description of this album (optional)"
+          class="shad-input w-full resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label for="alb-category" class="block text-sm font-medium text-zinc-700 mb-1">Category</label>
+        <select
+          id="alb-category"
+          [ngModel]="formCategory()"
+          (ngModelChange)="formCategory.set($event)"
+          class="shad-input w-full"
+        >
+          @for (cat of categoryOptions; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Year -->
+      <div>
+        <label for="alb-year" class="block text-sm font-medium text-zinc-700 mb-1">Year</label>
+        <input
+          id="alb-year"
+          type="number"
+          [ngModel]="formYear()"
+          (ngModelChange)="formYear.set(+$event)"
+          min="2000"
+          [max]="2099"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Sort Order -->
+      <div>
+        <label for="alb-sort" class="block text-sm font-medium text-zinc-700 mb-1">
+          Sort Order
+          <span class="text-zinc-400 font-normal">(lower = first)</span>
+        </label>
+        <input
+          id="alb-sort"
+          type="number"
+          [ngModel]="formSortOrder()"
+          (ngModelChange)="formSortOrder.set(+$event)"
+          min="0"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Published toggle -->
+      <div class="flex items-center gap-3 pt-6">
+        <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+          <div class="relative">
+            <input
+              type="checkbox"
+              class="sr-only"
+              [ngModel]="formIsPublished()"
+              (ngModelChange)="formIsPublished.set($event)"
+            />
+            <div
+              class="w-10 h-6 rounded-full transition-colors"
+              [class.bg-blue-600]="formIsPublished()"
+              [class.bg-zinc-300]="!formIsPublished()"
+            ></div>
+            <div
+              class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform"
+              [class.translate-x-4]="formIsPublished()"
+            ></div>
+          </div>
+          <span class="text-sm font-medium text-zinc-700">
+            {{ formIsPublished() ? 'Published (visible on gallery page)' : 'Draft (hidden from public)' }}
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-6 pt-5 border-t border-zinc-100">
+      <button
+        (click)="saveAlbum()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-5 h-9 text-sm gap-2"
+      >
+        @if (saving()) {
+          <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+          Saving…
+        } @else {
+          <i class="fa-solid fa-floppy-disk text-xs"></i>
+          {{ editingAlbumId() ? 'Save Changes' : 'Create Album' }}
+        }
+      </button>
+      <button (click)="cancelForm()" class="shad-btn-secondary px-5 h-9 text-sm">Cancel</button>
+    </div>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════════
+     ALBUM DETAIL (manage items)
+═══════════════════════════════════════════════════════════════ -->
+@if (mode() === 'album-detail' && activeAlbum()) {
+  <!-- Item error -->
+  @if (itemError()) {
+    <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+      <span>{{ itemError() }}</span>
+    </div>
+  }
+
+  <!-- Upload indicator -->
+  @if (uploadingFile()) {
+    <div class="mb-4 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      Uploading image to storage…
+    </div>
+  }
+
+  <!-- Add video form -->
+  @if (showAddItem()) {
+    <div class="shad-card p-5 mb-6">
+      <h3 class="text-sm font-semibold text-zinc-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-link text-xs text-zinc-500"></i>
+        Add External Video
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
+          <label for="item-url" class="block text-xs font-medium text-zinc-700 mb-1">
+            Video URL <span class="text-red-500">*</span>
+            <span class="font-normal text-zinc-400 ml-1">(YouTube or Vimeo)</span>
+          </label>
+          <input
+            id="item-url"
+            type="url"
+            [ngModel]="itemUrl()"
+            (ngModelChange)="itemUrl.set($event)"
+            placeholder="https://www.youtube.com/watch?v=..."
+            class="shad-input w-full"
+          />
+        </div>
+        <div>
+          <label for="item-thumb" class="block text-xs font-medium text-zinc-700 mb-1">Custom Thumbnail URL <span class="text-zinc-400 font-normal">(optional — auto-detected for YouTube)</span></label>
+          <input
+            id="item-thumb"
+            type="url"
+            [ngModel]="itemThumbnailUrl()"
+            (ngModelChange)="itemThumbnailUrl.set($event)"
+            placeholder="https://…"
+            class="shad-input w-full"
+          />
+        </div>
+        <div>
+          <label for="item-caption" class="block text-xs font-medium text-zinc-700 mb-1">Caption <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <input
+            id="item-caption"
+            type="text"
+            [ngModel]="itemCaption()"
+            (ngModelChange)="itemCaption.set($event)"
+            placeholder="Short description…"
+            class="shad-input w-full"
+          />
+        </div>
+      </div>
+      <div class="flex gap-3 mt-4">
+        <button
+          (click)="addVideoItem()"
+          [disabled]="itemLoading()"
+          class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-8 text-sm gap-2"
+        >
+          @if (itemLoading()) {
+            <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+            Adding…
+          } @else {
+            <i class="fa-solid fa-plus text-xs"></i>
+            Add Video
+          }
+        </button>
+        <button (click)="showAddItem.set(false)" class="shad-btn-secondary px-4 h-8 text-sm">Cancel</button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (activeAlbum()!.items.length === 0 && !uploadingFile()) {
+    <div class="text-center py-16 text-zinc-400 border-2 border-dashed border-zinc-200 rounded-xl bg-white">
+      <i class="fa-solid fa-photo-film text-5xl mb-3 block"></i>
+      <p class="text-sm font-medium mb-1">No media yet</p>
+      <p class="text-xs">Upload images or add video links using the buttons above.</p>
+    </div>
+  }
+
+  <!-- Items grid -->
+  @if (activeAlbum()!.items.length > 0) {
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      @for (item of activeAlbum()!.items; track item.id) {
+        <div class="group rounded-xl overflow-hidden border border-zinc-200 bg-white relative">
+          <!-- Thumbnail -->
+          <div class="aspect-square bg-zinc-100 overflow-hidden relative">
+            @if (item.type === 'image') {
+              <img
+                [src]="item.url"
+                [alt]="item.caption ?? 'Image'"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            } @else {
+              @if (getVideoThumb(item)) {
+                <img
+                  [src]="getVideoThumb(item)!"
+                  [alt]="item.caption ?? 'Video'"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              } @else {
+                <div class="w-full h-full flex items-center justify-center text-zinc-300">
+                  <i class="fa-solid fa-film text-3xl"></i>
+                </div>
+              }
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-9 h-9 rounded-full bg-black/60 flex items-center justify-center">
+                  <i class="fa-solid fa-play text-white text-sm ml-0.5"></i>
+                </div>
+              </div>
+            }
+            <!-- Type badge -->
+            <div class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wide font-medium">
+              {{ item.type }}
+            </div>
+          </div>
+          <!-- Caption -->
+          @if (item.caption) {
+            <div class="px-2 py-1.5">
+              <p class="text-[11px] text-zinc-600 truncate">{{ item.caption }}</p>
+            </div>
+          }
+          <!-- Delete overlay -->
+          <button
+            (click)="deleteItem(item)"
+            [disabled]="deleting().has(item.id)"
+            class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/90 hover:bg-red-100 text-zinc-500 hover:text-red-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow cursor-pointer"
+            title="Delete"
+          >
+            @if (deleting().has(item.id)) {
+              <i class="fa-solid fa-spinner fa-spin text-[10px]"></i>
+            } @else {
+              <i class="fa-solid fa-xmark text-[10px]"></i>
+            }
+          </button>
+        </div>
+      }
+    </div>
+  }
+}

@@ -323,11 +323,11 @@
               <!-- Progress row -->
               @if (c.status !== 'upcoming') {
                 <div class="flex items-center gap-3 flex-wrap text-xs text-zinc-500">
-                  <span class="font-semibold text-zinc-700">{{ formatBDT(c.raised ?? 0) }} raised</span>
+                  <span class="font-semibold text-zinc-700">{{ formatBDT(c.raised) }} raised</span>
                   <span>of {{ formatBDT(c.goal) }}</span>
                   <span class="text-emerald-600 font-medium">{{ progressPercent(c) }}%</span>
                   <span>·</span>
-                  <span><i class="fa-solid fa-users text-[10px]"></i> {{ c.donors ?? 0 }} donors</span>
+                  <span><i class="fa-solid fa-users text-[10px]"></i> {{ c.donors }} donors</span>
                   @if (c.deadline) {
                     <span>·</span>
                     <span><i class="fa-regular fa-calendar text-[10px]"></i> {{ c.deadline }}</span>

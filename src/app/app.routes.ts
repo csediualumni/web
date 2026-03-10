@@ -122,6 +122,13 @@ export const routes: Routes = [
             (m) => m.AdminCampaignsComponent,
           ),
       },
+      {
+        path: 'gallery',
+        loadComponent: () =>
+          import('./admin/gallery/admin-gallery.component').then(
+            (m) => m.AdminGalleryComponent,
+          ),
+      },
     ],
   },
   {
