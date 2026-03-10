@@ -63,7 +63,7 @@
       </div>
 
       <ul class="flex-1 px-2 space-y-0.5 overflow-y-auto">
-        @for (item of navItems; track item.path) {
+        @for (item of navItems(); track item.path) {
           <li>
             <a
               [routerLink]="item.path"
@@ -94,7 +94,7 @@
     <main class="flex-1 min-w-0 overflow-y-auto">
       <div class="md:hidden bg-white border-b border-zinc-200 px-2 overflow-x-auto">
         <div class="flex -mb-px whitespace-nowrap min-w-max">
-          @for (item of navItems; track item.path) {
+          @for (item of navItems(); track item.path) {
             <a
               [routerLink]="item.path"
               routerLinkActive
