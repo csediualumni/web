@@ -39,6 +39,7 @@ export interface AchievementEntry {
 }
 
 export interface UserProfile {
+  avatar: string | null;
   displayName: string | null;
   phone: string | null;
   batch: number | null;
@@ -173,6 +174,21 @@ export class AuthService {
         if (current) {
           this.currentUser.set({ ...current, profile: data });
           localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+        }
+      }),
+    );
+  }
+
+  uploadAvatar(file: File): Observable<{ avatar: string }> {
+    const fd = new FormData();
+    fd.append('file', file);
+    return this.http.post<{ avatar: string }>(`${this.base}/me/avatar`, fd).pipe(
+      tap((res) => {
+        const current = this.currentUser();
+        if (current) {
+          const updated = { ...current, profile: { ...current.profile, avatar: res.avatar } };
+          this.currentUser.set(updated);
+          localStorage.setItem('auth_user', JSON.stringify(updated));
         }
       }),
     );

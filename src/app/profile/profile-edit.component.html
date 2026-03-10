@@ -10,12 +10,35 @@
       </nav>
 
       <div class="flex items-center gap-5">
-        <!-- Avatar initials -->
-        <div
-          class="w-20 h-20 rounded-2xl bg-blue-600 ring-4 ring-white/20 flex items-center justify-center text-3xl font-bold text-white flex-shrink-0 select-none"
-        >
-          {{ (form.get('displayName')?.value || email)?.[0]?.toUpperCase() || '?' }}
+        <!-- Avatar with upload -->
+        <div class="relative flex-shrink-0 group cursor-pointer" (click)="avatarInput.click()">
+          @if (auth.currentUser()?.profile?.avatar) {
+            <img
+              [src]="auth.currentUser()!.profile!.avatar!"
+              alt="Profile photo"
+              class="w-20 h-20 rounded-2xl object-cover ring-4 ring-white/20"
+            />
+          } @else {
+            <div
+              class="w-20 h-20 rounded-2xl bg-blue-600 ring-4 ring-white/20 flex items-center justify-center text-3xl font-bold text-white select-none"
+            >
+              {{ (form.get('displayName')?.value || email)?.[0]?.toUpperCase() || '?' }}
+            </div>
+          }
+          <div
+            class="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          >
+            @if (avatarUploading()) {
+              <i class="fa-solid fa-spinner fa-spin text-white text-xl"></i>
+            } @else {
+              <i class="fa-solid fa-camera text-white text-xl"></i>
+            }
+          </div>
+          <input #avatarInput type="file" accept="image/*" class="hidden" (change)="onAvatarChange($event)" />
         </div>
+        @if (avatarError()) {
+          <p class="text-xs text-red-300 mt-1">{{ avatarError() }}</p>
+        }
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Edit Your Profile</h1>
           <p class="text-zinc-400 text-sm mt-1">{{ email }}</p>

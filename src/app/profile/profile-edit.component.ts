@@ -87,6 +87,10 @@ export class ProfileEditComponent implements OnInit {
   achSaving = signal(false);
   achError = signal<string | null>(null);
 
+  // ── Avatar ────────────────────────────────────────────────
+  avatarUploading = signal(false);
+  avatarError = signal<string | null>(null);
+
   get user() {
     return this.auth.currentUser();
   }
@@ -393,6 +397,29 @@ export class ProfileEditComponent implements OnInit {
   setAchField(field: keyof Omit<AchievementEntry, 'id'>, value: string) {
     const d = this.achDraft();
     if (d) this.achDraft.set({ ...d, [field]: value });
+  }
+
+  onAvatarChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.avatarError.set('Only image files are allowed.');
+      return;
+    }
+    this.avatarUploading.set(true);
+    this.avatarError.set(null);
+    this.auth.uploadAvatar(file).subscribe({
+      next: () => {
+        this.avatarUploading.set(false);
+        input.value = '';
+      },
+      error: (err) => {
+        this.avatarUploading.set(false);
+        this.avatarError.set(err?.error?.message ?? 'Failed to upload photo. Please try again.');
+        input.value = '';
+      },
+    });
   }
 
   get email() {

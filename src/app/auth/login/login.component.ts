@@ -75,9 +75,9 @@ export class LoginComponent {
         this.forgotLoading.set(false);
         this.forgotSuccess.set(res.message);
       },
-      error: () => {
+      error: (err) => {
         this.forgotLoading.set(false);
-        this.forgotError.set('Something went wrong. Please try again.');
+        this.forgotError.set(err?.error?.message ?? 'Something went wrong. Please try again.');
       },
     });
   }
