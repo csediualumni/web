@@ -256,6 +256,23 @@ export class AuthService {
     return this.http.delete<void>(`${this.base}/me/achievements/${id}`);
   }
 
+  // ────────────────────────────────────────────
+  // Member ID
+  // ────────────────────────────────────────────
+
+  generateMemberId(): Observable<{ memberId: string }> {
+    return this.http.post<{ memberId: string }>(`${this.base}/me/generate-member-id`, {}).pipe(
+      tap((res) => {
+        const current = this.currentUser();
+        if (current) {
+          const updated = { ...current, memberId: res.memberId };
+          this.currentUser.set(updated);
+          localStorage.setItem('auth_user', JSON.stringify(updated));
+        }
+      }),
+    );
+  }
+
   private decodeJwt(token: string): {
     permissions?: string[];
     roles?: { id: string; name: string }[];

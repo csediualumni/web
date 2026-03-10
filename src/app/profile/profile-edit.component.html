@@ -47,6 +47,24 @@
               <i class="fa-solid fa-id-card text-emerald-400 text-[10px]"></i>
               {{ auth.currentUser()!.memberId }}
             </p>
+          } @else if (auth.isMember()) {
+            <div class="mt-2 flex flex-col gap-1">
+              <button
+                type="button"
+                (click)="generateMemberId()"
+                [disabled]="memberIdGenerating()"
+                class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-300 hover:text-amber-100 border border-amber-400/40 hover:border-amber-300/70 rounded-lg px-3 py-1 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                @if (memberIdGenerating()) {
+                  <i class="fa-solid fa-spinner fa-spin text-[10px]"></i> Generating…
+                } @else {
+                  <i class="fa-solid fa-id-card-clip text-[10px]"></i> Generate Member ID
+                }
+              </button>
+              @if (memberIdError()) {
+                <p class="text-[10px] text-red-300">{{ memberIdError() }}</p>
+              }
+            </div>
           }
         </div>
 

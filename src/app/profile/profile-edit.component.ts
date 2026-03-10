@@ -91,6 +91,10 @@ export class ProfileEditComponent implements OnInit {
   avatarUploading = signal(false);
   avatarError = signal<string | null>(null);
 
+  // ── Member ID generation ──────────────────────────────────
+  memberIdGenerating = signal(false);
+  memberIdError = signal<string | null>(null);
+
   get user() {
     return this.auth.currentUser();
   }
@@ -418,6 +422,18 @@ export class ProfileEditComponent implements OnInit {
         this.avatarUploading.set(false);
         this.avatarError.set(err?.error?.message ?? 'Failed to upload photo. Please try again.');
         input.value = '';
+      },
+    });
+  }
+
+  generateMemberId(): void {
+    this.memberIdGenerating.set(true);
+    this.memberIdError.set(null);
+    this.auth.generateMemberId().subscribe({
+      next: () => this.memberIdGenerating.set(false),
+      error: (err) => {
+        this.memberIdGenerating.set(false);
+        this.memberIdError.set(err?.error?.message ?? 'Failed to generate member ID. Please try again.');
       },
     });
   }
