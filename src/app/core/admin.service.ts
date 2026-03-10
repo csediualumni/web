@@ -59,6 +59,43 @@ export interface ImportMembersResult {
   errors: { row: number; email: string; reason: string }[];
 }
 
+export type CampaignStatus = 'active' | 'completed' | 'upcoming';
+
+export interface AdminCampaign {
+  id: number;
+  title: string;
+  tagline: string;
+  description: string;
+  goal: number;
+  raised: number;
+  donors: number;
+  status: CampaignStatus;
+  deadline: string | null;
+  category: string;
+  icon: string;
+  color: string;
+  featured: boolean;
+  impact: string[];
+  updates: string[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaveCampaignDto {
+  title: string;
+  tagline: string;
+  description: string;
+  goal: number;
+  status: CampaignStatus;
+  deadline?: string | null;
+  category: string;
+  icon: string;
+  color: string;
+  featured: boolean;
+  impact: string[];
+  updates?: string[] | null;
+}
+
 export interface NewsletterSubscription {
   id: string;
   email: string;
@@ -513,5 +550,24 @@ export class AdminService {
     const form = new FormData();
     form.append('file', file);
     return this.http.post<{ url: string }>(`${this.adminBase}/upload/image`, form);
+  }
+
+  // ── Campaigns ─────────────────────────────────────────────
+  private readonly campaignsBase = `${environment.apiUrl}/campaigns`;
+
+  adminListCampaigns(): Observable<AdminCampaign[]> {
+    return this.http.get<AdminCampaign[]>(this.campaignsBase);
+  }
+
+  adminCreateCampaign(dto: SaveCampaignDto): Observable<AdminCampaign> {
+    return this.http.post<AdminCampaign>(this.campaignsBase, dto);
+  }
+
+  adminUpdateCampaign(id: number, dto: Partial<SaveCampaignDto>): Observable<AdminCampaign> {
+    return this.http.patch<AdminCampaign>(`${this.campaignsBase}/${id}`, dto);
+  }
+
+  adminDeleteCampaign(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.campaignsBase}/${id}`);
   }
 }

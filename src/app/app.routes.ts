@@ -115,6 +115,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/events/admin-events.component').then((m) => m.AdminEventsComponent),
       },
+      {
+        path: 'campaigns',
+        loadComponent: () =>
+          import('./admin/campaigns/admin-campaigns.component').then(
+            (m) => m.AdminCampaignsComponent,
+          ),
+      },
     ],
   },
   {

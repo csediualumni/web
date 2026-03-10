@@ -1,10 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DonationsService, Campaign } from './donations.service';
-import { InvoiceService } from '../core/invoice.service';
+import { DonationsService } from './donations.service';
+import { CampaignService, Campaign } from '../core/campaign.service';
+import { InvoiceService, RecentDonor } from '../core/invoice.service';
 import { AuthService } from '../core/auth.service';
+import { forkJoin } from 'rxjs';
 
 type DonateTab = 'active' | 'completed' | 'upcoming';
 
@@ -14,13 +16,37 @@ type DonateTab = 'active' | 'completed' | 'upcoming';
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './donations.component.html',
 })
-export class DonationsComponent {
+export class DonationsComponent implements OnInit {
   readonly svc = inject(DonationsService);
+  private readonly campaignSvc = inject(CampaignService);
   private readonly inv = inject(InvoiceService);
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  // ── Tabs ──────────────────────────────────────────────────
+  // ── API data ───────────────────────────────────────────────────
+  campaigns = signal<Campaign[]>([]);
+  recentDonors = signal<RecentDonor[]>([]);
+  loading = signal(true);
+  error = signal('');
+
+  ngOnInit() {
+    forkJoin({
+      campaigns: this.campaignSvc.getAll(),
+      donors: this.inv.getRecentDonors(8),
+    }).subscribe({
+      next: ({ campaigns, donors }) => {
+        this.campaigns.set(campaigns);
+        this.recentDonors.set(donors);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to load campaign data. Please refresh the page.');
+        this.loading.set(false);
+      },
+    });
+  }
+
+  // ── Tabs ──────────────────────────────────────────────────────
   activeTab = signal<DonateTab>('active');
   readonly tabs: { key: DonateTab; label: string; icon: string }[] = [
     { key: 'active', label: 'Active Campaigns', icon: 'fa-bolt' },
@@ -28,13 +54,13 @@ export class DonationsComponent {
     { key: 'upcoming', label: 'Coming Soon', icon: 'fa-clock' },
   ];
 
-  // ── Expanded campaign details ──────────────────────────────
+  // ── Expanded campaign details ──────────────────────────────────
   expandedId = signal<number | null>(null);
   toggleExpand(id: number) {
     this.expandedId.update((prev) => (prev === id ? null : id));
   }
 
-  // ── Donation form (per campaign) ───────────────────────────
+  // ── Donation form (per campaign) ───────────────────────────────
   activeDonationId = signal<number | null>(null);
   selectedAmount = signal<number | null>(500);
   customAmount = signal('');
@@ -90,7 +116,7 @@ export class DonationsComponent {
     if (amount < 100) return;
 
     const campaignId = this.activeDonationId();
-    const campaign = this.svc.campaigns.find((c) => c.id === campaignId);
+    const campaign = this.campaigns().find((c) => c.id === campaignId);
     if (!campaign) return;
 
     this.submitting.set(true);
@@ -121,11 +147,10 @@ export class DonationsComponent {
       });
   }
 
-  // ── Computed lists ─────────────────────────────────────────
-  readonly activeCampaigns = computed(() => this.svc.getActive());
-  readonly pastCampaigns = computed(() => this.svc.getPast());
-  readonly upcomingCampaigns = computed(() => this.svc.getUpcoming());
-  readonly featuredCampaigns = computed(() => this.svc.getFeatured());
+  // ── Computed lists ─────────────────────────────────────────────
+  readonly activeCampaigns = computed(() => this.campaigns().filter((c) => c.status === 'active'));
+  readonly pastCampaigns = computed(() => this.campaigns().filter((c) => c.status === 'completed'));
+  readonly upcomingCampaigns = computed(() => this.campaigns().filter((c) => c.status === 'upcoming'));
 
   readonly visibleCampaigns = computed<Campaign[]>(() => {
     const t = this.activeTab();
@@ -134,11 +159,11 @@ export class DonationsComponent {
     return this.upcomingCampaigns();
   });
 
-  // ── Stats ─────────────────────────────────────────────────
+  // ── Stats (computed from live API data) ────────────────────────
   readonly stats = computed(() => {
-    const all = this.svc.campaigns;
-    const totalRaised = all.reduce((s, c) => s + c.raised, 0);
-    const totalDonors = all.reduce((s, c) => s + c.donors, 0);
+    const all = this.campaigns();
+    const totalRaised = all.reduce((s, c) => s + (c.raised ?? 0), 0);
+    const totalDonors = all.reduce((s, c) => s + (c.donors ?? 0), 0);
     const completedCount = all.filter((c) => c.status === 'completed').length;
     return [
       {
@@ -155,4 +180,18 @@ export class DonationsComponent {
       },
     ];
   });
+
+  // ── Helpers ────────────────────────────────────────────────────
+  formatDonorDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('en-BD', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+
+  donorInitial(donor: RecentDonor): string {
+    if (donor.isAnonymous || !donor.donorName) return '';
+    return donor.donorName.charAt(0).toUpperCase();
+  }
 }

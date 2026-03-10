@@ -1,0 +1,379 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-lg font-semibold text-zinc-900">Donation Campaigns</h1>
+    <p class="text-sm text-zinc-500 mt-0.5">Manage fundraising campaigns shown on the Donations page.</p>
+  </div>
+  @if (mode() === 'list' && auth.hasPermission('campaigns:write')) {
+    <button
+      (click)="openCreate()"
+      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
+    >
+      <i class="fa-solid fa-plus text-xs"></i>
+      New Campaign
+    </button>
+  }
+</div>
+
+<!-- Alerts -->
+@if (error()) {
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- Create / Edit Form -->
+@if (mode() === 'create' || mode() === 'edit') {
+  <div class="shad-card p-6 mb-6">
+    <h2 class="text-base font-semibold text-zinc-900 mb-5">
+      {{ mode() === 'create' ? 'New Campaign' : 'Edit Campaign' }}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- Title -->
+      <div class="sm:col-span-2">
+        <label for="cp-title" class="block text-sm font-medium text-zinc-700 mb-1">
+          Title <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="cp-title"
+          type="text"
+          [ngModel]="formTitle()"
+          (ngModelChange)="formTitle.set($event)"
+          placeholder="e.g. Alumni Scholarship Fund 2027"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Tagline -->
+      <div class="sm:col-span-2">
+        <label for="cp-tagline" class="block text-sm font-medium text-zinc-700 mb-1">
+          Tagline <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="cp-tagline"
+          type="text"
+          [ngModel]="formTagline()"
+          (ngModelChange)="formTagline.set($event)"
+          placeholder="Short headline shown under the title"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Description -->
+      <div class="sm:col-span-2">
+        <label for="cp-description" class="block text-sm font-medium text-zinc-700 mb-1">
+          Description <span class="text-red-500">*</span>
+        </label>
+        <textarea
+          id="cp-description"
+          rows="4"
+          [ngModel]="formDescription()"
+          (ngModelChange)="formDescription.set($event)"
+          placeholder="Full description of the campaign…"
+          class="shad-input w-full resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Goal -->
+      <div>
+        <label for="cp-goal" class="block text-sm font-medium text-zinc-700 mb-1">
+          Goal (BDT) <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="cp-goal"
+          type="number"
+          [ngModel]="formGoal()"
+          (ngModelChange)="formGoal.set(+$event)"
+          min="1"
+          placeholder="e.g. 1500000"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label for="cp-status" class="block text-sm font-medium text-zinc-700 mb-1">Status</label>
+        <select
+          id="cp-status"
+          [ngModel]="formStatus()"
+          (ngModelChange)="formStatus.set($event)"
+          class="shad-input w-full"
+        >
+          @for (opt of statusOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Deadline -->
+      <div>
+        <label for="cp-deadline" class="block text-sm font-medium text-zinc-700 mb-1">Deadline (display text)</label>
+        <input
+          id="cp-deadline"
+          type="text"
+          [ngModel]="formDeadline()"
+          (ngModelChange)="formDeadline.set($event)"
+          placeholder="e.g. June 30, 2027  (leave blank if none)"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label for="cp-category" class="block text-sm font-medium text-zinc-700 mb-1">
+          Category <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="cp-category"
+          type="text"
+          [ngModel]="formCategory()"
+          (ngModelChange)="formCategory.set($event)"
+          placeholder="e.g. Scholarship, Infrastructure, Relief"
+          class="shad-input w-full"
+        />
+      </div>
+
+      <!-- Icon -->
+      <div>
+        <label for="cp-icon" class="block text-sm font-medium text-zinc-700 mb-1">
+          FontAwesome Icon <span class="text-red-500">*</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <div
+            class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+            [class]="formColor() + ' text-white'"
+          >
+            <i class="fa-solid {{ formIcon() }}"></i>
+          </div>
+          <input
+            id="cp-icon"
+            type="text"
+            [ngModel]="formIcon()"
+            (ngModelChange)="formIcon.set($event)"
+            placeholder="fa-graduation-cap"
+            class="shad-input flex-1"
+          />
+        </div>
+        <p class="text-xs text-zinc-400 mt-1">
+          Use any
+          <a href="https://fontawesome.com/icons" target="_blank" class="underline">Font Awesome 6 solid</a>
+          icon name, e.g. <code>fa-graduation-cap</code>.
+        </p>
+      </div>
+
+      <!-- Colour -->
+      <div>
+        <p class="block text-sm font-medium text-zinc-700 mb-1">
+          Colour <span class="text-red-500">*</span>
+        </p>
+        <div class="flex flex-wrap gap-2">
+          @for (opt of colorOptions; track opt.value) {
+            <button
+              type="button"
+              (click)="formColor.set(opt.value)"
+              class="w-8 h-8 rounded-lg border-2 transition-all"
+              [class]="opt.value"
+              [class.border-zinc-900]="formColor() === opt.value"
+              [class.border-transparent]="formColor() !== opt.value"
+              [title]="opt.label"
+            ></button>
+          }
+        </div>
+        <p class="text-xs text-zinc-400 mt-1">Selected: <code>{{ formColor() }}</code></p>
+      </div>
+
+      <!-- Featured -->
+      <div class="sm:col-span-2">
+        <label for="cp-featured" class="flex items-center gap-2.5 cursor-pointer select-none">
+          <input
+            id="cp-featured"
+            type="checkbox"
+            [ngModel]="formFeatured()"
+            (ngModelChange)="formFeatured.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-500"
+          />
+          <span class="text-sm font-medium text-zinc-700">Featured campaign</span>
+          <span class="text-xs text-zinc-400">(shown prominently at the top of the Active tab)</span>
+        </label>
+      </div>
+
+      <!-- Impact bullets -->
+      <div class="sm:col-span-2">
+        <label for="cp-impact" class="block text-sm font-medium text-zinc-700 mb-1">Impact bullets</label>
+        <textarea
+          id="cp-impact"
+          rows="4"
+          [ngModel]="formImpact()"
+          (ngModelChange)="formImpact.set($event)"
+          placeholder="One bullet per line, e.g.:&#10;Full tuition waiver for one academic year&#10;Laptop allowance (BDT 40,000)"
+          class="shad-input w-full resize-none font-mono text-xs"
+        ></textarea>
+        <p class="text-xs text-zinc-400 mt-1">One line = one bullet in the "Where Your Money Goes" section.</p>
+      </div>
+
+      <!-- Updates -->
+      <div class="sm:col-span-2">
+        <label for="cp-updates" class="block text-sm font-medium text-zinc-700 mb-1">Progress updates</label>
+        <textarea
+          id="cp-updates"
+          rows="3"
+          [ngModel]="formUpdates()"
+          (ngModelChange)="formUpdates.set($event)"
+          placeholder="One update per line, e.g.:&#10;March 2027: 60% of goal reached!&#10;Feb 2027: Campaign launched."
+          class="shad-input w-full resize-none font-mono text-xs"
+        ></textarea>
+        <p class="text-xs text-zinc-400 mt-1">Leave blank if no updates yet.</p>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-5">
+      <button
+        (click)="save()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-5 h-9 text-sm gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        @if (saving()) {
+          <i class="fa-solid fa-spinner animate-spin text-xs"></i>
+          Saving…
+        } @else {
+          <i class="fa-solid fa-floppy-disk text-xs"></i>
+          {{ mode() === 'create' ? 'Create Campaign' : 'Save Changes' }}
+        }
+      </button>
+      <button
+        (click)="cancelForm()"
+        class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+}
+
+<!-- List -->
+@if (mode() === 'list') {
+  @if (loading()) {
+    <div class="space-y-3">
+      @for (_ of [1, 2, 3]; track $index) {
+        <div class="shad-card p-4 animate-pulse">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex-1 space-y-2">
+              <div class="h-4 w-24 bg-zinc-100 rounded"></div>
+              <div class="h-5 w-56 bg-zinc-100 rounded"></div>
+              <div class="h-3 w-full bg-zinc-100 rounded"></div>
+            </div>
+            <div class="flex gap-2 shrink-0">
+              <div class="h-8 w-16 bg-zinc-100 rounded"></div>
+              <div class="h-8 w-16 bg-zinc-100 rounded"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (campaigns().length === 0) {
+    <div class="shad-card flex flex-col items-center justify-center py-16 text-center">
+      <div class="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center mb-3">
+        <i class="fa-solid fa-hand-holding-heart text-zinc-400 text-lg"></i>
+      </div>
+      <p class="text-sm font-medium text-zinc-700">No campaigns yet</p>
+      <p class="text-xs text-zinc-400 mt-1">Create the first donation campaign.</p>
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for (c of campaigns(); track c.id) {
+        <div class="shad-card p-4 hover:shadow-sm transition-shadow">
+          <div class="flex items-start gap-4">
+            <!-- Icon -->
+            <div
+              class="w-11 h-11 rounded-xl flex items-center justify-center text-white shrink-0"
+              [class]="c.color"
+            >
+              <i class="fa-solid {{ c.icon }}"></i>
+            </div>
+
+            <!-- Details -->
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span class="text-sm font-semibold text-zinc-900">{{ c.title }}</span>
+                @if (c.featured) {
+                  <span class="text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded">
+                    <i class="fa-solid fa-star text-[9px]"></i> Featured
+                  </span>
+                }
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full {{ statusBadgeClass(c.status) }}">
+                  {{ c.status === 'active' ? 'Active' : c.status === 'completed' ? 'Completed' : 'Coming Soon' }}
+                </span>
+                <span class="text-xs text-zinc-400 bg-zinc-100 rounded px-1.5 py-0.5">{{ c.category }}</span>
+              </div>
+              <p class="text-xs text-zinc-500 italic mb-2">{{ c.tagline }}</p>
+
+              <!-- Progress row -->
+              @if (c.status !== 'upcoming') {
+                <div class="flex items-center gap-3 flex-wrap text-xs text-zinc-500">
+                  <span class="font-semibold text-zinc-700">{{ formatBDT(c.raised ?? 0) }} raised</span>
+                  <span>of {{ formatBDT(c.goal) }}</span>
+                  <span class="text-emerald-600 font-medium">{{ progressPercent(c) }}%</span>
+                  <span>·</span>
+                  <span><i class="fa-solid fa-users text-[10px]"></i> {{ c.donors ?? 0 }} donors</span>
+                  @if (c.deadline) {
+                    <span>·</span>
+                    <span><i class="fa-regular fa-calendar text-[10px]"></i> {{ c.deadline }}</span>
+                  }
+                </div>
+                <!-- Mini progress bar -->
+                <div class="mt-2 h-1.5 w-full max-w-xs rounded-full bg-zinc-100 overflow-hidden">
+                  <div
+                    class="h-full rounded-full bg-emerald-500 transition-all"
+                    [style.width.%]="progressPercent(c)"
+                  ></div>
+                </div>
+              } @else {
+                @if (c.deadline) {
+                  <p class="text-xs text-amber-600"><i class="fa-solid fa-clock text-[10px]"></i> {{ c.deadline }}</p>
+                }
+              }
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-2 shrink-0">
+              @if (auth.hasPermission('campaigns:write')) {
+                <button
+                  (click)="openEdit(c)"
+                  class="shad-btn-ghost text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 h-8 px-3 text-xs gap-1.5"
+                >
+                  <i class="fa-solid fa-pen text-[11px]"></i>
+                  Edit
+                </button>
+                <button
+                  (click)="delete(c)"
+                  [disabled]="isDeleting(c.id)"
+                  class="shad-btn-ghost text-red-500 hover:text-red-700 hover:bg-red-50 h-8 px-3 text-xs gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  @if (isDeleting(c.id)) {
+                    <i class="fa-solid fa-spinner animate-spin text-[11px]"></i>
+                  } @else {
+                    <i class="fa-solid fa-trash text-[11px]"></i>
+                  }
+                  Delete
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}

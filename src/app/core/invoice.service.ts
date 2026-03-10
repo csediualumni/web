@@ -57,6 +57,15 @@ export interface SubmitPaymentDto {
   senderBkash?: string;
 }
 
+export interface RecentDonor {
+  donorName: string | null;
+  isAnonymous: boolean;
+  totalAmount: number;
+  campaignTitle: string | null;
+  createdAt: string;
+  metadata: Record<string, unknown> | null;
+}
+
 // ── Helpers ───────────────────────────────────────────────────────
 
 export function paidAmount(invoice: Invoice): number {
@@ -91,7 +100,9 @@ export class InvoiceService {
   getById(id: string): Observable<Invoice> {
     return this.http.get<Invoice>(`${this.base}/${id}`);
   }
-
+  getRecentDonors(limit = 8): Observable<RecentDonor[]> {
+    return this.http.get<RecentDonor[]>(`${this.base}/donations/recent?limit=${limit}`);
+  }
   submitPayment(invoiceId: string, dto: SubmitPaymentDto): Observable<Invoice> {
     return this.http.post<Invoice>(`${this.base}/${invoiceId}/payments`, dto);
   }

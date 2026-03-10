@@ -23,6 +23,7 @@ export class AdminComponent {
     { label: 'History / Milestones', path: 'milestones', icon: 'fa-timeline' },
     { label: 'Committees', path: 'committees', icon: 'fa-crown' },
     { label: 'Events', path: 'events', icon: 'fa-calendar-days' },
+    { label: 'Campaigns', path: 'campaigns', icon: 'fa-hand-holding-heart' },
   ];
 
   readonly auth = inject(AuthService);
