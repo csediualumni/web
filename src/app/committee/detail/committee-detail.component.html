@@ -87,14 +87,22 @@
           class="mb-8 rounded-2xl bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/70 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 shadow-sm"
         >
           <a [routerLink]="['/alumni', president.user.id]" class="flex-shrink-0">
-            <div
-              [class]="
-                'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' +
-                colorFor(president.user.id)
-              "
-            >
-              {{ initialsFor(president.user.displayName, president.user.email) }}
-            </div>
+            @if (president.user.avatar) {
+              <img
+                [src]="president.user.avatar"
+                [alt]="president.user.displayName ?? president.user.email"
+                class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform"
+              />
+            } @else {
+              <div
+                [class]="
+                  'w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl ring-4 ring-amber-300/60 shadow-lg cursor-pointer hover:scale-105 transition-transform ' +
+                  colorFor(president.user.id)
+                "
+              >
+                {{ initialsFor(president.user.displayName, president.user.email) }}
+              </div>
+            }
           </a>
           <div class="flex-1 min-w-0">
             <div
@@ -146,14 +154,22 @@
             class="group flex flex-col bg-white border border-zinc-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer"
           >
             <div class="flex items-start gap-3 mb-3">
-              <div
-                [class]="
-                  'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' +
-                  colorFor(entry.user.id)
-                "
-              >
-                {{ initialsFor(entry.user.displayName, entry.user.email) }}
-              </div>
+              @if (entry.user.avatar) {
+                <img
+                  [src]="entry.user.avatar"
+                  [alt]="entry.user.displayName ?? entry.user.email"
+                  class="w-12 h-12 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
+                />
+              } @else {
+                <div
+                  [class]="
+                    'w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0 group-hover:scale-105 transition-transform ' +
+                    colorFor(entry.user.id)
+                  "
+                >
+                  {{ initialsFor(entry.user.displayName, entry.user.email) }}
+                </div>
+              }
               <div class="min-w-0 flex-1 pt-0.5">
                 <span
                   class="inline-block text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-0.5 leading-none"

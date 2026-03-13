@@ -291,14 +291,22 @@
             [routerLink]="['/alumni', entry.user.id]"
             class="shad-card p-6 text-center hover:shadow-md transition-shadow group cursor-pointer"
           >
-            <div
-              [class]="
-                'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl text-white group-hover:scale-110 transition-transform ' +
-                colorFor(entry.user.id)
-              "
-            >
-              {{ initialsFor(entry.user.displayName, entry.user.email) }}
-            </div>
+            @if (entry.user.avatar) {
+              <img
+                [src]="entry.user.avatar"
+                [alt]="entry.user.displayName ?? entry.user.email"
+                class="w-16 h-16 rounded-full object-cover mx-auto mb-4 group-hover:scale-110 transition-transform"
+              />
+            } @else {
+              <div
+                [class]="
+                  'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-xl text-white group-hover:scale-110 transition-transform ' +
+                  colorFor(entry.user.id)
+                "
+              >
+                {{ initialsFor(entry.user.displayName, entry.user.email) }}
+              </div>
+            }
             <h3
               class="text-sm font-semibold text-zinc-900 mb-0.5 group-hover:text-blue-700 transition-colors"
             >

@@ -78,4 +78,8 @@ export class NavbarComponent {
   get userEmail(): string {
     return this.auth.currentUser()?.email ?? '';
   }
+
+  get userAvatar(): string | null {
+    return this.auth.currentUser()?.profile?.avatar ?? null;
+  }
 }

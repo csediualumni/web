@@ -48,6 +48,7 @@ export interface AlumnusExperience {
 export interface AlumnusMember {
   id: string;
   name: string;
+  avatar: string | null;
   memberId: string | null;
   batch: number | null;
   industry: string | null;
@@ -102,6 +103,7 @@ function toAlumnusMember(u: PublicUser): AlumnusMember {
   return {
     id: u.id,
     name: u.displayName || u.email,
+    avatar: u.avatar ?? null,
     memberId: u.memberId,
     batch: u.batch,
     industry: u.industry,
@@ -145,7 +147,7 @@ export class AlumniService {
     .get<PublicUser[]>(`${environment.apiUrl}/users`)
     .pipe(
       map((users) => users.map(toAlumnusMember)),
-      shareReplay(1),
+      shareReplay({ bufferSize: 1, refCount: true }),
       catchError(() => of([])),
     );
 }

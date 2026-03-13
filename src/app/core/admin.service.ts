@@ -108,6 +108,18 @@ export interface AdminUser {
   displayName: string | null;
   avatar: string | null;
   googleId: string | null;
+  memberId: string | null;
+  phone: string | null;
+  batch: number | null;
+  bio: string | null;
+  jobTitle: string | null;
+  company: string | null;
+  industry: string | null;
+  city: string | null;
+  country: string | null;
+  skills: string[] | null;
+  openToMentoring: boolean;
+  profileVisibility: boolean;
   createdAt: string;
   updatedAt: string;
   userRoles: { role: { id: string; name: string } }[];
@@ -433,6 +445,33 @@ export class AdminService {
 
   removeUserRole(userId: string, roleId: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/users/${userId}/roles/${roleId}`);
+  }
+
+  updateUserProfile(
+    userId: string,
+    dto: {
+      displayName?: string;
+      phone?: string;
+      batch?: number;
+      bio?: string;
+      jobTitle?: string;
+      company?: string;
+      industry?: string;
+      city?: string;
+      country?: string;
+      skills?: string[];
+      openToMentoring?: boolean;
+      profileVisibility?: boolean;
+    },
+  ): Observable<AdminUser> {
+    return this.http.patch<AdminUser>(`${this.adminBase}/users/${userId}`, dto);
+  }
+
+  generateMemberIdForUser(userId: string): Observable<{ memberId: string }> {
+    return this.http.post<{ memberId: string }>(
+      `${this.adminBase}/users/${userId}/generate-member-id`,
+      {},
+    );
   }
 
   // ── Roles ──────────────────────────────────────────────

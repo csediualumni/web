@@ -87,13 +87,23 @@ export class AuthService {
   register(email: string, password: string): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.base}/register`, { email, password })
-      .pipe(tap((res) => this.persistSession(res)));
+      .pipe(
+        tap((res) => {
+          this.persistSession(res);
+          this.loadProfile().subscribe({ error: () => undefined });
+        }),
+      );
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.base}/login`, { email, password })
-      .pipe(tap((res) => this.persistSession(res)));
+      .pipe(
+        tap((res) => {
+          this.persistSession(res);
+          this.loadProfile().subscribe({ error: () => undefined });
+        }),
+      );
   }
 
   forgotPassword(email: string): Observable<{ message: string }> {
@@ -127,6 +137,7 @@ export class AuthService {
       },
     };
     this.persistSession(res);
+    this.loadProfile().subscribe({ error: () => undefined });
   }
 
   // ──────────────────────────────────────────────

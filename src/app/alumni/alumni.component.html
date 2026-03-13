@@ -203,13 +203,21 @@
           >
             <!-- Avatar + name -->
             <div class="flex items-start gap-3">
-              <div
-                class="w-12 h-12 rounded-full {{
-                  member.color
-                }} flex items-center justify-center text-white font-bold text-base flex-shrink-0"
-              >
-                {{ member.initials }}
-              </div>
+              @if (member.avatar) {
+                <img
+                  [src]="member.avatar"
+                  [alt]="member.name"
+                  class="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                />
+              } @else {
+                <div
+                  class="w-12 h-12 rounded-full {{
+                    member.color
+                  }} flex items-center justify-center text-white font-bold text-base flex-shrink-0"
+                >
+                  {{ member.initials }}
+                </div>
+              }
               <div class="min-w-0">
                 <p class="text-sm font-semibold text-zinc-900 leading-tight truncate">
                   {{ member.name }}
