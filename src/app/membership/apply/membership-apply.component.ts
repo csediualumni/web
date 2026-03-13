@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ export class MembershipApplyComponent implements OnInit {
   error = signal('');
 
   readonly auth = inject(AuthService);
+  readonly memberId = computed(() => this.auth.currentUser()?.memberId ?? null);
   private readonly membership = inject(MembershipService);
   private readonly router = inject(Router);
 

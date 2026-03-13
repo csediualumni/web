@@ -106,7 +106,10 @@ export class InvoiceService {
   submitPayment(invoiceId: string, dto: SubmitPaymentDto): Observable<Invoice> {
     return this.http.post<Invoice>(`${this.base}/${invoiceId}/payments`, dto);
   }
-
+  // ── User self-service ─────────────────────────────
+  getMyInvoices(): Observable<Invoice[]> {
+    return this.http.get<Invoice[]>(`${this.base}/my`);
+  }
   // ── Admin ─────────────────────────────────────────────────────
   listAll(page = 1, limit = 20): Observable<Invoice[]> {
     return this.http.get<Invoice[]>(`${this.base}?page=${page}&limit=${limit}`);

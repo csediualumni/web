@@ -721,7 +721,10 @@ export class AdminService {
   getMyRsvp(id: string): Observable<EventRsvp | null> {
     return this.http.get<EventRsvp | null>(`${this.eventsBase}/${id}/rsvp`);
   }
-
+  /** Returns all RSVPs for the currently authenticated user (with embedded event). */
+  getMyRsvps(): Observable<(EventRsvp & { event: ApiEvent })[]> {
+    return this.http.get<(EventRsvp & { event: ApiEvent })[]>(`${this.eventsBase}/my-rsvps`);
+  }
   // ── Events (admin) ───────────────────────────────────
   adminListEvents(): Observable<ApiEvent[]> {
     return this.http.get<ApiEvent[]>(`${this.adminBase}/events`);
@@ -879,6 +882,11 @@ export class AdminService {
 
   listMentorApplications(): Observable<AdminMentorApplication[]> {
     return this.http.get<AdminMentorApplication[]>(`${this.mentorsBase}/admin/applications`);
+  }
+
+  /** Returns the current user's own mentor/mentee application (or null if none). */
+  getMyMentorApplication(): Observable<AdminMentorApplication | null> {
+    return this.http.get<AdminMentorApplication | null>(`${this.mentorsBase}/my-application`);
   }
 
   updateApplicationStatus(id: string, status: ApplicationStatus): Observable<AdminMentorApplication> {

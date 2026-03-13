@@ -1,0 +1,54 @@
+<h1 class="text-xl font-bold text-zinc-900 mb-1">My Invoices</h1>
+<p class="text-sm text-zinc-500 mb-6">All invoices linked to your account.</p>
+
+@if (loading()) {
+  <div class="flex items-center gap-2 text-zinc-400 text-sm py-8">
+    <i class="fa-solid fa-spinner animate-spin"></i>
+    <span>Loading…</span>
+  </div>
+} @else if (error()) {
+  <div class="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
+    <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ error() }}
+  </div>
+} @else if (invoices().length === 0) {
+  <div class="text-center py-16 text-zinc-400">
+    <i class="fa-solid fa-file-invoice-dollar text-4xl mb-3 block"></i>
+    <p class="text-sm">No invoices yet.</p>
+  </div>
+} @else {
+  <ul class="space-y-3">
+    @for (inv of invoices(); track inv.id) {
+      <li class="bg-white rounded-xl border border-zinc-200 px-4 py-4 flex items-start gap-4">
+        <div class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid {{ typeIcon(inv.type) }} text-zinc-500 text-sm"></i>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap mb-0.5">
+            <p class="text-sm font-semibold text-zinc-800 truncate">{{ inv.description }}</p>
+            <span class="text-[10px] font-medium uppercase tracking-wide text-zinc-400 bg-zinc-100 px-1.5 py-0.5 rounded">
+              {{ typeLabel(inv.type) }}
+            </span>
+          </div>
+          <p class="text-xs text-zinc-400">{{ inv.createdAt | date:'mediumDate' }}</p>
+        </div>
+
+        <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ statusClass(inv.status) }}">
+            {{ inv.status | titlecase }}
+          </span>
+          <p class="text-sm font-semibold text-zinc-800">{{ formatBDT(inv.totalAmount) }}</p>
+          @if (dueAmount(inv) > 0 && inv.status !== 'cancelled' && inv.status !== 'refunded') {
+            <a
+              [routerLink]="['/payment']"
+              [queryParams]="{ invoiceId: inv.id }"
+              class="text-xs text-blue-600 hover:underline font-medium"
+            >
+              Pay {{ formatBDT(dueAmount(inv)) }} due →
+            </a>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}

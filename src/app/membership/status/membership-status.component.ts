@@ -29,7 +29,7 @@ export class MembershipStatusComponent implements OnInit {
         this.loading.set(false);
         if (err.status === 404) {
           // No application yet — send to apply page
-          this.router.navigate(['/membership/apply']);
+          this.router.navigate(['/my/membership/apply']);
         } else {
           this.error.set('Failed to load your membership status. Please try again.');
         }

@@ -1,0 +1,86 @@
+<h1 class="text-xl font-bold text-zinc-900 mb-1">Mentorship</h1>
+<p class="text-sm text-zinc-500 mb-6">Track your mentor or mentee application.</p>
+
+@if (loading()) {
+  <div class="flex items-center gap-2 text-zinc-400 text-sm py-8">
+    <i class="fa-solid fa-spinner animate-spin"></i>
+    <span>Loading…</span>
+  </div>
+} @else if (error()) {
+  <div class="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
+    <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ error() }}
+  </div>
+} @else if (!application()) {
+  <!-- No application -->
+  <div class="bg-white rounded-xl border border-zinc-200 p-6 text-center">
+    <div class="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-4">
+      <i class="fa-solid fa-chalkboard-user text-purple-400 text-2xl"></i>
+    </div>
+    <h2 class="text-base font-semibold text-zinc-800 mb-1">No application yet</h2>
+    <p class="text-sm text-zinc-500 mb-5 max-w-sm mx-auto">
+      Join the community as a mentor sharing your expertise, or as a mentee looking to grow.
+    </p>
+    <a
+      routerLink="/mentorship"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 text-white text-sm font-medium hover:bg-zinc-700 transition-colors"
+    >
+      <i class="fa-solid fa-arrow-right text-xs"></i>
+      Explore Mentorship
+    </a>
+  </div>
+} @else {
+  <!-- Application exists -->
+  <div class="bg-white rounded-xl border border-zinc-200 p-6">
+    <!-- Status banner -->
+    <div class="flex items-center gap-3 p-3 rounded-lg border {{ statusClass(application()!.status) }} mb-6">
+      <i class="fa-solid {{ statusIcon(application()!.status) }} text-lg"></i>
+      <div>
+        <p class="text-sm font-semibold">{{ statusLabel(application()!.status) }}</p>
+        <p class="text-xs opacity-75">
+          @switch (application()!.status) {
+            @case ('pending') { Your application is in the queue. We'll review it soon. }
+            @case ('reviewing') { Our team is currently reviewing your application. }
+            @case ('accepted') { Congratulations! Your application has been accepted. }
+            @case ('rejected') { Unfortunately your application was not accepted at this time. }
+          }
+        </p>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <dl class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:gap-4">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Name</dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.name }}</dd>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:gap-4">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Type</dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0 capitalize">{{ application()!.type }}</dd>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:gap-4">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Area</dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.area }}</dd>
+      </div>
+      <div class="flex flex-col sm:flex-row sm:gap-4">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Goals</dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0 leading-relaxed">{{ application()!.goals }}</dd>
+      </div>
+      @if (application()!.batch) {
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Batch</dt>
+          <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.batch }}</dd>
+        </div>
+      }
+      <div class="flex flex-col sm:flex-row sm:gap-4">
+        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Applied</dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.createdAt | date:'mediumDate' }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="mt-4">
+    <a routerLink="/mentorship" class="text-sm text-blue-600 hover:underline font-medium">
+      <i class="fa-solid fa-people-arrows mr-1"></i>View mentorship community →
+    </a>
+  </div>
+}

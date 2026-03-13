@@ -134,6 +134,14 @@
                   Dashboard
                 </a>
                 <a
+                  routerLink="/my"
+                  (click)="userDropdownOpen.set(false)"
+                  class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+                >
+                  <i class="fa-solid fa-user-circle w-4 text-center text-zinc-400"></i>
+                  My Account
+                </a>
+                <a
                   routerLink="/manage"
                   (click)="userDropdownOpen.set(false)"
                   class="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
@@ -225,6 +233,14 @@
             >
               <i class="fa-solid fa-gauge-high w-4 text-center text-zinc-400"></i>
               Dashboard
+            </a>
+            <a
+              routerLink="/my"
+              (click)="closeMobileMenu()"
+              class="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+            >
+              <i class="fa-solid fa-user-circle w-4 text-center text-zinc-400"></i>
+              My Account
             </a>
             <a
               routerLink="/manage"

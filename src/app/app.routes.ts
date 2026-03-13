@@ -41,30 +41,69 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
+  // ── Legacy redirects so old bookmarks keep working ───────────────
+  { path: 'profile', redirectTo: '/my/profile', pathMatch: 'full' },
+  { path: 'membership/apply', redirectTo: '/my/membership', pathMatch: 'full' },
+  { path: 'membership/status', redirectTo: '/my/membership', pathMatch: 'full' },
+  { path: 'membership', redirectTo: '/my/membership', pathMatch: 'full' },
+  // ── My Account portal ────────────────────────────────────────────
   {
-    path: 'membership/apply',
-    title: 'Apply for Membership',
+    path: 'my',
+    title: 'My Account',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./membership/apply/membership-apply.component').then(
-        (m) => m.MembershipApplyComponent,
-      ),
-  },
-  {
-    path: 'membership/status',
-    title: 'Membership Status',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./membership/status/membership-status.component').then(
-        (m) => m.MembershipStatusComponent,
-      ),
-  },
-  {
-    path: 'profile',
-    title: 'Edit Profile',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./profile/profile-edit.component').then((m) => m.ProfileEditComponent),
+      import('./my-account/my-account.component').then((m) => m.MyAccountComponent),
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      {
+        path: 'overview',
+        title: 'Overview',
+        loadComponent: () =>
+          import('./my-account/overview/my-overview.component').then((m) => m.MyOverviewComponent),
+      },
+      {
+        path: 'profile',
+        title: 'Edit Profile',
+        loadComponent: () =>
+          import('./profile/profile-edit.component').then((m) => m.ProfileEditComponent),
+      },
+      {
+        path: 'membership',
+        title: 'Membership',
+        loadComponent: () =>
+          import('./membership/status/membership-status.component').then(
+            (m) => m.MembershipStatusComponent,
+          ),
+      },
+      {
+        path: 'membership/apply',
+        title: 'Apply for Membership',
+        loadComponent: () =>
+          import('./membership/apply/membership-apply.component').then(
+            (m) => m.MembershipApplyComponent,
+          ),
+      },
+      {
+        path: 'invoices',
+        title: 'My Invoices',
+        loadComponent: () =>
+          import('./my-account/invoices/my-invoices.component').then(
+            (m) => m.MyInvoicesComponent,
+          ),
+      },
+      {
+        path: 'events',
+        title: 'My Events',
+        loadComponent: () =>
+          import('./my-account/events/my-events.component').then((m) => m.MyEventsComponent),
+      },
+      {
+        path: 'mentor',
+        title: 'Mentorship Application',
+        loadComponent: () =>
+          import('./my-account/mentor/my-mentor.component').then((m) => m.MyMentorComponent),
+      },
+    ],
   },
   {
     path: 'manage',
