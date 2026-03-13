@@ -31,7 +31,7 @@
       <div class="lg:col-span-2 mb-12 lg:mb-0">
         <h2 class="text-xl font-bold text-zinc-900 mb-6">Contact Information</h2>
         <div class="space-y-4">
-          @for (info of contactInfo; track info.label) {
+          @for (info of contactInfo(); track info.label) {
             <div class="flex items-start gap-4 p-4 rounded-xl border border-zinc-100 bg-zinc-50">
               <div
                 class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -59,47 +59,79 @@
         </div>
 
         <!-- Social -->
-        <div class="mt-8">
-          <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Follow Us</p>
-          <div class="flex items-center gap-3">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener"
-              aria-label="Facebook"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
-            >
-              <i class="fa-brands fa-facebook-f text-sm"></i>
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener"
-              aria-label="LinkedIn"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
-            >
-              <i class="fa-brands fa-linkedin-in text-sm"></i>
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener"
-              aria-label="Twitter / X"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
-            >
-              <i class="fa-brands fa-x-twitter text-sm"></i>
-            </a>
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noopener"
-              aria-label="YouTube"
-              class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
-            >
-              <i class="fa-brands fa-youtube text-sm"></i>
-            </a>
+        @if (siteConfig.facebookUrl() || siteConfig.linkedinUrl() || siteConfig.twitterUrl() || siteConfig.instagramUrl() || siteConfig.youtubeUrl() || siteConfig.githubUrl()) {
+          <div class="mt-8">
+            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">Follow Us</p>
+            <div class="flex items-center gap-3">
+              @if (siteConfig.facebookUrl()) {
+                <a
+                  [href]="siteConfig.facebookUrl()"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Facebook"
+                  class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-facebook-f text-sm"></i>
+                </a>
+              }
+              @if (siteConfig.linkedinUrl()) {
+                <a
+                  [href]="siteConfig.linkedinUrl()"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="LinkedIn"
+                  class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-linkedin-in text-sm"></i>
+                </a>
+              }
+              @if (siteConfig.twitterUrl()) {
+                <a
+                  [href]="siteConfig.twitterUrl()"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Twitter / X"
+                  class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-x-twitter text-sm"></i>
+                </a>
+              }
+              @if (siteConfig.instagramUrl()) {
+                <a
+                  [href]="siteConfig.instagramUrl()"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Instagram"
+                  class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-instagram text-sm"></i>
+                </a>
+              }
+              @if (siteConfig.youtubeUrl()) {
+                <a
+                  [href]="siteConfig.youtubeUrl()"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="YouTube"
+                  class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-youtube text-sm"></i>
+                </a>
+              }
+              @if (siteConfig.githubUrl()) {
+                <a
+                  [href]="siteConfig.githubUrl()"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="GitHub"
+                  class="w-9 h-9 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-blue-700 hover:text-white transition-colors"
+                >
+                  <i class="fa-brands fa-github text-sm"></i>
+                </a>
+              }
+            </div>
           </div>
-        </div>
+        }
       </div>
 
       <!-- Right: contact form -->

@@ -30,6 +30,7 @@ export class AdminComponent {
     { label: 'Mentors', path: 'mentors', icon: 'fa-chalkboard-user', permission: 'mentors:read' },
     { label: 'Scholarships', path: 'scholarships', icon: 'fa-graduation-cap', permission: 'scholarships:read' },
     { label: 'Job Board', path: 'jobs', icon: 'fa-briefcase', permission: 'jobs:read' },
+    { label: 'Site Config', path: 'config', icon: 'fa-gear', permission: 'config:edit' },
   ];
 
   readonly auth = inject(AuthService);

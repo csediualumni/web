@@ -269,7 +269,7 @@
                     <div>
                       <p class="text-xs text-zinc-500">Association bKash Number</p>
                       <p class="text-xl font-extrabold text-zinc-900 tracking-wide font-mono">
-                        {{ bkashNumber }}
+                        {{ siteConfig.bkashNumber() ?? '—' }}
                       </p>
                       <p class="text-xs text-zinc-500 mt-0.5">
                         Account Type: <strong>Personal</strong>
@@ -283,7 +283,7 @@
                     </li>
                     <li class="flex items-start gap-2">
                       <span class="font-bold text-emerald-700 flex-shrink-0">2.</span>
-                      Enter the number: <strong>{{ bkashNumber }}</strong>
+                      Enter the number: <strong>{{ siteConfig.bkashNumber() ?? '—' }}</strong>
                     </li>
                     <li class="flex items-start gap-2">
                       <span class="font-bold text-emerald-700 flex-shrink-0">3.</span>

@@ -9,6 +9,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
+import { SiteConfigService } from '../../core/site-config.service';
 
 function passwordStrength(control: AbstractControl): ValidationErrors | null {
   const v: string = control.value ?? '';
@@ -28,6 +29,7 @@ export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  readonly siteConfig = inject(SiteConfigService);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],

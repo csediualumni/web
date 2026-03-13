@@ -1,0 +1,288 @@
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-lg font-semibold text-zinc-900">Site Configuration</h1>
+    <p class="text-sm text-zinc-500 mt-0.5">Manage branding, contact info, and social links.</p>
+  </div>
+</div>
+
+<!-- Alerts -->
+@if (error()) {
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
+    <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (success()) {
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
+    <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
+    <span>{{ success() }}</span>
+  </div>
+}
+
+<!-- ── Branding ─────────────────────────────────────────────── -->
+<div class="shad-card p-6 mb-6">
+  <h2 class="text-base font-semibold text-zinc-900 mb-1">Branding</h2>
+  <p class="text-sm text-zinc-500 mb-5">Upload a logo and favicon. Changes apply site-wide immediately.</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+    <!-- Logo -->
+    <div>
+      <p class="text-sm font-medium text-zinc-700 mb-2">Logo</p>
+      @if (logoPreview()) {
+        <img
+          [src]="logoPreview()"
+          alt="Logo preview"
+          class="h-16 w-auto mb-3 rounded-md border border-zinc-200 p-1 bg-white"
+        />
+      } @else {
+        <div
+          class="h-16 w-32 mb-3 rounded-md border border-dashed border-zinc-300 flex items-center justify-center text-zinc-400 bg-zinc-50"
+        >
+          <i class="fa-solid fa-image text-xl"></i>
+        </div>
+      }
+      <label
+        for="logo-upload"
+        class="inline-flex items-center gap-2 px-3 h-8 text-sm font-medium rounded-md border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 cursor-pointer transition-colors"
+        [class.opacity-50]="uploadingLogo()"
+        [class.pointer-events-none]="uploadingLogo()"
+      >
+        @if (uploadingLogo()) {
+          <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+          Uploading…
+        } @else {
+          <i class="fa-solid fa-upload text-xs"></i>
+          Upload logo
+        }
+      </label>
+      <input
+        id="logo-upload"
+        type="file"
+        accept="image/*"
+        class="sr-only"
+        (change)="onLogoSelected($event)"
+        [disabled]="uploadingLogo()"
+      />
+      <p class="mt-1.5 text-xs text-zinc-400">PNG or SVG recommended. Transparent background.</p>
+    </div>
+
+    <!-- Favicon -->
+    <div>
+      <p class="text-sm font-medium text-zinc-700 mb-2">Favicon</p>
+      @if (faviconPreview()) {
+        <img
+          [src]="faviconPreview()"
+          alt="Favicon preview"
+          class="h-16 w-auto mb-3 rounded-md border border-zinc-200 p-1 bg-white"
+        />
+      } @else {
+        <div
+          class="h-16 w-32 mb-3 rounded-md border border-dashed border-zinc-300 flex items-center justify-center text-zinc-400 bg-zinc-50"
+        >
+          <i class="fa-solid fa-image text-xl"></i>
+        </div>
+      }
+      <label
+        for="favicon-upload"
+        class="inline-flex items-center gap-2 px-3 h-8 text-sm font-medium rounded-md border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 cursor-pointer transition-colors"
+        [class.opacity-50]="uploadingFavicon()"
+        [class.pointer-events-none]="uploadingFavicon()"
+      >
+        @if (uploadingFavicon()) {
+          <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+          Uploading…
+        } @else {
+          <i class="fa-solid fa-upload text-xs"></i>
+          Upload favicon
+        }
+      </label>
+      <input
+        id="favicon-upload"
+        type="file"
+        accept="image/*"
+        class="sr-only"
+        (change)="onFaviconSelected($event)"
+        [disabled]="uploadingFavicon()"
+      />
+      <p class="mt-1.5 text-xs text-zinc-400">PNG or ICO recommended. 32×32 or 64×64 px.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Contact Information ──────────────────────────────────── -->
+<div class="shad-card p-6 mb-6">
+  <h2 class="text-base font-semibold text-zinc-900 mb-1">Contact Information</h2>
+  <p class="text-sm text-zinc-500 mb-5">Shown on the contact page and in footer.</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="cfg-email" class="block text-sm font-medium text-zinc-700 mb-1"
+        >Support Email</label
+      >
+      <input
+        id="cfg-email"
+        type="text"
+        [ngModel]="supportEmail()"
+        (ngModelChange)="supportEmail.set($event)"
+        placeholder="support@example.com"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-phone" class="block text-sm font-medium text-zinc-700 mb-1"
+        >Phone Number</label
+      >
+      <input
+        id="cfg-phone"
+        type="text"
+        [ngModel]="supportPhone()"
+        (ngModelChange)="supportPhone.set($event)"
+        placeholder="+880 1234 567890"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-bkash" class="block text-sm font-medium text-zinc-700 mb-1"
+        >bKash Number</label
+      >
+      <input
+        id="cfg-bkash"
+        type="text"
+        [ngModel]="bkashNumber()"
+        (ngModelChange)="bkashNumber.set($event)"
+        placeholder="+880 1234 567890"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-location" class="block text-sm font-medium text-zinc-700 mb-1"
+        >Location</label
+      >
+      <input
+        id="cfg-location"
+        type="text"
+        [ngModel]="location()"
+        (ngModelChange)="location.set($event)"
+        placeholder="Dhaka, Bangladesh"
+        class="shad-input w-full"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- ── Social Links ─────────────────────────────────────────── -->
+<div class="shad-card p-6 mb-6">
+  <h2 class="text-base font-semibold text-zinc-900 mb-1">Social Links</h2>
+  <p class="text-sm text-zinc-500 mb-5">Displayed in the site footer. Leave blank to hide.</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label for="cfg-facebook" class="block text-sm font-medium text-zinc-700 mb-1">
+        <i class="fa-brands fa-facebook mr-1.5 text-blue-600"></i>Facebook
+      </label>
+      <input
+        id="cfg-facebook"
+        type="url"
+        [ngModel]="facebookUrl()"
+        (ngModelChange)="facebookUrl.set($event)"
+        placeholder="https://facebook.com/yourpage"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-twitter" class="block text-sm font-medium text-zinc-700 mb-1">
+        <i class="fa-brands fa-x-twitter mr-1.5"></i>Twitter / X
+      </label>
+      <input
+        id="cfg-twitter"
+        type="url"
+        [ngModel]="twitterUrl()"
+        (ngModelChange)="twitterUrl.set($event)"
+        placeholder="https://x.com/yourhandle"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-linkedin" class="block text-sm font-medium text-zinc-700 mb-1">
+        <i class="fa-brands fa-linkedin mr-1.5 text-blue-700"></i>LinkedIn
+      </label>
+      <input
+        id="cfg-linkedin"
+        type="url"
+        [ngModel]="linkedinUrl()"
+        (ngModelChange)="linkedinUrl.set($event)"
+        placeholder="https://linkedin.com/company/yourpage"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-instagram" class="block text-sm font-medium text-zinc-700 mb-1">
+        <i class="fa-brands fa-instagram mr-1.5 text-pink-500"></i>Instagram
+      </label>
+      <input
+        id="cfg-instagram"
+        type="url"
+        [ngModel]="instagramUrl()"
+        (ngModelChange)="instagramUrl.set($event)"
+        placeholder="https://instagram.com/yourprofile"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-youtube" class="block text-sm font-medium text-zinc-700 mb-1">
+        <i class="fa-brands fa-youtube mr-1.5 text-red-600"></i>YouTube
+      </label>
+      <input
+        id="cfg-youtube"
+        type="url"
+        [ngModel]="youtubeUrl()"
+        (ngModelChange)="youtubeUrl.set($event)"
+        placeholder="https://youtube.com/@yourchannel"
+        class="shad-input w-full"
+      />
+    </div>
+
+    <div>
+      <label for="cfg-github" class="block text-sm font-medium text-zinc-700 mb-1">
+        <i class="fa-brands fa-github mr-1.5"></i>GitHub
+      </label>
+      <input
+        id="cfg-github"
+        type="url"
+        [ngModel]="githubUrl()"
+        (ngModelChange)="githubUrl.set($event)"
+        placeholder="https://github.com/yourorg"
+        class="shad-input w-full"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Save -->
+<div class="flex justify-end">
+  <button
+    (click)="saveTextConfig()"
+    [disabled]="saving()"
+    class="inline-flex items-center gap-2 px-5 h-9 text-sm font-medium rounded-md bg-zinc-900 text-white hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+  >
+    @if (saving()) {
+      <i class="fa-solid fa-spinner fa-spin text-xs"></i>
+      Saving…
+    } @else {
+      <i class="fa-solid fa-floppy-disk text-xs"></i>
+      Save Configuration
+    }
+  </button>
+</div>

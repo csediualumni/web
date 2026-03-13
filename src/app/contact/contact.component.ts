@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../core/admin.service';
+import { SiteConfigService } from '../core/site-config.service';
 
 interface ContactForm {
   name: string;
@@ -18,6 +19,8 @@ interface ContactForm {
   templateUrl: './contact.component.html',
 })
 export class ContactComponent {
+  readonly siteConfig = inject(SiteConfigService);
+
   form: ContactForm = { name: '', email: '', subject: '', message: '' };
   submitted = signal(false);
   submitting = signal(false);
@@ -34,35 +37,28 @@ export class ContactComponent {
     'Other',
   ];
 
-  readonly contactInfo = [
-    {
-      icon: 'fa-location-dot',
-      label: 'Address',
-      lines: [
-        'Department of Computer Science & Engineering (CSE), Dhaka International University',
-        'Satarkul, Badda, Dhaka-1212, Bangladesh',
-      ],
-      link: null,
-    },
-    {
-      icon: 'fa-envelope',
-      label: 'Email',
-      lines: ['support@csediualumni.com'],
-      link: 'mailto:support@csediualumni.com',
-    },
-    {
-      icon: 'fa-phone',
-      label: 'Phone',
-      lines: ['+880 1624-350761'],
-      link: 'tel:+8801624350761',
-    },
-    {
-      icon: 'fa-clock',
-      label: 'Office Hours',
-      lines: ['Always Open'],
-      link: null,
-    },
-  ];
+  readonly contactInfo = computed(() => {
+    const items: { icon: string; label: string; lines: string[]; link: string | null }[] = [];
+    const location = this.siteConfig.location();
+    if (location) {
+      items.push({ icon: 'fa-location-dot', label: 'Address', lines: [location], link: null });
+    }
+    const email = this.siteConfig.supportEmail();
+    if (email) {
+      items.push({ icon: 'fa-envelope', label: 'Email', lines: [email], link: `mailto:${email}` });
+    }
+    const phone = this.siteConfig.supportPhone();
+    if (phone) {
+      items.push({
+        icon: 'fa-phone',
+        label: 'Phone',
+        lines: [phone],
+        link: `tel:${phone.replace(/[\s\-()]/g, '')}`,
+      });
+    }
+    items.push({ icon: 'fa-clock', label: 'Office Hours', lines: ['Always Open'], link: null });
+    return items;
+  });
 
   readonly faqs = [
     {

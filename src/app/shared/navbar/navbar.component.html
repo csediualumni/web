@@ -59,7 +59,9 @@
     <div class="flex items-center justify-between h-16">
       <!-- Logo -->
       <a routerLink="/" class="flex items-center flex-shrink-0">
-        <img src="/images/logo.png" alt="CSE DIU Alumni Association" class="h-12 w-auto" />
+        @if (siteConfig.logo()) {
+          <img [src]="siteConfig.logo()" alt="CSE DIU Alumni Association" class="h-12 w-auto" />
+        }
       </a>
 
       <!-- Desktop nav links -->

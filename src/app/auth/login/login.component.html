@@ -23,7 +23,9 @@
     <div class="relative z-10 flex flex-col h-full px-10 py-10">
       <!-- Logo -->
       <a routerLink="/" class="flex items-center w-fit">
-        <img src="/images/logo.png" alt="CSE DIU Alumni Association" class="h-16 w-auto" />
+        @if (siteConfig.logo()) {
+          <img [src]="siteConfig.logo()" alt="CSE DIU Alumni Association" class="h-16 w-auto" />
+        }
       </a>
 
       <!-- Main pitch -->
@@ -79,7 +81,9 @@
     <div class="flex items-center justify-between px-6 py-5 lg:px-10">
       <!-- Mobile logo -->
       <a routerLink="/" class="flex items-center lg:hidden">
-        <img src="/images/logo.png" alt="CSE DIU Alumni Association" class="h-10 w-auto" />
+        @if (siteConfig.logo()) {
+          <img [src]="siteConfig.logo()" alt="CSE DIU Alumni Association" class="h-10 w-auto" />
+        }
       </a>
       <!-- Back to home (desktop) -->
       <a

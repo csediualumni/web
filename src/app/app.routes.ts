@@ -191,6 +191,14 @@ export const routes: Routes = [
             (m) => m.AdminJobsComponent,
           ),
       },
+      {
+        path: 'config',
+        title: 'Site Configuration',
+        loadComponent: () =>
+          import('./admin/config/admin-config.component').then(
+            (m) => m.AdminConfigComponent,
+          ),
+      },
     ],
   },
   {

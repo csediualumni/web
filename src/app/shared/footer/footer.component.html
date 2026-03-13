@@ -50,7 +50,9 @@
       <!-- Col 1: Brand + about -->
       <div class="lg:col-span-1">
         <div class="flex items-center mb-4">
-          <img src="/images/logo.png" alt="CSE DIU Alumni Association" class="h-16 w-auto" />
+          @if (siteConfig.logo()) {
+            <img [src]="siteConfig.logo()" alt="CSE DIU Alumni Association" class="h-16 w-auto" />
+          }
         </div>
         <p class="text-sm text-zinc-400 leading-relaxed mb-5">
           Connecting Computer Science & Engineering graduates of Dhaka International University —
@@ -58,42 +60,72 @@
         </p>
         <!-- Socials -->
         <div class="flex items-center gap-3">
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener"
-            aria-label="Facebook"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
-          >
-            <i class="fa-brands fa-facebook-f text-xs"></i>
-          </a>
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noopener"
-            aria-label="LinkedIn"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
-          >
-            <i class="fa-brands fa-linkedin-in text-xs"></i>
-          </a>
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener"
-            aria-label="Twitter / X"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
-          >
-            <i class="fa-brands fa-x-twitter text-xs"></i>
-          </a>
-          <a
-            href="https://youtube.com"
-            target="_blank"
-            rel="noopener"
-            aria-label="YouTube"
-            class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
-          >
-            <i class="fa-brands fa-youtube text-xs"></i>
-          </a>
+          @if (siteConfig.facebookUrl()) {
+            <a
+              [href]="siteConfig.facebookUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+            >
+              <i class="fa-brands fa-facebook-f text-xs"></i>
+            </a>
+          }
+          @if (siteConfig.linkedinUrl()) {
+            <a
+              [href]="siteConfig.linkedinUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+            >
+              <i class="fa-brands fa-linkedin-in text-xs"></i>
+            </a>
+          }
+          @if (siteConfig.twitterUrl()) {
+            <a
+              [href]="siteConfig.twitterUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter / X"
+              class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+            >
+              <i class="fa-brands fa-x-twitter text-xs"></i>
+            </a>
+          }
+          @if (siteConfig.instagramUrl()) {
+            <a
+              [href]="siteConfig.instagramUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+            >
+              <i class="fa-brands fa-instagram text-xs"></i>
+            </a>
+          }
+          @if (siteConfig.youtubeUrl()) {
+            <a
+              [href]="siteConfig.youtubeUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+            >
+              <i class="fa-brands fa-youtube text-xs"></i>
+            </a>
+          }
+          @if (siteConfig.githubUrl()) {
+            <a
+              [href]="siteConfig.githubUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              class="w-8 h-8 rounded-md bg-zinc-800 flex items-center justify-center text-zinc-400 hover:bg-zinc-700 hover:text-white transition-colors"
+            >
+              <i class="fa-brands fa-github text-xs"></i>
+            </a>
+          }
         </div>
       </div>
 
@@ -168,33 +200,36 @@
       <div>
         <h4 class="text-xs font-semibold text-white uppercase tracking-widest mb-4">Contact Us</h4>
         <ul class="space-y-3">
-          <li class="flex items-start gap-2.5">
-            <i
-              class="fa-solid fa-location-dot text-zinc-500 text-sm mt-0.5 flex-shrink-0 w-3.5 text-center"
-            ></i>
-            <span class="text-sm text-zinc-400">
-              Department of Computer Science & Engineering (CSE), Dhaka International University<br />
-              Satarkul, Badda, Dhaka-1212, Bangladesh
-            </span>
-          </li>
-          <li class="flex items-center gap-2.5">
-            <i class="fa-solid fa-phone text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
-            <a
-              href="tel:+8801624350761"
-              class="text-sm text-zinc-400 hover:text-white transition-colors"
-              >+880 1624-350761</a
-            >
-          </li>
-          <li class="flex items-center gap-2.5">
-            <i
-              class="fa-regular fa-envelope text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"
-            ></i>
-            <a
-              href="mailto:support@csediualumni.com"
-              class="text-sm text-zinc-400 hover:text-white transition-colors"
-              >support&#64;csediualumni.com</a
-            >
-          </li>
+          @if (siteConfig.location()) {
+            <li class="flex items-start gap-2.5">
+              <i
+                class="fa-solid fa-location-dot text-zinc-500 text-sm mt-0.5 flex-shrink-0 w-3.5 text-center"
+              ></i>
+              <span class="text-sm text-zinc-400">{{ siteConfig.location() }}</span>
+            </li>
+          }
+          @if (siteConfig.supportPhone()) {
+            <li class="flex items-center gap-2.5">
+              <i class="fa-solid fa-phone text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"></i>
+              <a
+                [href]="'tel:' + siteConfig.supportPhone()!.replace(/[\s\-()]/g, '')"
+                class="text-sm text-zinc-400 hover:text-white transition-colors"
+                >{{ siteConfig.supportPhone() }}</a
+              >
+            </li>
+          }
+          @if (siteConfig.supportEmail()) {
+            <li class="flex items-center gap-2.5">
+              <i
+                class="fa-regular fa-envelope text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"
+              ></i>
+              <a
+                [href]="'mailto:' + siteConfig.supportEmail()"
+                class="text-sm text-zinc-400 hover:text-white transition-colors"
+                >{{ siteConfig.supportEmail() }}</a
+              >
+            </li>
+          }
           <li class="flex items-center gap-2.5">
             <i
               class="fa-regular fa-clock text-zinc-500 text-sm flex-shrink-0 w-3.5 text-center"

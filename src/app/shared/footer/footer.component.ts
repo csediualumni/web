@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../core/admin.service';
+import { SiteConfigService } from '../../core/site-config.service';
 
 @Component({
   selector: 'app-footer',
@@ -11,6 +12,7 @@ import { AdminService } from '../../core/admin.service';
 })
 export class FooterComponent {
   readonly currentYear = new Date().getFullYear();
+  readonly siteConfig = inject(SiteConfigService);
 
   newsletterEmail = signal('');
   subscribed = signal(false);

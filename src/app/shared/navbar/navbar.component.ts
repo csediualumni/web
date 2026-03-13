@@ -2,6 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
+import { SiteConfigService } from '../../core/site-config.service';
 
 export interface NavLink {
   label: string;
@@ -18,6 +19,7 @@ export interface NavLink {
 export class NavbarComponent {
   private router = inject(Router);
   auth = inject(AuthService);
+  siteConfig = inject(SiteConfigService);
 
   mobileMenuOpen = signal(false);
   userDropdownOpen = signal(false);

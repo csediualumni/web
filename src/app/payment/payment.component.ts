@@ -2,8 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  InvoiceService,
+import { InvoiceService,
   Invoice,
   SubmitPaymentDto,
   paidAmount,
@@ -11,8 +10,7 @@ import {
   dueAmount,
   formatBDT,
 } from '../core/invoice.service';
-
-const BKASH_NUMBER = '01624-350761'; // Association's bKash number
+import { SiteConfigService } from '../core/site-config.service';
 
 @Component({
   selector: 'app-payment',
@@ -23,8 +21,7 @@ const BKASH_NUMBER = '01624-350761'; // Association's bKash number
 export class PaymentComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly svc = inject(InvoiceService);
-
-  readonly bkashNumber = BKASH_NUMBER;
+  readonly siteConfig = inject(SiteConfigService);
 
   invoice = signal<Invoice | null>(null);
   loading = signal(true);
