@@ -1,9 +1,13 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { NewsService, NewsArticle } from '../news.service';
 import { ContentRendererComponent } from '../../shared/content-renderer/content-renderer.component';
 import { categoryColor } from '../news.utils';
+import { SeoService } from '../../core/seo.service';
+
+const SITE_NAME = 'CSE DIU Alumni';
 
 @Component({
   selector: 'app-news-detail',
@@ -14,6 +18,8 @@ import { categoryColor } from '../news.utils';
 export class NewsDetailComponent implements OnInit {
   private readonly newsSvc = inject(NewsService);
   private readonly route = inject(ActivatedRoute);
+  private readonly titleService = inject(Title);
+  private readonly seo = inject(SeoService);
 
   loading = signal(true);
   error = signal('');
@@ -25,6 +31,8 @@ export class NewsDetailComponent implements OnInit {
       next: (data) => {
         this.article.set(data);
         this.loading.set(false);
+        this.titleService.setTitle(`${data.title} | ${SITE_NAME}`);
+        this.seo.update({ title: data.title, ogUrl: `/news/${id}` });
       },
       error: (err) => {
         this.error.set(err?.status === 404 ? 'Article not found.' : 'Failed to load article.');
