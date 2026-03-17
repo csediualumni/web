@@ -49,7 +49,7 @@ export class AlumniProfileComponent implements OnInit, OnDestroy {
         if (found) {
           this.member.set(found);
           this.titleService.setTitle(`${found.name} | ${SITE_NAME}`);
-          this.seo.update({ title: found.name });
+          this.seo.update({ title: found.name, ogUrl: `/alumni/${found.id}` });
           const rel = members
             .filter(
               (m) => m.id !== found.id && (m.batch === found.batch || m.industry === found.industry),

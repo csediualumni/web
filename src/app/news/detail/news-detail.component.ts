@@ -32,7 +32,7 @@ export class NewsDetailComponent implements OnInit {
         this.article.set(data);
         this.loading.set(false);
         this.titleService.setTitle(`${data.title} | ${SITE_NAME}`);
-        this.seo.update({ title: data.title });
+        this.seo.update({ title: data.title, ogUrl: `/news/${id}` });
       },
       error: (err) => {
         this.error.set(err?.status === 404 ? 'Article not found.' : 'Failed to load article.');
