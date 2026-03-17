@@ -11,12 +11,21 @@ export function app(): express.Express {
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
 
-  // Allow hosts configured via NG_ALLOWED_HOSTS env var, plus localhost for development
+  // Allow hosts configured via NG_ALLOWED_HOSTS env var, plus localhost for development,
+  // plus Railway-provided domain env vars and the Railway health check host.
   const extraHosts = (process.env['NG_ALLOWED_HOSTS'] ?? '')
     .split(',')
     .map((h) => h.trim())
     .filter(Boolean);
-  const allowedHosts = ['localhost', '127.0.0.1', ...extraHosts];
+
+  const railwayHosts = [
+    process.env['RAILWAY_PUBLIC_DOMAIN'],
+    process.env['RAILWAY_PRIVATE_DOMAIN'],
+    // Railway uses this host for internal health checks
+    'healthcheck.railway.app',
+  ].filter((h): h is string => Boolean(h));
+
+  const allowedHosts = ['localhost', '127.0.0.1', ...railwayHosts, ...extraHosts];
 
   const commonEngine = new CommonEngine({ allowedHosts });
 
