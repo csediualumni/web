@@ -330,14 +330,22 @@
               [routerLink]="['/alumni', rel.id]"
               class="shad-card rounded-2xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow group"
             >
-              <div
-                [class]="
-                  'w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0 ' +
-                  rel.color
-                "
-              >
-                {{ rel.initials }}
-              </div>
+              @if (rel.avatar) {
+                <img
+                  [src]="rel.avatar"
+                  [alt]="rel.name"
+                  class="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                />
+              } @else {
+                <div
+                  [class]="
+                    'w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base flex-shrink-0 ' +
+                    rel.color
+                  "
+                >
+                  {{ rel.initials }}
+                </div>
+              }
               <div class="min-w-0">
                 <p
                   class="font-semibold text-zinc-900 leading-tight group-hover:text-sky-600 transition-colors truncate"

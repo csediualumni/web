@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
-import { take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { AlumniService, AlumnusMember } from '../alumni.service';
 
 @Component({
@@ -10,9 +11,10 @@ import { AlumniService, AlumnusMember } from '../alumni.service';
   imports: [CommonModule, RouterLink],
   templateUrl: './alumni-profile.component.html',
 })
-export class AlumniProfileComponent implements OnInit {
+export class AlumniProfileComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly alumniService = inject(AlumniService);
+  private readonly destroy$ = new Subject<void>();
 
   member = signal<AlumnusMember | null>(null);
   notFound = signal(false);
@@ -21,20 +23,38 @@ export class AlumniProfileComponent implements OnInit {
   related = signal<AlumnusMember[]>([]);
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id') ?? '';
-    this.alumniService.members$.pipe(take(1)).subscribe((members) => {
-      const found = members.find((m) => m.id === id);
-      if (found) {
-        this.member.set(found);
-        const rel = members
-          .filter(
-            (m) => m.id !== found.id && (m.batch === found.batch || m.industry === found.industry),
-          )
-          .slice(0, 3);
-        this.related.set(rel);
-      } else {
-        this.notFound.set(true);
-      }
-    });
+    this.route.paramMap
+      .pipe(
+        switchMap((params) => {
+          const id = params.get('id') ?? '';
+          this.member.set(null);
+          this.notFound.set(false);
+          this.related.set([]);
+          return this.alumniService.members$.pipe(
+            take(1),
+            switchMap((members) => [{ id, members }]),
+          );
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(({ id, members }) => {
+        const found = members.find((m) => m.id === id);
+        if (found) {
+          this.member.set(found);
+          const rel = members
+            .filter(
+              (m) => m.id !== found.id && (m.batch === found.batch || m.industry === found.industry),
+            )
+            .slice(0, 3);
+          this.related.set(rel);
+        } else {
+          this.notFound.set(true);
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
