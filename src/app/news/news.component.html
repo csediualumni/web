@@ -63,20 +63,11 @@
               <i class="fa-solid fa-pen-nib mr-1"></i>{{ article.author }} &bull;
               {{ article.date }} &bull; {{ article.readTime }}
             </div>
-            <button (click)="toggleExpand(article.id)" class="shad-btn-ghost text-xs px-4 py-2">
-              {{ isExpanded(article.id) ? 'Collapse' : 'Read More' }}
-              <i
-                [class]="
-                  'fa-solid ml-1 ' + (isExpanded(article.id) ? 'fa-chevron-up' : 'fa-chevron-down')
-                "
-              ></i>
-            </button>
+            <a [routerLink]="['/news', article.id]" class="shad-btn-ghost text-xs px-4 py-2">
+              Read More
+              <i class="fa-solid fa-arrow-right ml-1"></i>
+            </a>
           </div>
-          @if (isExpanded(article.id)) {
-            <div class="px-6 pb-6 border-t border-zinc-100 pt-4">
-              <app-content-renderer [content]="article.body" class="text-sm text-zinc-700" />
-            </div>
-          }
         </div>
       }
     </div>
@@ -148,19 +139,13 @@
             <div class="text-xs text-zinc-400">
               {{ article.author }} &bull; {{ article.date }} &bull; {{ article.readTime }}
             </div>
-            <button
-              (click)="toggleExpand(article.id)"
+            <a
+              [routerLink]="['/news', article.id]"
               class="shad-btn-ghost text-sm px-0 py-0 justify-start font-semibold text-zinc-700 hover:text-violet-600 transition-colors"
             >
-              {{ isExpanded(article.id) ? 'Collapse ↑' : 'Read More →' }}
-            </button>
+              Read More →
+            </a>
           </div>
-
-          @if (isExpanded(article.id)) {
-            <div class="px-6 pb-6 border-t border-zinc-100 pt-4">
-              <app-content-renderer [content]="article.body" class="text-sm text-zinc-700" />
-            </div>
-          }
         </div>
       }
     </div>
