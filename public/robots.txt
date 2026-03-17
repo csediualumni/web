@@ -8,4 +8,4 @@ Disallow: /auth/
 Disallow: /dashboard/
 Disallow: /payment/
 
-Sitemap: https://alumni.csediu.com/sitemap.xml
+Sitemap: https://csediualumni.com/sitemap.xml

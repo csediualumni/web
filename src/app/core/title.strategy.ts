@@ -17,7 +17,7 @@ export class AppTitleStrategy extends TitleStrategy {
     const routeTitle = this.buildTitle(snapshot);
     this.title.setTitle(routeTitle ? `${routeTitle} | ${SITE_NAME}` : SITE_NAME);
 
-    const routeData = this.getDeepestRouteData(snapshot.root);
+    const routeData = this.getLeafRouteData(snapshot.root);
     this.seo.update({
       title: routeTitle ?? SITE_NAME,
       description: routeData?.['description'],
@@ -26,7 +26,7 @@ export class AppTitleStrategy extends TitleStrategy {
     });
   }
 
-  private getDeepestRouteData(
+  private getLeafRouteData(
     route: ActivatedRouteSnapshot,
   ): Record<string, string | undefined> | null {
     let current: ActivatedRouteSnapshot | null = route;
