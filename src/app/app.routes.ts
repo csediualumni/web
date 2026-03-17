@@ -9,9 +9,9 @@ export const routes: Routes = [
     title: 'Welcome',
     data: {
       description:
-        'Welcome to the CSE DIU Alumni Association – the official network connecting Computer Science & Engineering graduates of Daffodil International University worldwide.',
+        'Welcome to the CSE DIU Alumni Association – the official network connecting Computer Science & Engineering graduates of Dhaka International University worldwide.',
       keywords:
-        'CSE DIU Alumni, Daffodil International University, computer science alumni, DIU graduates, alumni association, alumni network',
+        'CSE DIU Alumni, Dhaka International University, computer science alumni, DIU graduates, alumni association, alumni network',
     },
     loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent),
   },

@@ -11,7 +11,7 @@ export interface SeoMetadata {
 
 const SITE_NAME = 'CSE DIU Alumni';
 const DEFAULT_DESCRIPTION =
-  'The official alumni network of the Computer Science & Engineering department at Daffodil International University. Connect with graduates, explore jobs, events, mentorship, scholarships, and research.';
+  'The official alumni network of the Computer Science & Engineering department at Dhaka International University. Connect with graduates, explore jobs, events, mentorship, scholarships, and research.';
 const DEFAULT_OG_IMAGE = 'https://csediualumni.com/og-image.png';
 const SITE_URL = 'https://csediualumni.com';
 
