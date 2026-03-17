@@ -1,10 +1,14 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { AlumniService, AlumnusMember } from '../alumni.service';
 import { ContentRendererComponent } from '../../shared/content-renderer/content-renderer.component';
+import { SeoService } from '../../core/seo.service';
+
+const SITE_NAME = 'CSE DIU Alumni';
 
 @Component({
   selector: 'app-alumni-profile',
@@ -15,6 +19,8 @@ import { ContentRendererComponent } from '../../shared/content-renderer/content-
 export class AlumniProfileComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly alumniService = inject(AlumniService);
+  private readonly titleService = inject(Title);
+  private readonly seo = inject(SeoService);
   private readonly destroy$ = new Subject<void>();
 
   member = signal<AlumnusMember | null>(null);
@@ -42,6 +48,8 @@ export class AlumniProfileComponent implements OnInit, OnDestroy {
         const found = members.find((m) => m.id === id);
         if (found) {
           this.member.set(found);
+          this.titleService.setTitle(`${found.name} | ${SITE_NAME}`);
+          this.seo.update({ title: found.name });
           const rel = members
             .filter(
               (m) => m.id !== found.id && (m.batch === found.batch || m.industry === found.industry),
