@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow private/admin sections
+Disallow: /manage/
+Disallow: /my/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /payment/
+
+Sitemap: https://alumni.csediu.com/sitemap.xml
