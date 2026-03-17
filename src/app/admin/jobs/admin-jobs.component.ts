@@ -8,13 +8,15 @@ import {
   AdminJobType,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 
 @Component({
   selector: 'app-admin-jobs',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-jobs.component.html',
 })
 export class AdminJobsComponent implements OnInit {
@@ -40,6 +42,7 @@ export class AdminJobsComponent implements OnInit {
   formPosted = signal('');
   formDeadline = signal('');
   formDescription = signal('');
+  formDescriptionFormat = signal<'html' | 'markdown'>('html');
   formSkills = signal(''); // comma-separated
   formFeatured = signal(false);
   formPostedById = signal('');
@@ -82,6 +85,7 @@ export class AdminJobsComponent implements OnInit {
     this.formPosted.set('');
     this.formDeadline.set('');
     this.formDescription.set('');
+    this.formDescriptionFormat.set('html');
     this.formSkills.set('');
     this.formFeatured.set(false);
     this.formPostedById.set('');
@@ -103,6 +107,7 @@ export class AdminJobsComponent implements OnInit {
     this.formPosted.set(j.posted);
     this.formDeadline.set(j.deadline);
     this.formDescription.set(j.description);
+    this.formDescriptionFormat.set('html');
     this.formSkills.set((j.skills ?? []).join(', '));
     this.formFeatured.set(j.featured);
     this.formPostedById.set(j.postedById ?? '');
@@ -126,7 +131,7 @@ export class AdminJobsComponent implements OnInit {
     const experience = this.formExperience().trim();
     const posted = this.formPosted().trim();
     const deadline = this.formDeadline().trim();
-    const description = this.formDescription().trim();
+    const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
 
     if (!title || !company || !location || !country || !industry || !experience || !posted || !deadline || !description) {
       this.error.set('All required fields must be filled.');

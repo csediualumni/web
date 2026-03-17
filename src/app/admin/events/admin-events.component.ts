@@ -10,6 +10,8 @@ import {
   EventStatus,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit' | 'rsvps';
 
@@ -20,7 +22,7 @@ const CATEGORIES = ['Reunion', 'Workshop', 'Seminar', 'Sports', 'Cultural', 'Web
 @Component({
   selector: 'app-admin-events',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-events.component.html',
 })
 export class AdminEventsComponent implements OnInit {
@@ -44,6 +46,7 @@ export class AdminEventsComponent implements OnInit {
   editingId = signal<string | null>(null);
   formTitle = signal('');
   formDescription = signal('');
+  formDescriptionFormat = signal<'html' | 'markdown'>('html');
   formDate = signal(''); // ISO date "YYYY-MM-DD"
   formTime = signal('');
   formLocation = signal('');
@@ -94,6 +97,7 @@ export class AdminEventsComponent implements OnInit {
     this.editingId.set(null);
     this.formTitle.set('');
     this.formDescription.set('');
+    this.formDescriptionFormat.set('html');
     this.formDate.set('');
     this.formTime.set('');
     this.formLocation.set('');
@@ -117,6 +121,7 @@ export class AdminEventsComponent implements OnInit {
     this.editingId.set(e.id);
     this.formTitle.set(e.title);
     this.formDescription.set(e.description);
+    this.formDescriptionFormat.set('html');
     // Convert ISO date to YYYY-MM-DD for date input
     this.formDate.set(e.date.substring(0, 10));
     this.formTime.set(e.time);
@@ -180,7 +185,7 @@ export class AdminEventsComponent implements OnInit {
 
   save(): void {
     const title = this.formTitle().trim();
-    const description = this.formDescription().trim();
+    const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
     const date = this.formDate().trim();
     const time = this.formTime().trim();
     const location = this.formLocation().trim();

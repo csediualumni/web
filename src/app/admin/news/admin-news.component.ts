@@ -8,13 +8,15 @@ import {
   NewsCategory,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 
 @Component({
   selector: 'app-admin-news',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-news.component.html',
 })
 export class AdminNewsComponent implements OnInit {
@@ -31,7 +33,9 @@ export class AdminNewsComponent implements OnInit {
   editingId = signal<string | null>(null);
   formTitle = signal('');
   formSummary = signal('');
+  formSummaryFormat = signal<'html' | 'markdown'>('html');
   formBody = signal('');
+  formBodyFormat = signal<'html' | 'markdown'>('html');
   formCategory = signal<NewsCategory>('Announcement');
   formAuthor = signal('');
   formDate = signal('');
@@ -93,7 +97,9 @@ export class AdminNewsComponent implements OnInit {
     this.editingId.set(null);
     this.formTitle.set('');
     this.formSummary.set('');
+    this.formSummaryFormat.set('html');
     this.formBody.set('');
+    this.formBodyFormat.set('html');
     this.formCategory.set('Announcement');
     this.formAuthor.set('');
     this.formDate.set('');
@@ -111,7 +117,9 @@ export class AdminNewsComponent implements OnInit {
     this.editingId.set(a.id);
     this.formTitle.set(a.title);
     this.formSummary.set(a.summary);
+    this.formSummaryFormat.set('html');
     this.formBody.set(a.body);
+    this.formBodyFormat.set('html');
     this.formCategory.set(a.category);
     this.formAuthor.set(a.author);
     this.formDate.set(a.date);
@@ -133,8 +141,8 @@ export class AdminNewsComponent implements OnInit {
 
   save(): void {
     const title = this.formTitle().trim();
-    const summary = this.formSummary().trim();
-    const body = this.formBody().trim();
+    const summary = convertToHtml(this.formSummary().trim(), this.formSummaryFormat());
+    const body = convertToHtml(this.formBody().trim(), this.formBodyFormat());
     const author = this.formAuthor().trim();
     const date = this.formDate().trim();
     const readTime = this.formReadTime().trim();

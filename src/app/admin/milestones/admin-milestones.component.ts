@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, Milestone } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 
 @Component({
   selector: 'app-admin-milestones',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-milestones.component.html',
 })
 export class AdminMilestonesComponent implements OnInit {
@@ -27,6 +29,7 @@ export class AdminMilestonesComponent implements OnInit {
   formYear = signal('');
   formTitle = signal('');
   formDescription = signal('');
+  formDescriptionFormat = signal<'html' | 'markdown'>('html');
   formSortOrder = signal(0);
 
   readonly auth = inject(AuthService);
@@ -60,6 +63,7 @@ export class AdminMilestonesComponent implements OnInit {
     this.formYear.set('');
     this.formTitle.set('');
     this.formDescription.set('');
+    this.formDescriptionFormat.set('html');
     this.formSortOrder.set(this.milestones().length);
     this.error.set('');
     this.success.set('');
@@ -71,6 +75,7 @@ export class AdminMilestonesComponent implements OnInit {
     this.formYear.set(m.year);
     this.formTitle.set(m.title);
     this.formDescription.set(m.description);
+    this.formDescriptionFormat.set('html');
     this.formSortOrder.set(m.sortOrder);
     this.error.set('');
     this.success.set('');
@@ -86,7 +91,7 @@ export class AdminMilestonesComponent implements OnInit {
   save(): void {
     const year = this.formYear().trim();
     const title = this.formTitle().trim();
-    const description = this.formDescription().trim();
+    const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
     const sortOrder = this.formSortOrder();
 
     if (!year || !title || !description) {

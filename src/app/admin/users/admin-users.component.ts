@@ -4,11 +4,13 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { AdminService, AdminUser, ImportMembersResult, Role } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { forkJoin } from 'rxjs';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RichTextEditorComponent],
   templateUrl: './admin-users.component.html',
 })
 export class AdminUsersComponent implements OnInit {
@@ -27,6 +29,7 @@ export class AdminUsersComponent implements OnInit {
   // Edit user profile
   editingUser = signal<AdminUser | null>(null);
   editForm!: FormGroup;
+  editBioFormat = signal<'html' | 'markdown'>('html');
   savingEdit = signal(false);
   editError = signal('');
 
@@ -130,6 +133,7 @@ export class AdminUsersComponent implements OnInit {
   openEdit(user: AdminUser): void {
     this.editingUser.set(user);
     this.editError.set('');
+    this.editBioFormat.set('html');
     this.editForm = this.fb.group({
       displayName: [user.displayName ?? ''],
       phone: [user.phone ?? ''],
@@ -149,6 +153,7 @@ export class AdminUsersComponent implements OnInit {
   closeEdit(): void {
     this.editingUser.set(null);
     this.editError.set('');
+    this.editBioFormat.set('html');
   }
 
   saveEdit(): void {
@@ -161,7 +166,7 @@ export class AdminUsersComponent implements OnInit {
       displayName: raw.displayName || undefined,
       phone: raw.phone || undefined,
       batch: raw.batch !== '' && raw.batch !== null ? Number(raw.batch) : undefined,
-      bio: raw.bio || undefined,
+      bio: raw.bio ? convertToHtml(raw.bio, this.editBioFormat()) : undefined,
       jobTitle: raw.jobTitle || undefined,
       company: raw.company || undefined,
       industry: raw.industry || undefined,

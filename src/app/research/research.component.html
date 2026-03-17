@@ -109,7 +109,7 @@
             </p>
           </div>
 
-          <p class="text-sm text-zinc-600 leading-relaxed">{{ paper.abstract }}</p>
+          <div class="text-sm text-zinc-600 leading-relaxed"><app-content-renderer [content]="paper.abstract" /></div>
 
           <div
             class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-zinc-100"

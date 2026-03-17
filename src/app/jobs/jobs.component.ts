@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { JobsService } from './jobs.service';
 import type { JobPosting, JobType } from './jobs.service';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 @Component({
   selector: 'app-jobs',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ContentRendererComponent],
   templateUrl: './jobs.component.html',
 })
 export class JobsComponent implements OnInit {

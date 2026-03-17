@@ -7,13 +7,14 @@ import { CampaignService, Campaign } from '../core/campaign.service';
 import { InvoiceService, RecentDonor } from '../core/invoice.service';
 import { AuthService } from '../core/auth.service';
 import { forkJoin } from 'rxjs';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 type DonateTab = 'active' | 'completed' | 'upcoming';
 
 @Component({
   selector: 'app-donations',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ContentRendererComponent],
   templateUrl: './donations.component.html',
 })
 export class DonationsComponent implements OnInit {

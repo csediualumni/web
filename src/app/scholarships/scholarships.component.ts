@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ScholarshipsService } from './scholarships.service';
 import type { Scholarship } from './scholarships.service';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 @Component({
   selector: 'app-scholarships',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ContentRendererComponent],
   templateUrl: './scholarships.component.html',
 })
 export class ScholarshipsComponent implements OnInit {

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ResearchService } from './research.service';
 import type { ResearchPaper } from './research.service';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 @Component({
   selector: 'app-research',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ContentRendererComponent],
   templateUrl: './research.component.html',
 })
 export class ResearchComponent implements OnInit {

@@ -9,6 +9,8 @@ import {
   AdminMentorApplication,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 type Tab = 'mentors' | 'applications';
@@ -16,7 +18,7 @@ type Tab = 'mentors' | 'applications';
 @Component({
   selector: 'app-admin-mentors',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-mentors.component.html',
 })
 export class AdminMentorsComponent implements OnInit {
@@ -45,6 +47,7 @@ export class AdminMentorsComponent implements OnInit {
   formColor = signal('');
   formExpertise = signal('');  // comma-separated
   formBio = signal('');
+  formBioFormat = signal<'html' | 'markdown'>('html');
   formAvailability = signal('');
   formMentees = signal(0);
   formRating = signal(0);
@@ -104,6 +107,7 @@ export class AdminMentorsComponent implements OnInit {
     this.formColor.set('');
     this.formExpertise.set('');
     this.formBio.set('');
+    this.formBioFormat.set('html');
     this.formAvailability.set('Open');
     this.formMentees.set(0);
     this.formRating.set(0);
@@ -125,6 +129,7 @@ export class AdminMentorsComponent implements OnInit {
     this.formColor.set(m.color ?? '');
     this.formExpertise.set((m.expertise ?? []).join(', '));
     this.formBio.set(m.bio);
+    this.formBioFormat.set('html');
     this.formAvailability.set(m.availability);
     this.formMentees.set(m.mentees);
     this.formRating.set(m.rating);
@@ -146,7 +151,7 @@ export class AdminMentorsComponent implements OnInit {
     const company = this.formCompany().trim();
     const country = this.formCountry().trim();
     const city = this.formCity().trim();
-    const bio = this.formBio().trim();
+    const bio = convertToHtml(this.formBio().trim(), this.formBioFormat());
     const availability = this.formAvailability().trim();
 
     if (!name || !role || !company || !country || !city || !bio || !availability) {

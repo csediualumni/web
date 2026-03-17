@@ -8,6 +8,8 @@ import {
   EducationEntry,
   AchievementEntry,
 } from '../core/auth.service';
+import { RichTextEditorComponent } from '../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../shared/content.utils';
 
 const INDUSTRIES = [
   'Software Engineering',
@@ -45,7 +47,7 @@ const COUNTRIES = [
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RichTextEditorComponent],
   templateUrl: './profile-edit.component.html',
 })
 export class ProfileEditComponent implements OnInit {
@@ -59,6 +61,8 @@ export class ProfileEditComponent implements OnInit {
   saving = signal(false);
   saveSuccess = signal(false);
   saveError = signal<string | null>(null);
+
+  bioFormat = signal<'html' | 'markdown'>('html');
 
   form!: FormGroup;
 
@@ -369,6 +373,7 @@ export class ProfileEditComponent implements OnInit {
     const value = this.form.getRawValue();
     const dto = {
       ...value,
+      bio: value.bio ? convertToHtml(value.bio, this.bioFormat()) : value.bio,
       batch: value.batch ? Number(value.batch) : null,
       skills: this.skills(),
     };

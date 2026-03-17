@@ -7,13 +7,15 @@ import {
   SaveScholarshipDto,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 
 @Component({
   selector: 'app-admin-scholarships',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-scholarships.component.html',
 })
 export class AdminScholarshipsComponent implements OnInit {
@@ -34,10 +36,12 @@ export class AdminScholarshipsComponent implements OnInit {
   formCurrency = signal('USD');
   formDeadline = signal('');
   formEligibility = signal('');
+  formEligibilityFormat = signal<'html' | 'markdown'>('html');
   formLevel = signal('');
   formCountry = signal('');
   formType = signal('');
   formDescription = signal('');
+  formDescriptionFormat = signal<'html' | 'markdown'>('html');
   formTags = signal(''); // comma-separated
   formLink = signal('');
   formFeatured = signal(false);
@@ -77,10 +81,12 @@ export class AdminScholarshipsComponent implements OnInit {
     this.formCurrency.set('USD');
     this.formDeadline.set('');
     this.formEligibility.set('');
+    this.formEligibilityFormat.set('html');
     this.formLevel.set('Any');
     this.formCountry.set('');
     this.formType.set('Full');
     this.formDescription.set('');
+    this.formDescriptionFormat.set('html');
     this.formTags.set('');
     this.formLink.set('');
     this.formFeatured.set(false);
@@ -98,10 +104,12 @@ export class AdminScholarshipsComponent implements OnInit {
     this.formCurrency.set(s.currency);
     this.formDeadline.set(s.deadline);
     this.formEligibility.set(s.eligibility);
+    this.formEligibilityFormat.set('html');
     this.formLevel.set(s.level);
     this.formCountry.set(s.country);
     this.formType.set(s.type);
     this.formDescription.set(s.description);
+    this.formDescriptionFormat.set('html');
     this.formTags.set((s.tags ?? []).join(', '));
     this.formLink.set(s.link);
     this.formFeatured.set(s.featured);
@@ -122,11 +130,11 @@ export class AdminScholarshipsComponent implements OnInit {
     const provider = this.formProvider().trim();
     const amount = this.formAmount().trim();
     const deadline = this.formDeadline().trim();
-    const eligibility = this.formEligibility().trim();
+    const eligibility = convertToHtml(this.formEligibility().trim(), this.formEligibilityFormat());
     const level = this.formLevel().trim();
     const country = this.formCountry().trim();
     const type = this.formType().trim();
-    const description = this.formDescription().trim();
+    const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
     const link = this.formLink().trim();
 
     if (!title || !provider || !amount || !deadline || !eligibility || !level || !country || !type || !description || !link) {

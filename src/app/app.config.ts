@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, TitleStrategy } from '@angular/router';
+import { provideRouter, TitleStrategy, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
@@ -11,7 +11,7 @@ import { SiteConfigService } from './core/site-config.service';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })),
     provideHttpClient(withInterceptors([authInterceptor])),
     { provide: TitleStrategy, useClass: AppTitleStrategy },
     {

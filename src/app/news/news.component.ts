@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NewsService, NewsArticle } from './news.service';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 export type NewsCategory =
   | 'All'
@@ -17,7 +18,7 @@ export type { NewsArticle };
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ContentRendererComponent],
   templateUrl: './news.component.html',
 })
 export class NewsComponent implements OnInit {

@@ -4,11 +4,12 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { AlumniService, AlumnusMember } from '../alumni.service';
+import { ContentRendererComponent } from '../../shared/content-renderer/content-renderer.component';
 
 @Component({
   selector: 'app-alumni-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ContentRendererComponent],
   templateUrl: './alumni-profile.component.html',
 })
 export class AlumniProfileComponent implements OnInit, OnDestroy {

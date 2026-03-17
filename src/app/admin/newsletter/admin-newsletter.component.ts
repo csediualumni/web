@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, NewsletterSubscription } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Tab = 'subscriptions' | 'compose';
 
 @Component({
   selector: 'app-admin-newsletter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-newsletter.component.html',
 })
 export class AdminNewsletterComponent implements OnInit {
@@ -25,8 +27,8 @@ export class AdminNewsletterComponent implements OnInit {
   // Compose form
   subject = signal('');
   htmlBody = signal('');
+  htmlBodyFormat = signal<'html' | 'markdown'>('html');
   sending = signal(false);
-  previewHtml = signal(false);
   sendResult = signal<{ sent: number } | null>(null);
 
   // Filter & search
@@ -137,11 +139,13 @@ export class AdminNewsletterComponent implements OnInit {
 
   sendNewsletter(): void {
     const subject = this.subject().trim();
-    const htmlBody = this.htmlBody().trim();
-    if (!subject || !htmlBody) {
+    const rawBody = this.htmlBody().trim();
+    if (!subject || !rawBody) {
       this.error.set('Subject and message body are required.');
       return;
     }
+    // Convert markdown to HTML before sending (email clients need HTML)
+    const htmlBody = convertToHtml(rawBody, this.htmlBodyFormat());
     if (!confirm(`Send this newsletter to ${this.activeCount()} active subscribers?`)) return;
 
     this.sending.set(true);
@@ -156,6 +160,7 @@ export class AdminNewsletterComponent implements OnInit {
         this.success.set(`Newsletter sent to ${result.sent} subscriber(s).`);
         this.subject.set('');
         this.htmlBody.set('');
+        this.htmlBodyFormat.set('html');
       },
       error: (err) => {
         this.sending.set(false);

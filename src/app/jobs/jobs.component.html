@@ -121,7 +121,9 @@
               <p class="text-zinc-500 text-sm mb-3">
                 {{ job.company }} &mdash; {{ job.location }}, {{ job.country }}
               </p>
-              <p class="text-zinc-600 text-sm leading-relaxed">{{ job.description }}</p>
+              <div class="text-zinc-600 text-sm leading-relaxed">
+                <app-content-renderer [content]="job.description" />
+              </div>
             </div>
           </div>
 

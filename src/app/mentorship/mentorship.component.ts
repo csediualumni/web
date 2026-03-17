@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MentorshipService } from './mentorship.service';
 import type { Mentor, ApplyMentorshipDto } from './mentorship.service';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 interface MentorshipForm {
   name: string;
@@ -16,7 +17,7 @@ interface MentorshipForm {
 @Component({
   selector: 'app-mentorship',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ContentRendererComponent],
   templateUrl: './mentorship.component.html',
 })
 export class MentorshipComponent implements OnInit {

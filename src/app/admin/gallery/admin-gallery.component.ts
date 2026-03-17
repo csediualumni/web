@@ -8,13 +8,15 @@ import {
   GalleryItem,
 } from '../../core/gallery.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'albums' | 'album-form' | 'album-detail';
 
 @Component({
   selector: 'app-admin-gallery',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-gallery.component.html',
 })
 export class AdminGalleryComponent implements OnInit {
@@ -42,6 +44,7 @@ export class AdminGalleryComponent implements OnInit {
   // ── Album form fields ─────────────────────────────────────────
   formTitle = signal('');
   formDescription = signal('');
+  formDescriptionFormat = signal<'html' | 'markdown'>('html');
   formCategory = signal('General');
   formYear = signal(new Date().getFullYear());
   formIsPublished = signal(true);
@@ -88,6 +91,7 @@ export class AdminGalleryComponent implements OnInit {
     this.editingAlbumId.set(null);
     this.formTitle.set('');
     this.formDescription.set('');
+    this.formDescriptionFormat.set('html');
     this.formCategory.set('General');
     this.formYear.set(new Date().getFullYear());
     this.formIsPublished.set(true);
@@ -101,6 +105,7 @@ export class AdminGalleryComponent implements OnInit {
     this.editingAlbumId.set(album.id);
     this.formTitle.set(album.title);
     this.formDescription.set(album.description ?? '');
+    this.formDescriptionFormat.set('html');
     this.formCategory.set(album.category);
     this.formYear.set(album.year);
     this.formIsPublished.set(album.isPublished);
@@ -139,7 +144,7 @@ export class AdminGalleryComponent implements OnInit {
 
     const dto = {
       title: this.formTitle().trim(),
-      description: this.formDescription().trim() || undefined,
+      description: convertToHtml(this.formDescription().trim(), this.formDescriptionFormat()) || undefined,
       category: this.formCategory(),
       year: Number(this.formYear()),
       isPublished: this.formIsPublished(),

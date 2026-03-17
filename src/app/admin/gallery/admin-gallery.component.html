@@ -214,15 +214,16 @@
 
       <!-- Description -->
       <div class="sm:col-span-2">
-        <label for="alb-description" class="block text-sm font-medium text-zinc-700 mb-1">Description</label>
-        <textarea
-          id="alb-description"
-          rows="3"
-          [ngModel]="formDescription()"
-          (ngModelChange)="formDescription.set($event)"
+        <app-rich-text-editor
+          inputId="alb-description"
+          label="Description"
+          [rows]="3"
           placeholder="Short description of this album (optional)"
-          class="shad-input w-full resize-none"
-        ></textarea>
+          [content]="formDescription()"
+          [format]="formDescriptionFormat()"
+          (contentChange)="formDescription.set($event)"
+          (formatChange)="formDescriptionFormat.set($event)"
+        />
       </div>
 
       <!-- Category -->

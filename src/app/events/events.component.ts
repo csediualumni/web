@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AdminService, ApiEvent, EventMode, EventStatus } from '../core/admin.service';
 import { AuthService } from '../core/auth.service';
+import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
 
 // Re-export for template compatibility
 export type { EventStatus, EventMode };
@@ -11,7 +12,7 @@ export type { ApiEvent as CalendarEvent };
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ContentRendererComponent],
   templateUrl: './events.component.html',
 })
 export class EventsComponent implements OnInit {

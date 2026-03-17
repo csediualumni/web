@@ -59,32 +59,32 @@
 
       <!-- Summary -->
       <div class="sm:col-span-2">
-        <label for="na-summary" class="block text-sm font-medium text-zinc-700 mb-1">
-          Summary <span class="text-red-500">*</span>
-        </label>
-        <textarea
-          id="na-summary"
-          rows="2"
-          [ngModel]="formSummary()"
-          (ngModelChange)="formSummary.set($event)"
+        <app-rich-text-editor
+          inputId="na-summary"
+          label="Summary"
+          [required]="true"
+          [rows]="3"
           placeholder="Short description shown on the card (1–2 sentences)"
-          class="shad-input w-full resize-none"
-        ></textarea>
+          [content]="formSummary()"
+          [format]="formSummaryFormat()"
+          (contentChange)="formSummary.set($event)"
+          (formatChange)="formSummaryFormat.set($event)"
+        />
       </div>
 
       <!-- Body -->
       <div class="sm:col-span-2">
-        <label for="na-body" class="block text-sm font-medium text-zinc-700 mb-1">
-          Full Body <span class="text-red-500">*</span>
-        </label>
-        <textarea
-          id="na-body"
-          rows="6"
-          [ngModel]="formBody()"
-          (ngModelChange)="formBody.set($event)"
-          placeholder="Full article text. Use blank lines to separate paragraphs."
-          class="shad-input w-full resize-y"
-        ></textarea>
+        <app-rich-text-editor
+          inputId="na-body"
+          label="Full Body"
+          [required]="true"
+          [rows]="8"
+          placeholder="Full article text. Use HTML or Markdown."
+          [content]="formBody()"
+          [format]="formBodyFormat()"
+          (contentChange)="formBody.set($event)"
+          (formatChange)="formBodyFormat.set($event)"
+        />
       </div>
 
       <!-- Category -->

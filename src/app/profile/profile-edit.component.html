@@ -297,16 +297,16 @@
           <i class="fa-solid fa-align-left text-zinc-400"></i> About / Bio
         </h2>
         <div>
-          <label for="pe-bio" class="block text-sm font-medium text-zinc-700 mb-1.5">
-            Bio
-          </label>
-          <textarea
-            id="pe-bio"
-            formControlName="bio"
-            rows="5"
+          <app-rich-text-editor
+            inputId="pe-bio"
+            label="Bio"
+            [rows]="6"
             placeholder="Tell fellow alumni a bit about yourself — your journey, interests, and what you're working on…"
-            class="shad-input w-full resize-none leading-relaxed"
-          ></textarea>
+            [content]="form.get('bio')?.value ?? ''"
+            [format]="bioFormat()"
+            (contentChange)="form.get('bio')?.setValue($event)"
+            (formatChange)="bioFormat.set($event)"
+          />
         </div>
       </div>
 

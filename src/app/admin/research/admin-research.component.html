@@ -62,13 +62,17 @@
 
       <!-- Abstract -->
       <div class="sm:col-span-2">
-        <label for="rp-abstract" class="block text-sm font-medium text-zinc-700 mb-1">
-          Abstract <span class="text-red-500">*</span>
-        </label>
-        <textarea id="rp-abstract" rows="4"
-          [ngModel]="formAbstract()" (ngModelChange)="formAbstract.set($event)"
+        <app-rich-text-editor
+          inputId="rp-abstract"
+          label="Abstract"
+          [required]="true"
+          [rows]="5"
           placeholder="Paper abstract"
-          class="shad-input w-full resize-none"></textarea>
+          [content]="formAbstract()"
+          [format]="formAbstractFormat()"
+          (contentChange)="formAbstract.set($event)"
+          (formatChange)="formAbstractFormat.set($event)"
+        />
       </div>
 
       <!-- Year -->

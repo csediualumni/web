@@ -8,13 +8,15 @@ import {
   VenueType,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 
 @Component({
   selector: 'app-admin-research',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-research.component.html',
 })
 export class AdminResearchComponent implements OnInit {
@@ -32,6 +34,7 @@ export class AdminResearchComponent implements OnInit {
   formTitle = signal('');
   formAuthors = signal('');  // comma-separated
   formAbstract = signal('');
+  formAbstractFormat = signal<'html' | 'markdown'>('html');
   formYear = signal<number>(new Date().getFullYear());
   formVenue = signal('');
   formVenueType = signal<VenueType>('conference');
@@ -74,6 +77,7 @@ export class AdminResearchComponent implements OnInit {
     this.formTitle.set('');
     this.formAuthors.set('');
     this.formAbstract.set('');
+    this.formAbstractFormat.set('html');
     this.formYear.set(new Date().getFullYear());
     this.formVenue.set('');
     this.formVenueType.set('conference');
@@ -92,6 +96,7 @@ export class AdminResearchComponent implements OnInit {
     this.formTitle.set(p.title);
     this.formAuthors.set((p.authors ?? []).join(', '));
     this.formAbstract.set(p.abstract);
+    this.formAbstractFormat.set('html');
     this.formYear.set(p.year);
     this.formVenue.set(p.venue);
     this.formVenueType.set(p.venueType);
@@ -113,7 +118,7 @@ export class AdminResearchComponent implements OnInit {
 
   save(): void {
     const title = this.formTitle().trim();
-    const abstract = this.formAbstract().trim();
+    const abstract = convertToHtml(this.formAbstract().trim(), this.formAbstractFormat());
     const venue = this.formVenue().trim();
     const link = this.formLink().trim();
     const authors = this.formAuthors().split(',').map((s) => s.trim()).filter(Boolean);

@@ -74,17 +74,17 @@
 
       <!-- Description -->
       <div class="sm:col-span-2">
-        <label for="cp-description" class="block text-sm font-medium text-zinc-700 mb-1">
-          Description <span class="text-red-500">*</span>
-        </label>
-        <textarea
-          id="cp-description"
-          rows="4"
-          [ngModel]="formDescription()"
-          (ngModelChange)="formDescription.set($event)"
+        <app-rich-text-editor
+          inputId="cp-description"
+          label="Description"
+          [required]="true"
+          [rows]="5"
           placeholder="Full description of the campaign…"
-          class="shad-input w-full resize-none"
-        ></textarea>
+          [content]="formDescription()"
+          [format]="formDescriptionFormat()"
+          (contentChange)="formDescription.set($event)"
+          (formatChange)="formDescriptionFormat.set($event)"
+        />
       </div>
 
       <!-- Goal -->

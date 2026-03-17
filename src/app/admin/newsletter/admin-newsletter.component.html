@@ -251,40 +251,17 @@
 
         <!-- Body -->
         <div class="space-y-1.5">
-          <div class="flex items-center justify-between">
-            <label
-              for="nl-body"
-              class="block text-xs font-semibold text-zinc-600 uppercase tracking-wide"
-              >Message Body (HTML supported)</label
-            >
-            <button
-              (click)="previewHtml.update(v => !v)"
-              class="text-xs text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer flex items-center gap-1"
-            >
-              <i
-                class="fa-solid"
-                [class.fa-eye]="!previewHtml()"
-                [class.fa-code]="previewHtml()"
-              ></i>
-              {{ previewHtml() ? 'Edit' : 'Preview' }}
-            </button>
-          </div>
-
-          @if (!previewHtml()) {
-            <textarea
-              id="nl-body"
-              rows="14"
-              placeholder="Write your newsletter content here. You can use plain text or HTML tags."
-              [value]="htmlBody()"
-              (input)="htmlBody.set($any($event.target).value)"
-              class="w-full rounded-md border border-zinc-200 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-300 bg-zinc-50 font-mono resize-y leading-relaxed"
-            ></textarea>
-          } @else {
-            <div
-              class="w-full rounded-md border border-zinc-200 px-4 py-4 min-h-[240px] bg-white text-sm prose max-w-none"
-              [innerHTML]="htmlBody()"
-            ></div>
-          }
+          <app-rich-text-editor
+            inputId="nl-body"
+            label="Message Body"
+            [required]="true"
+            [rows]="14"
+            placeholder="Write your newsletter content here. You can use HTML or Markdown."
+            [content]="htmlBody()"
+            [format]="htmlBodyFormat()"
+            (contentChange)="htmlBody.set($event)"
+            (formatChange)="htmlBodyFormat.set($event)"
+          />
         </div>
 
         <!-- Tips -->
@@ -293,11 +270,7 @@
         >
           <p class="font-semibold">Tips</p>
           <ul class="list-disc list-inside space-y-0.5 text-blue-600">
-            <li>
-              You can use basic HTML: <code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>,
-              <code>&lt;a href="..."&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code>,
-              <code>&lt;p&gt;</code>.
-            </li>
+            <li>Use the <strong>HTML</strong> tab for raw HTML, <strong>Markdown</strong> for formatted text, or <strong>Preview</strong> to see the result.</li>
             <li>An unsubscribe link is automatically appended to every email.</li>
             <li>Emails are sent one by one; large lists may take a moment.</li>
           </ul>

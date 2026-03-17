@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, AdminCampaign, SaveCampaignDto, CampaignStatus } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit';
 
 @Component({
   selector: 'app-admin-campaigns',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   templateUrl: './admin-campaigns.component.html',
 })
 export class AdminCampaignsComponent implements OnInit {
@@ -27,6 +29,7 @@ export class AdminCampaignsComponent implements OnInit {
   formTitle = signal('');
   formTagline = signal('');
   formDescription = signal('');
+  formDescriptionFormat = signal<'html' | 'markdown'>('html');
   formGoal = signal(0);
   formStatus = signal<CampaignStatus>('active');
   formDeadline = signal('');
@@ -85,6 +88,7 @@ export class AdminCampaignsComponent implements OnInit {
     this.formTitle.set('');
     this.formTagline.set('');
     this.formDescription.set('');
+    this.formDescriptionFormat.set('html');
     this.formGoal.set(0);
     this.formStatus.set('active');
     this.formDeadline.set('');
@@ -104,6 +108,7 @@ export class AdminCampaignsComponent implements OnInit {
     this.formTitle.set(c.title);
     this.formTagline.set(c.tagline);
     this.formDescription.set(c.description);
+    this.formDescriptionFormat.set('html');
     this.formGoal.set(c.goal);
     this.formStatus.set(c.status);
     this.formDeadline.set(c.deadline ?? '');
@@ -134,7 +139,7 @@ export class AdminCampaignsComponent implements OnInit {
   save(): void {
     const title = this.formTitle().trim();
     const tagline = this.formTagline().trim();
-    const description = this.formDescription().trim();
+    const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
     const goal = this.formGoal();
     const category = this.formCategory().trim();
     const icon = this.formIcon().trim();
