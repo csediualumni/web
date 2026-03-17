@@ -103,6 +103,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./my-account/mentor/my-mentor.component').then((m) => m.MyMentorComponent),
       },
+      {
+        path: 'research',
+        title: 'My Research',
+        loadComponent: () =>
+          import('./my-account/research/my-research.component').then((m) => m.MyResearchComponent),
+      },
     ],
   },
   {
