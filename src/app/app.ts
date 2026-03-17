@@ -30,7 +30,10 @@ export class App {
   constructor() {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
-      .subscribe((e) => this.currentUrl.set(e.urlAfterRedirects));
+      .subscribe((e) => {
+        this.currentUrl.set(e.urlAfterRedirects);
+        this.document.defaultView?.scrollTo(0, 0);
+      });
 
     effect(() => {
       const url = this.siteConfig.favicon();
