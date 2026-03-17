@@ -4,22 +4,21 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 RUN npm run build -- --configuration production
 
-# Stage 2: Serve with nginx
-FROM nginx:alpine
+# Stage 2: Run the Node.js SSR server
+FROM node:22-alpine
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+# Copy only the built output and production dependencies
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/package*.json ./
+RUN npm ci --omit=dev --legacy-peer-deps
 
-# Copy built Angular app
-COPY --from=builder /app/dist/web/browser /usr/share/nginx/html
+EXPOSE 4000
 
-# Railway sets $PORT dynamically; use envsubst at runtime
-CMD ["/bin/sh", "-c", "envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["node", "dist/web/server/server.mjs"]

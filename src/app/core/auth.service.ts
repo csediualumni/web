@@ -1,4 +1,5 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -76,9 +77,10 @@ export type UpdateProfileDto = Partial<UserProfile>;
 export class AuthService {
   private readonly base = `${environment.apiUrl}/auth`;
 
-  readonly currentUser = signal<AuthUser | null>(this.loadUser());
-
   private readonly http = inject(HttpClient);
+  private readonly platformId = inject(PLATFORM_ID);
+
+  readonly currentUser = signal<AuthUser | null>(this.loadUser());
 
   // ──────────────────────────────────────────────
   // Email / Password
@@ -119,7 +121,9 @@ export class AuthService {
   // ──────────────────────────────────────────────
 
   redirectToGoogle(): void {
-    window.location.href = `${this.base}/google`;
+    if (isPlatformBrowser(this.platformId)) {
+      window.location.href = `${this.base}/google`;
+    }
   }
 
   /** Called by the callback component after Google redirects back */
@@ -145,12 +149,15 @@ export class AuthService {
   // ──────────────────────────────────────────────
 
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('auth_user');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('auth_user');
+    }
     this.currentUser.set(null);
   }
 
   getToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
     return localStorage.getItem('access_token');
   }
 
@@ -184,7 +191,9 @@ export class AuthService {
         const current = this.currentUser();
         if (current) {
           this.currentUser.set({ ...current, profile: data });
-          localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+          }
         }
       }),
     );
@@ -199,7 +208,9 @@ export class AuthService {
         if (current) {
           const updated = { ...current, profile: { ...current.profile, avatar: res.avatar } };
           this.currentUser.set(updated);
-          localStorage.setItem('auth_user', JSON.stringify(updated));
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('auth_user', JSON.stringify(updated));
+          }
         }
       }),
     );
@@ -213,7 +224,9 @@ export class AuthService {
           const current = this.currentUser();
           if (current) {
             this.currentUser.set({ ...current, profile: data });
-            localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+            if (isPlatformBrowser(this.platformId)) {
+              localStorage.setItem('auth_user', JSON.stringify({ ...current, profile: data }));
+            }
           }
         }),
       );
@@ -278,7 +291,9 @@ export class AuthService {
         if (current) {
           const updated = { ...current, memberId: res.memberId };
           this.currentUser.set(updated);
-          localStorage.setItem('auth_user', JSON.stringify(updated));
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('auth_user', JSON.stringify(updated));
+          }
         }
       }),
     );
@@ -298,12 +313,15 @@ export class AuthService {
   }
 
   private persistSession(res: AuthResponse): void {
-    localStorage.setItem('access_token', res.accessToken);
-    localStorage.setItem('auth_user', JSON.stringify(res.user));
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('access_token', res.accessToken);
+      localStorage.setItem('auth_user', JSON.stringify(res.user));
+    }
     this.currentUser.set(res.user);
   }
 
   private loadUser(): AuthUser | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
     const raw = localStorage.getItem('auth_user');
     return raw ? JSON.parse(raw) : null;
   }
