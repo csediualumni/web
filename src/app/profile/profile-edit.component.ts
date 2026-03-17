@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   AuthService,
   ExperienceEntry,
@@ -101,19 +101,19 @@ export class ProfileEditComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      displayName: ['', [Validators.maxLength(100)]],
-      phone: ['', [Validators.maxLength(30)]],
+      displayName: [''],
+      phone: [''],
       batch: [null as number | null],
-      bio: ['', [Validators.maxLength(1000)]],
-      jobTitle: ['', [Validators.maxLength(100)]],
-      company: ['', [Validators.maxLength(100)]],
+      bio: [''],
+      jobTitle: [''],
+      company: [''],
       industry: [''],
-      city: ['', [Validators.maxLength(100)]],
+      city: [''],
       country: [''],
-      linkedin: ['', [Validators.maxLength(255)]],
-      github: ['', [Validators.maxLength(255)]],
-      twitter: ['', [Validators.maxLength(255)]],
-      website: ['', [Validators.maxLength(255)]],
+      linkedin: [''],
+      github: [''],
+      twitter: [''],
+      website: [''],
       openToMentoring: [false],
       profileVisibility: [false],
     });

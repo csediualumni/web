@@ -129,7 +129,7 @@
         <!-- Initials -->
         <div>
           <label for="mt-initials" class="block text-sm font-medium text-zinc-700 mb-1">Initials</label>
-          <input id="mt-initials" type="text" maxlength="3"
+          <input id="mt-initials" type="text"
             [ngModel]="formInitials()" (ngModelChange)="formInitials.set($event)"
             placeholder="e.g. AB (auto-generated if blank)"
             class="shad-input w-full" />

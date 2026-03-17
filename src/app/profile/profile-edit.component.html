@@ -298,7 +298,7 @@
         </h2>
         <div>
           <label for="pe-bio" class="block text-sm font-medium text-zinc-700 mb-1.5">
-            Bio <span class="text-zinc-400 text-xs font-normal">(max 1000 characters)</span>
+            Bio
           </label>
           <textarea
             id="pe-bio"
@@ -307,9 +307,6 @@
             placeholder="Tell fellow alumni a bit about yourself — your journey, interests, and what you're working on…"
             class="shad-input w-full resize-none leading-relaxed"
           ></textarea>
-          <p class="text-xs text-zinc-400 mt-1.5 text-right">
-            {{ form.get('bio')?.value?.length ?? 0 }} / 1000
-          </p>
         </div>
       </div>
 

@@ -91,3 +91,12 @@
     @apply absolute inset-0 flex items-center;
   }
 }
+
+/* Auto-resize all textareas to fit their content.
+   Placed outside @layer so it overrides the h-9 fixed height from .shad-input. */
+textarea {
+  height: auto;
+  field-sizing: content;
+  min-height: 5rem;
+  overflow-y: hidden;
+}
