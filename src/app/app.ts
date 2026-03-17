@@ -1,7 +1,7 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, PLATFORM_ID, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { SiteConfigService } from './core/site-config.service';
@@ -26,13 +26,16 @@ export class App {
   private readonly router = inject(Router);
   private readonly siteConfig = inject(SiteConfigService);
   private readonly document = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
 
   constructor() {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
         this.currentUrl.set(e.urlAfterRedirects);
-        this.document.defaultView?.scrollTo(0, 0);
+        if (isPlatformBrowser(this.platformId)) {
+          this.document.defaultView?.scrollTo(0, 0);
+        }
       });
 
     effect(() => {
