@@ -18,6 +18,7 @@ export class MyAccountComponent {
     { label: 'Membership', path: 'membership', icon: 'fa-id-card' },
     { label: 'My Invoices', path: 'invoices', icon: 'fa-file-invoice-dollar' },
     { label: 'My Events', path: 'events', icon: 'fa-calendar-check' },
+    { label: 'My Research', path: 'research', icon: 'fa-microscope' },
     { label: 'Mentorship', path: 'mentor', icon: 'fa-chalkboard-user' },
   ];
 
