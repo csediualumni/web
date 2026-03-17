@@ -1,0 +1,236 @@
+<!-- ── Hero ──────────────────────────────────────────────────────── -->
+<section class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+    <div
+      class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-zinc-300 mb-6"
+    >
+      <i class="fa-brands fa-github text-white"></i> GitHub Issues
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">Open Issues</h1>
+    <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+      Track open bugs, feature requests, and improvements for the CSE DIU Alumni web platform.
+    </p>
+    <a
+      href="https://github.com/csediualumni/web/issues/new"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-8 inline-flex items-center gap-2 bg-white text-blue-900 font-semibold px-6 py-2.5 rounded-xl hover:bg-blue-50 transition-colors text-sm"
+    >
+      <i class="fa-solid fa-plus"></i> Open a New Issue
+    </a>
+  </div>
+</section>
+
+<!-- ── Search & Filters ──────────────────────────────────────────── -->
+<section class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-zinc-200 shadow-sm py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="relative flex-1">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+        <input
+          type="text"
+          placeholder="Search issues by title or description…"
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+          class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+        />
+      </div>
+      <select
+        class="rounded-lg border border-zinc-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        [value]="selectedLabel()"
+        (change)="selectedLabel.set($any($event.target).value)"
+      >
+        <option value="">All Labels</option>
+        @for (label of allLabels(); track label.id) {
+          <option [value]="label.name">{{ label.name }}</option>
+        }
+      </select>
+      @if (hasFilters()) {
+        <button
+          (click)="clearFilters()"
+          class="shad-btn-outline text-sm px-4 py-2.5 whitespace-nowrap"
+        >
+          <i class="fa-solid fa-times mr-1"></i> Clear
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ── Results ──────────────────────────────────────────────────── -->
+<section class="py-12 bg-zinc-50 min-h-[400px]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="flex flex-col items-center justify-center py-24 text-zinc-400">
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-blue-400"></i>
+        <p class="text-lg font-medium">Loading issues…</p>
+      </div>
+    }
+
+    <!-- Error -->
+    @if (!loading() && error()) {
+      <div class="flex flex-col items-center justify-center py-24 text-zinc-500">
+        <i class="fa-solid fa-triangle-exclamation text-4xl mb-4 text-rose-400"></i>
+        <p class="text-lg font-medium text-zinc-700">{{ error() }}</p>
+        <a
+          href="https://github.com/csediualumni/web/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 shad-btn-primary text-sm px-6 py-2.5"
+        >
+          View on GitHub
+        </a>
+      </div>
+    }
+
+    <!-- Issues list -->
+    @if (!loading() && !error()) {
+      <div class="flex items-center justify-between mb-6">
+        <p class="text-zinc-500 text-sm">
+          <i class="fa-solid fa-circle-dot text-emerald-500 mr-1"></i>
+          <span class="font-semibold text-zinc-800">{{ filteredIssues().length }}</span>
+          open issue{{ filteredIssues().length === 1 ? '' : 's' }}
+        </p>
+        <a
+          href="https://github.com/csediualumni/web/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+        >
+          <i class="fa-brands fa-github"></i> View on GitHub
+        </a>
+      </div>
+
+      @if (filteredIssues().length === 0) {
+        <div class="text-center py-20 text-zinc-400">
+          <i class="fa-solid fa-circle-check text-5xl mb-4 text-emerald-400"></i>
+          <p class="text-lg font-medium text-zinc-600">
+            {{ hasFilters() ? 'No issues match your search.' : 'No open issues — everything looks great!' }}
+          </p>
+          @if (hasFilters()) {
+            <button (click)="clearFilters()" class="mt-4 shad-btn-primary text-sm px-6 py-2.5">
+              Clear Filters
+            </button>
+          }
+        </div>
+      }
+
+      <div class="space-y-3">
+        @for (issue of filteredIssues(); track issue.id) {
+          <a
+            [href]="issue.html_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block shad-card rounded-2xl p-5 hover:shadow-md transition-all hover:-translate-y-0.5 group"
+          >
+            <div class="flex items-start gap-4">
+              <!-- Avatar -->
+              <img
+                [src]="issue.user.avatar_url"
+                [alt]="issue.user.login"
+                class="w-9 h-9 rounded-full flex-shrink-0 ring-1 ring-zinc-200"
+              />
+
+              <!-- Content -->
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <span class="text-xs text-zinc-400 font-mono">#{{ issue.number }}</span>
+                  <h2
+                    class="text-base font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors leading-snug"
+                  >
+                    {{ issue.title }}
+                  </h2>
+                </div>
+
+                @if (issue.body) {
+                  <p class="text-zinc-500 text-sm leading-relaxed line-clamp-2 mb-3">
+                    {{ issue.body }}
+                  </p>
+                }
+
+                <div class="flex flex-wrap items-center gap-3">
+                  <!-- Labels -->
+                  @for (label of issue.labels; track label.id) {
+                    <span
+                      class="inline-flex items-center text-xs font-medium rounded-full px-2.5 py-0.5 border"
+                      [style.background-color]="'#' + label.color"
+                      [style.border-color]="'#' + label.color"
+                      [style.color]="labelTextColor(label.color)"
+                    >
+                      {{ label.name }}
+                    </span>
+                  }
+
+                  <!-- Milestone -->
+                  @if (issue.milestone) {
+                    <span class="inline-flex items-center gap-1 text-xs text-zinc-400">
+                      <i class="fa-solid fa-flag"></i> {{ issue.milestone.title }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <!-- Meta -->
+              <div class="hidden sm:flex flex-col items-end gap-2 flex-shrink-0 text-right">
+                <span class="text-xs text-zinc-400 whitespace-nowrap">
+                  opened {{ timeAgo(issue.created_at) }} by
+                  <span class="font-medium text-zinc-600">{{ issue.user.login }}</span>
+                </span>
+                @if (issue.comments > 0) {
+                  <span class="inline-flex items-center gap-1 text-xs text-zinc-400">
+                    <i class="fa-regular fa-comment"></i> {{ issue.comments }}
+                  </span>
+                }
+              </div>
+            </div>
+
+            <!-- Mobile meta -->
+            <div class="sm:hidden mt-3 flex flex-wrap gap-3 text-xs text-zinc-400">
+              <span>
+                opened {{ timeAgo(issue.created_at) }} by
+                <span class="font-medium text-zinc-600">{{ issue.user.login }}</span>
+              </span>
+              @if (issue.comments > 0) {
+                <span class="inline-flex items-center gap-1">
+                  <i class="fa-regular fa-comment"></i> {{ issue.comments }}
+                </span>
+              }
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────────────────────────────── -->
+<section class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white py-16">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <i class="fa-solid fa-code-pull-request text-4xl mb-4 opacity-80"></i>
+    <h2 class="text-3xl font-bold mb-3">Want to Contribute?</h2>
+    <p class="text-blue-100 text-lg mb-8 max-w-xl mx-auto">
+      This project is open source. Help us improve the platform by submitting bug reports, feature
+      requests, or pull requests on GitHub.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="https://github.com/csediualumni/web/issues/new"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-blue-50 transition-colors"
+      >
+        <i class="fa-solid fa-bug"></i> Report a Bug
+      </a>
+      <a
+        href="https://github.com/csediualumni/web"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-white/10 border border-white/30 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-white/20 transition-colors"
+      >
+        <i class="fa-brands fa-github"></i> View Repository
+      </a>
+    </div>
+  </div>
+</section>
