@@ -360,6 +360,12 @@ export const routes: Routes = [
     loadComponent: () => import('./issues/issues.component').then((m) => m.IssuesComponent),
   },
   {
+    path: 'contributors',
+    title: 'Contributors',
+    loadComponent: () =>
+      import('./contributors/contributors.component').then((m) => m.ContributorsComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
