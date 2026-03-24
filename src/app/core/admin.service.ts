@@ -265,6 +265,7 @@ export interface AdminResearchPaper {
   link: string;
   citations: number;
   featured: boolean;
+  submittedBy: { id: string; displayName: string | null; email: string } | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -847,6 +848,22 @@ export class AdminService {
 
   listResearchPapers(): Observable<AdminResearchPaper[]> {
     return this.http.get<AdminResearchPaper[]>(this.researchBase);
+  }
+
+  getMyResearchPapers(): Observable<AdminResearchPaper[]> {
+    return this.http.get<AdminResearchPaper[]>(`${this.researchBase}/mine`);
+  }
+
+  submitMyResearchPaper(dto: SaveResearchPaperDto): Observable<AdminResearchPaper> {
+    return this.http.post<AdminResearchPaper>(`${this.researchBase}/mine`, dto);
+  }
+
+  updateMyResearchPaper(id: string, dto: Partial<SaveResearchPaperDto>): Observable<AdminResearchPaper> {
+    return this.http.patch<AdminResearchPaper>(`${this.researchBase}/mine/${id}`, dto);
+  }
+
+  deleteMyResearchPaper(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.researchBase}/mine/${id}`);
   }
 
   adminCreateResearchPaper(dto: SaveResearchPaperDto): Observable<AdminResearchPaper> {

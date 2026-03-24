@@ -1,16 +1,16 @@
 <!-- Header -->
 <div class="flex items-center justify-between mb-6">
   <div>
-    <h1 class="text-lg font-semibold text-zinc-900">Research Papers</h1>
-    <p class="text-sm text-zinc-500 mt-0.5">Manage research publications shown on the Research page.</p>
+    <h1 class="text-xl font-bold text-zinc-900 mb-1">My Research Papers</h1>
+    <p class="text-sm text-zinc-500">Submit and manage your research publications.</p>
   </div>
-  @if (mode() === 'list' && auth.hasPermission('research:write')) {
+  @if (mode() === 'list') {
     <button
       (click)="openCreate()"
       class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
     >
       <i class="fa-solid fa-plus text-xs"></i>
-      New Paper
+      Add Paper
     </button>
   }
 </div>
@@ -33,7 +33,7 @@
 @if (mode() === 'create' || mode() === 'edit') {
   <div class="shad-card p-6 mb-6">
     <h2 class="text-base font-semibold text-zinc-900 mb-5">
-      {{ mode() === 'create' ? 'New Research Paper' : 'Edit Research Paper' }}
+      {{ mode() === 'create' ? 'Add Research Paper' : 'Edit Research Paper' }}
     </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -147,19 +147,6 @@
           class="shad-input w-full" />
       </div>
 
-      <!-- Featured -->
-      <div class="sm:col-span-2">
-        <label for="rp-featured" class="flex items-center gap-2.5 cursor-pointer select-none">
-          <input id="rp-featured" type="checkbox"
-            [ngModel]="formFeatured()" (ngModelChange)="formFeatured.set($event)"
-            class="w-4 h-4 rounded border-zinc-300 accent-violet-600" />
-          <div>
-            <span class="text-sm font-medium text-zinc-700">Featured</span>
-            <p class="text-xs text-zinc-400">Highlighted at the top of the Research page</p>
-          </div>
-        </label>
-      </div>
-
     </div>
 
     <!-- Form Actions -->
@@ -170,7 +157,7 @@
           <i class="fa-solid fa-spinner fa-spin text-xs"></i> Saving…
         } @else {
           <i class="fa-solid fa-check text-xs"></i>
-          {{ mode() === 'create' ? 'Create Paper' : 'Save Changes' }}
+          {{ mode() === 'create' ? 'Submit Paper' : 'Save Changes' }}
         }
       </button>
       <button (click)="cancelForm()" [disabled]="saving()"
@@ -189,9 +176,13 @@
       <span class="text-sm">Loading…</span>
     </div>
   } @else if (papers().length === 0) {
-    <div class="text-center py-20 text-zinc-400">
-      <i class="fa-solid fa-microscope text-4xl mb-3 opacity-30"></i>
-      <p class="text-sm">No research papers yet. Click <strong>New Paper</strong> to add one.</p>
+    <div class="text-center py-16 text-zinc-400">
+      <i class="fa-solid fa-microscope text-4xl mb-3 block opacity-30"></i>
+      <p class="text-sm mb-3">You haven't added any research papers yet.</p>
+      <button (click)="openCreate()"
+        class="text-sm text-blue-600 hover:underline font-medium">
+        Add your first paper →
+      </button>
     </div>
   } @else {
     <div class="shad-card overflow-hidden">
@@ -201,9 +192,6 @@
             <th class="px-4 py-3 text-left font-medium text-zinc-500">Title</th>
             <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">Venue</th>
             <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">Year</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Citations</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Featured</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden xl:table-cell">Submitted By</th>
             <th class="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>
           </tr>
         </thead>
@@ -221,38 +209,20 @@
                 <span class="block text-xs text-zinc-400 mt-0.5 truncate">{{ paper.venue }}</span>
               </td>
               <td class="px-4 py-3 text-zinc-500 hidden md:table-cell">{{ paper.year }}</td>
-              <td class="px-4 py-3 text-zinc-500 hidden lg:table-cell">{{ paper.citations }}</td>
-              <td class="px-4 py-3 hidden lg:table-cell">
-                @if (paper.featured) {
-                  <span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-full px-2 py-0.5">
-                    <i class="fa-solid fa-star mr-1"></i>Featured
-                  </span>
-                }
-              </td>
-              <td class="px-4 py-3 hidden xl:table-cell">
-                @if (paper.submittedBy) {
-                  <span class="text-xs text-zinc-700">{{ paper.submittedBy.displayName || paper.submittedBy.email }}</span>
-                  <span class="block text-xs text-zinc-400">{{ paper.submittedBy.email }}</span>
-                } @else {
-                  <span class="text-xs text-zinc-400">—</span>
-                }
-              </td>
               <td class="px-4 py-3 text-right">
                 <div class="flex items-center justify-end gap-2">
-                  @if (auth.hasPermission('research:write')) {
-                    <button (click)="openEdit(paper)"
-                      class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600">
-                      <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button (click)="delete(paper)" [disabled]="isDeleting(paper.id)"
-                      class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50">
-                      @if (isDeleting(paper.id)) {
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                      } @else {
-                        <i class="fa-solid fa-trash"></i>
-                      }
-                    </button>
-                  }
+                  <button (click)="openEdit(paper)"
+                    class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button (click)="delete(paper)" [disabled]="isDeleting(paper.id)"
+                    class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50">
+                    @if (isDeleting(paper.id)) {
+                      <i class="fa-solid fa-spinner fa-spin"></i>
+                    } @else {
+                      <i class="fa-solid fa-trash"></i>
+                    }
+                  </button>
                 </div>
               </td>
             </tr>

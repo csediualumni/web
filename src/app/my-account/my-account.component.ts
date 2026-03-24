@@ -19,6 +19,7 @@ export class MyAccountComponent {
     { label: 'My Invoices', path: 'invoices', icon: 'fa-file-invoice-dollar' },
     { label: 'My Events', path: 'events', icon: 'fa-calendar-check' },
     { label: 'Mentorship', path: 'mentor', icon: 'fa-chalkboard-user' },
+    { label: 'My Research Papers', path: 'research', icon: 'fa-file-lines' },
   ];
 
   readonly auth = inject(AuthService);
