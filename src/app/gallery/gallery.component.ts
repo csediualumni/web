@@ -34,9 +34,7 @@ export class GalleryComponent implements OnInit {
     return cat === 'All' ? this.albums() : this.albums().filter((a) => a.category === cat);
   });
 
-  private readonly flatItems = computed(() =>
-    this.filteredAlbums().flatMap((a) => a.items),
-  );
+  private readonly flatItems = computed(() => this.filteredAlbums().flatMap((a) => a.items));
 
   ngOnInit(): void {
     this.gallerySvc.getAlbums().subscribe({

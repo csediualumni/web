@@ -113,7 +113,9 @@
             </div>
           </div>
 
-          <div class="text-sm text-zinc-600 leading-relaxed"><app-content-renderer [content]="s.description" /></div>
+          <div class="text-sm text-zinc-600 leading-relaxed">
+            <app-content-renderer [content]="s.description" />
+          </div>
 
           <div class="flex flex-wrap gap-2">
             @for (tag of s.tags; track tag) {
@@ -129,7 +131,8 @@
             <div class="text-sm text-zinc-500 space-y-1">
               <div>
                 <i class="fa-solid fa-user-graduate mr-1.5 text-zinc-400"></i
-                ><span class="font-medium">Eligibility:</span> <app-content-renderer [content]="s.eligibility" />
+                ><span class="font-medium">Eligibility:</span>
+                <app-content-renderer [content]="s.eligibility" />
               </div>
               <div class="text-rose-600">
                 <i class="fa-solid fa-hourglass-end mr-1.5"></i

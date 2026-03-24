@@ -1,11 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  AdminService,
-  AdminScholarship,
-  SaveScholarshipDto,
-} from '../../core/admin.service';
+import { AdminService, AdminScholarship, SaveScholarshipDto } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
 import { convertToHtml } from '../../shared/content.utils';
@@ -61,7 +57,10 @@ export class AdminScholarshipsComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
     this.adminSvc.listScholarships().subscribe({
-      next: (data) => { this.scholarships.set(data); this.loading.set(false); },
+      next: (data) => {
+        this.scholarships.set(data);
+        this.loading.set(false);
+      },
       error: (err) => {
         this.error.set(
           err?.status === 403
@@ -137,18 +136,45 @@ export class AdminScholarshipsComponent implements OnInit {
     const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
     const link = this.formLink().trim();
 
-    if (!title || !provider || !amount || !deadline || !eligibility || !level || !country || !type || !description || !link) {
+    if (
+      !title ||
+      !provider ||
+      !amount ||
+      !deadline ||
+      !eligibility ||
+      !level ||
+      !country ||
+      !type ||
+      !description ||
+      !link
+    ) {
       this.error.set('All required fields must be filled.');
       return;
     }
 
     const rawTags = this.formTags().trim();
-    const tags = rawTags ? rawTags.split(',').map((s) => s.trim()).filter(Boolean) : [];
+    const tags = rawTags
+      ? rawTags
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     const dto: SaveScholarshipDto = {
-      title, provider, amount, currency: this.formCurrency(), deadline,
-      eligibility, level, country, type, description, tags, link,
-      featured: this.formFeatured(), urgent: this.formUrgent(),
+      title,
+      provider,
+      amount,
+      currency: this.formCurrency(),
+      deadline,
+      eligibility,
+      level,
+      country,
+      type,
+      description,
+      tags,
+      link,
+      featured: this.formFeatured(),
+      urgent: this.formUrgent(),
     };
 
     this.saving.set(true);
@@ -192,11 +218,19 @@ export class AdminScholarshipsComponent implements OnInit {
     this.adminSvc.adminDeleteScholarship(s.id).subscribe({
       next: () => {
         this.scholarships.update((list) => list.filter((x) => x.id !== s.id));
-        this.deleting.update((set) => { const n = new Set(set); n.delete(s.id); return n; });
+        this.deleting.update((set) => {
+          const n = new Set(set);
+          n.delete(s.id);
+          return n;
+        });
         this.success.set(`"${s.title}" deleted.`);
       },
       error: (err) => {
-        this.deleting.update((set) => { const n = new Set(set); n.delete(s.id); return n; });
+        this.deleting.update((set) => {
+          const n = new Set(set);
+          n.delete(s.id);
+          return n;
+        });
         this.error.set(
           err?.status === 403
             ? "You don't have permission to delete scholarships."
@@ -212,10 +246,10 @@ export class AdminScholarshipsComponent implements OnInit {
 
   typeBadgeClass(type: string): string {
     const map: Record<string, string> = {
-      Full:           'bg-emerald-100 text-emerald-700 border border-emerald-200',
-      Partial:        'bg-sky-100 text-sky-700 border border-sky-200',
+      Full: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+      Partial: 'bg-sky-100 text-sky-700 border border-sky-200',
       'Alumni-Funded': 'bg-violet-100 text-violet-700 border border-violet-200',
-      External:       'bg-amber-100 text-amber-700 border border-amber-200',
+      External: 'bg-amber-100 text-amber-700 border border-amber-200',
     };
     return map[type] ?? 'bg-zinc-100 text-zinc-600 border border-zinc-200';
   }

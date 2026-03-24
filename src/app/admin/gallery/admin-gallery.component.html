@@ -3,18 +3,28 @@
   <div>
     @if (mode() === 'albums') {
       <h1 class="text-lg font-semibold text-zinc-900">Gallery</h1>
-      <p class="text-sm text-zinc-500 mt-0.5">Manage photo albums and media items shown on the Gallery page.</p>
+      <p class="text-sm text-zinc-500 mt-0.5">
+        Manage photo albums and media items shown on the Gallery page.
+      </p>
     } @else if (mode() === 'album-form') {
-      <h1 class="text-lg font-semibold text-zinc-900">{{ editingAlbumId() ? 'Edit Album' : 'New Album' }}</h1>
+      <h1 class="text-lg font-semibold text-zinc-900">
+        {{ editingAlbumId() ? 'Edit Album' : 'New Album' }}
+      </h1>
       <p class="text-sm text-zinc-500 mt-0.5">Fill in the album details below.</p>
     } @else if (mode() === 'album-detail' && activeAlbum()) {
       <div class="flex items-center gap-2">
-        <button (click)="mode.set('albums')" class="text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer">
+        <button
+          (click)="mode.set('albums')"
+          class="text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer"
+        >
           <i class="fa-solid fa-arrow-left text-sm"></i>
         </button>
         <div>
           <h1 class="text-lg font-semibold text-zinc-900">{{ activeAlbum()!.title }}</h1>
-          <p class="text-sm text-zinc-500 mt-0.5">{{ activeAlbum()!.category }} · {{ activeAlbum()!.year }} · {{ activeAlbum()!.items.length }} items</p>
+          <p class="text-sm text-zinc-500 mt-0.5">
+            {{ activeAlbum()!.category }} · {{ activeAlbum()!.year }} ·
+            {{ activeAlbum()!.items.length }} items
+          </p>
         </div>
       </div>
     }
@@ -68,13 +78,17 @@
 
 <!-- ── Alerts ── -->
 @if (error()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
     <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
     <span>{{ error() }}</span>
   </div>
 }
 @if (success()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
     <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
     <span>{{ success() }}</span>
   </div>
@@ -126,17 +140,23 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             } @else {
-              <div class="w-full h-full flex flex-col items-center justify-center text-zinc-300 gap-2">
+              <div
+                class="w-full h-full flex flex-col items-center justify-center text-zinc-300 gap-2"
+              >
                 <i class="fa-solid fa-images text-4xl"></i>
                 <span class="text-xs">No cover image</span>
               </div>
             }
             <!-- Item count badge -->
-            <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full">
+            <div
+              class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full"
+            >
               {{ album.items.length }} {{ album.items.length === 1 ? 'item' : 'items' }}
             </div>
             @if (!album.isPublished) {
-              <div class="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide">
+              <div
+                class="absolute top-2 left-2 bg-amber-500 text-white text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wide"
+              >
                 Draft
               </div>
             }
@@ -147,7 +167,10 @@
               <div class="min-w-0">
                 <h3 class="text-sm font-semibold text-zinc-900 truncate">{{ album.title }}</h3>
                 <div class="flex items-center gap-1.5 mt-1">
-                  <span class="text-[11px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">{{ album.category }}</span>
+                  <span
+                    class="text-[11px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium"
+                    >{{ album.category }}</span
+                  >
                   <span class="text-[11px] text-zinc-400">{{ album.year }}</span>
                 </div>
                 @if (album.description) {
@@ -196,7 +219,6 @@
 @if (mode() === 'album-form') {
   <div class="shad-card p-6">
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
       <!-- Title -->
       <div class="sm:col-span-2">
         <label for="alb-title" class="block text-sm font-medium text-zinc-700 mb-1">
@@ -228,7 +250,9 @@
 
       <!-- Category -->
       <div>
-        <label for="alb-category" class="block text-sm font-medium text-zinc-700 mb-1">Category</label>
+        <label for="alb-category" class="block text-sm font-medium text-zinc-700 mb-1"
+          >Category</label
+        >
         <select
           id="alb-category"
           [ngModel]="formCategory()"
@@ -292,7 +316,11 @@
             ></div>
           </div>
           <span class="text-sm font-medium text-zinc-700">
-            {{ formIsPublished() ? 'Published (visible on gallery page)' : 'Draft (hidden from public)' }}
+            {{
+              formIsPublished()
+                ? 'Published (visible on gallery page)'
+                : 'Draft (hidden from public)'
+            }}
           </span>
         </label>
       </div>
@@ -323,7 +351,9 @@
 @if (mode() === 'album-detail' && activeAlbum()) {
   <!-- Item error -->
   @if (itemError()) {
-    <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <div
+      class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+    >
       <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
       <span>{{ itemError() }}</span>
     </div>
@@ -331,7 +361,9 @@
 
   <!-- Upload indicator -->
   @if (uploadingFile()) {
-    <div class="mb-4 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+    <div
+      class="mb-4 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700"
+    >
       <i class="fa-solid fa-spinner fa-spin"></i>
       Uploading image to storage…
     </div>
@@ -360,7 +392,12 @@
           />
         </div>
         <div>
-          <label for="item-thumb" class="block text-xs font-medium text-zinc-700 mb-1">Custom Thumbnail URL <span class="text-zinc-400 font-normal">(optional — auto-detected for YouTube)</span></label>
+          <label for="item-thumb" class="block text-xs font-medium text-zinc-700 mb-1"
+            >Custom Thumbnail URL
+            <span class="text-zinc-400 font-normal"
+              >(optional — auto-detected for YouTube)</span
+            ></label
+          >
           <input
             id="item-thumb"
             type="url"
@@ -371,7 +408,9 @@
           />
         </div>
         <div>
-          <label for="item-caption" class="block text-xs font-medium text-zinc-700 mb-1">Caption <span class="text-zinc-400 font-normal">(optional)</span></label>
+          <label for="item-caption" class="block text-xs font-medium text-zinc-700 mb-1"
+            >Caption <span class="text-zinc-400 font-normal">(optional)</span></label
+          >
           <input
             id="item-caption"
             type="text"
@@ -396,14 +435,18 @@
             Add Video
           }
         </button>
-        <button (click)="showAddItem.set(false)" class="shad-btn-secondary px-4 h-8 text-sm">Cancel</button>
+        <button (click)="showAddItem.set(false)" class="shad-btn-secondary px-4 h-8 text-sm">
+          Cancel
+        </button>
       </div>
     </div>
   }
 
   <!-- Empty state -->
   @if (activeAlbum()!.items.length === 0 && !uploadingFile()) {
-    <div class="text-center py-16 text-zinc-400 border-2 border-dashed border-zinc-200 rounded-xl bg-white">
+    <div
+      class="text-center py-16 text-zinc-400 border-2 border-dashed border-zinc-200 rounded-xl bg-white"
+    >
       <i class="fa-solid fa-photo-film text-5xl mb-3 block"></i>
       <p class="text-sm font-medium mb-1">No media yet</p>
       <p class="text-xs">Upload images or add video links using the buttons above.</p>
@@ -444,7 +487,9 @@
               </div>
             }
             <!-- Type badge -->
-            <div class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wide font-medium">
+            <div
+              class="absolute top-1.5 left-1.5 bg-black/60 text-white text-[9px] px-1.5 py-0.5 rounded-full uppercase tracking-wide font-medium"
+            >
               {{ item.type }}
             </div>
           </div>

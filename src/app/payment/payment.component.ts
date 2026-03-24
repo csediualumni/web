@@ -2,7 +2,8 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { InvoiceService,
+import {
+  InvoiceService,
   Invoice,
   SubmitPaymentDto,
   paidAmount,

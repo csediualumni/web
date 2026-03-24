@@ -108,20 +108,23 @@ export class DashboardComponent implements OnInit {
 
   // ── Platform stats (live from API) ──────────────────────────────
   private static readonly STAT_COLORS: Pick<PlatformStatCard, 'iconBg' | 'iconColor'>[] = [
-    { iconBg: 'bg-blue-50',    iconColor: 'text-blue-600'   },
-    { iconBg: 'bg-violet-50',  iconColor: 'text-violet-600' },
+    { iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+    { iconBg: 'bg-violet-50', iconColor: 'text-violet-600' },
     { iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
-    { iconBg: 'bg-amber-50',   iconColor: 'text-amber-600'  },
+    { iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
   ];
 
   readonly platformStats = toSignal(
     this.statsService.iconStats$.pipe(
       map((stats) =>
-        stats.map((s, i) => ({
-          ...s,
-          icon: s.icon ?? 'fa-chart-bar',
-          ...DashboardComponent.STAT_COLORS[i % 4],
-        } as PlatformStatCard)),
+        stats.map(
+          (s, i) =>
+            ({
+              ...s,
+              icon: s.icon ?? 'fa-chart-bar',
+              ...DashboardComponent.STAT_COLORS[i % 4],
+            }) as PlatformStatCard,
+        ),
       ),
     ),
     { initialValue: [] as PlatformStatCard[] },
@@ -222,7 +225,7 @@ export class DashboardComponent implements OnInit {
             }),
             location: e.location,
             badge: e.mode,
-          }))
+          })),
       ),
       catchError(() => of([] as UpcomingEvent[])),
     ),

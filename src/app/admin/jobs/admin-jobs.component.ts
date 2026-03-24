@@ -47,7 +47,13 @@ export class AdminJobsComponent implements OnInit {
   formFeatured = signal(false);
   formPostedById = signal('');
 
-  readonly jobTypes: AdminJobType[] = ['Full-time', 'Part-time', 'Internship', 'Remote', 'Contract'];
+  readonly jobTypes: AdminJobType[] = [
+    'Full-time',
+    'Part-time',
+    'Internship',
+    'Remote',
+    'Contract',
+  ];
 
   readonly auth = inject(AuthService);
   private readonly adminSvc = inject(AdminService);
@@ -60,7 +66,10 @@ export class AdminJobsComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
     this.adminSvc.listJobPostings().subscribe({
-      next: (data) => { this.jobs.set(data); this.loading.set(false); },
+      next: (data) => {
+        this.jobs.set(data);
+        this.loading.set(false);
+      },
       error: (err) => {
         this.error.set(
           err?.status === 403
@@ -133,22 +142,44 @@ export class AdminJobsComponent implements OnInit {
     const deadline = this.formDeadline().trim();
     const description = convertToHtml(this.formDescription().trim(), this.formDescriptionFormat());
 
-    if (!title || !company || !location || !country || !industry || !experience || !posted || !deadline || !description) {
+    if (
+      !title ||
+      !company ||
+      !location ||
+      !country ||
+      !industry ||
+      !experience ||
+      !posted ||
+      !deadline ||
+      !description
+    ) {
       this.error.set('All required fields must be filled.');
       return;
     }
 
     const rawSkills = this.formSkills().trim();
-    const skills = rawSkills ? rawSkills.split(',').map((s) => s.trim()).filter(Boolean) : [];
+    const skills = rawSkills
+      ? rawSkills
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     const postedById = this.formPostedById().trim() || undefined;
 
     const dto: SaveJobPostingDto = {
-      title, company, location, country,
+      title,
+      company,
+      location,
+      country,
       type: this.formType(),
-      industry, experience,
+      industry,
+      experience,
       salary: this.formSalary().trim() || undefined,
-      posted, deadline, description, skills,
+      posted,
+      deadline,
+      description,
+      skills,
       featured: this.formFeatured(),
       postedById,
     };
@@ -194,11 +225,19 @@ export class AdminJobsComponent implements OnInit {
     this.adminSvc.adminDeleteJobPosting(j.id).subscribe({
       next: () => {
         this.jobs.update((list) => list.filter((x) => x.id !== j.id));
-        this.deleting.update((s) => { const n = new Set(s); n.delete(j.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(j.id);
+          return n;
+        });
         this.success.set(`"${j.title}" deleted.`);
       },
       error: (err) => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(j.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(j.id);
+          return n;
+        });
         this.error.set(
           err?.status === 403
             ? "You don't have permission to delete job postings."
@@ -219,11 +258,11 @@ export class AdminJobsComponent implements OnInit {
 
   typeBadgeClass(type: AdminJobType): string {
     const map: Record<string, string> = {
-      'Full-time':  'bg-emerald-100 text-emerald-700 border border-emerald-200',
-      'Part-time':  'bg-sky-100 text-sky-700 border border-sky-200',
-      'Internship': 'bg-violet-100 text-violet-700 border border-violet-200',
-      'Remote':     'bg-amber-100 text-amber-700 border border-amber-200',
-      'Contract':   'bg-zinc-100 text-zinc-600 border border-zinc-200',
+      'Full-time': 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+      'Part-time': 'bg-sky-100 text-sky-700 border border-sky-200',
+      Internship: 'bg-violet-100 text-violet-700 border border-violet-200',
+      Remote: 'bg-amber-100 text-amber-700 border border-amber-200',
+      Contract: 'bg-zinc-100 text-zinc-600 border border-zinc-200',
     };
     return map[type] ?? 'bg-zinc-100 text-zinc-600 border border-zinc-200';
   }

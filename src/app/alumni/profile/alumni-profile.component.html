@@ -134,27 +134,32 @@
       <!-- Tab-like section links (visual divider) -->
       <div class="flex gap-1 border-b border-white/10 -mx-4 sm:-mx-6 px-4 sm:px-6 overflow-x-auto">
         <a
-          [routerLink]="[]" fragment="about"
+          [routerLink]="[]"
+          fragment="about"
           class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
           >About</a
         >
         <a
-          [routerLink]="[]" fragment="experience"
+          [routerLink]="[]"
+          fragment="experience"
           class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
           >Experience</a
         >
         <a
-          [routerLink]="[]" fragment="education"
+          [routerLink]="[]"
+          fragment="education"
           class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
           >Education</a
         >
         <a
-          [routerLink]="[]" fragment="achievements"
+          [routerLink]="[]"
+          fragment="achievements"
           class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
           >Achievements</a
         >
         <a
-          [routerLink]="[]" fragment="skills"
+          [routerLink]="[]"
+          fragment="skills"
           class="px-4 py-3 text-sm text-zinc-400 hover:text-white border-b-2 border-transparent hover:border-white/40 transition-colors whitespace-nowrap"
           >Skills</a
         >
@@ -173,7 +178,9 @@
             <h2 class="text-lg font-bold text-zinc-900 mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-user text-zinc-400"></i> About
             </h2>
-            <div class="text-zinc-600 leading-relaxed"><app-content-renderer [content]="m.bio ?? ''" /></div>
+            <div class="text-zinc-600 leading-relaxed">
+              <app-content-renderer [content]="m.bio ?? ''" />
+            </div>
           </div>
 
           <!-- Experience -->

@@ -61,11 +61,19 @@ export class ResearchComponent implements OnInit {
     });
   });
 
-  setTag(t: string) { this.activeTag.set(t); }
-  setYear(y: string) { this.activeYear.set(y); }
+  setTag(t: string) {
+    this.activeTag.set(t);
+  }
+  setYear(y: string) {
+    this.activeYear.set(y);
+  }
 
   venueIcon(type: string): string {
-    return type === 'journal' ? 'fa-book-open' : type === 'conference' ? 'fa-users-line' : 'fa-file-lines';
+    return type === 'journal'
+      ? 'fa-book-open'
+      : type === 'conference'
+        ? 'fa-users-line'
+        : 'fa-file-lines';
   }
 
   venueColor(type: string): string {

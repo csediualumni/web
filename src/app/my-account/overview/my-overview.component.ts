@@ -34,9 +34,7 @@ export class MyOverviewComponent implements OnInit {
 
   get upcomingRsvps(): RsvpWithEvent[] {
     const now = new Date();
-    return this.rsvps().filter(
-      (r) => r.status === 'registered' && new Date(r.event.date) >= now,
-    );
+    return this.rsvps().filter((r) => r.status === 'registered' && new Date(r.event.date) >= now);
   }
 
   membershipLabel(status: string): string {
@@ -81,25 +79,39 @@ export class MyOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     let done = 0;
-    const finish = () => { if (++done === 4) this.loading.set(false); };
+    const finish = () => {
+      if (++done === 4) this.loading.set(false);
+    };
 
     this.membership.getMyApplication().subscribe({
-      next: (app) => { this.application.set(app); finish(); },
+      next: (app) => {
+        this.application.set(app);
+        finish();
+      },
       error: () => finish(),
     });
 
     this.invoices.getMyInvoices().subscribe({
-      next: (list) => { this.invoiceList.set(list); finish(); },
+      next: (list) => {
+        this.invoiceList.set(list);
+        finish();
+      },
       error: () => finish(),
     });
 
     this.admin.getMyRsvps().subscribe({
-      next: (list) => { this.rsvps.set(list); finish(); },
+      next: (list) => {
+        this.rsvps.set(list);
+        finish();
+      },
       error: () => finish(),
     });
 
     this.admin.getMyMentorApplication().subscribe({
-      next: (app) => { this.mentorApp.set(app); finish(); },
+      next: (app) => {
+        this.mentorApp.set(app);
+        finish();
+      },
       error: () => finish(),
     });
   }

@@ -31,24 +31,24 @@ export class SiteConfigService {
   githubUrl = () => this.config()['githubUrl'] ?? null;
 
   update(data: Record<string, string | null>): Observable<Record<string, string | null>> {
-    return this.http.patch<Record<string, string | null>>(this.baseUrl, data).pipe(
-      tap((updated) => this.config.set(updated)),
-    );
+    return this.http
+      .patch<Record<string, string | null>>(this.baseUrl, data)
+      .pipe(tap((updated) => this.config.set(updated)));
   }
 
   uploadLogo(file: File): Observable<{ logoUrl: string }> {
     const form = new FormData();
     form.append('file', file);
-    return this.http.post<{ logoUrl: string }>(`${this.baseUrl}/logo`, form).pipe(
-      tap(({ logoUrl }) => this.config.update((c) => ({ ...c, logoUrl }))),
-    );
+    return this.http
+      .post<{ logoUrl: string }>(`${this.baseUrl}/logo`, form)
+      .pipe(tap(({ logoUrl }) => this.config.update((c) => ({ ...c, logoUrl }))));
   }
 
   uploadFavicon(file: File): Observable<{ faviconUrl: string }> {
     const form = new FormData();
     form.append('file', file);
-    return this.http.post<{ faviconUrl: string }>(`${this.baseUrl}/favicon`, form).pipe(
-      tap(({ faviconUrl }) => this.config.update((c) => ({ ...c, faviconUrl }))),
-    );
+    return this.http
+      .post<{ faviconUrl: string }>(`${this.baseUrl}/favicon`, form)
+      .pipe(tap(({ faviconUrl }) => this.config.update((c) => ({ ...c, faviconUrl }))));
   }
 }

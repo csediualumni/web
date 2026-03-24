@@ -30,12 +30,18 @@ export class ScholarshipsComponent implements OnInit {
         this.scholarships.set(data);
         const levelSet = new Set<string>();
         const countrySet = new Set<string>();
-        data.forEach((s) => { levelSet.add(s.level); countrySet.add(s.country); });
+        data.forEach((s) => {
+          levelSet.add(s.level);
+          countrySet.add(s.country);
+        });
         this.levels.set(['All', ...Array.from(levelSet).sort()]);
         this.countries.set(['All', ...Array.from(countrySet).sort()]);
         this.loading.set(false);
       },
-      error: () => { this.error.set('Failed to load scholarships.'); this.loading.set(false); },
+      error: () => {
+        this.error.set('Failed to load scholarships.');
+        this.loading.set(false);
+      },
     });
   }
 
@@ -50,18 +56,26 @@ export class ScholarshipsComponent implements OnInit {
   stats = computed(() => {
     const all = this.scholarships();
     const countries = new Set(all.map((s) => s.country)).size;
-    const fullyFunded = all.filter((s) =>
-      s.amount.toLowerCase().includes('full') || s.currency.toLowerCase().includes('full')
+    const fullyFunded = all.filter(
+      (s) => s.amount.toLowerCase().includes('full') || s.currency.toLowerCase().includes('full'),
     ).length;
     const alumniCount = all.filter((s) => s.type.toLowerCase().includes('alumni')).length;
     return [
-      { value: all.length > 0 ? all.length + '+' : '0', label: 'Active Scholarships', icon: 'fa-medal' },
+      {
+        value: all.length > 0 ? all.length + '+' : '0',
+        label: 'Active Scholarships',
+        icon: 'fa-medal',
+      },
       { value: String(countries), label: 'Countries', icon: 'fa-globe' },
       { value: String(fullyFunded), label: 'Fully Funded', icon: 'fa-star' },
       { value: String(alumniCount), label: 'Alumni-Funded', icon: 'fa-heart' },
     ];
   });
 
-  setLevel(l: string) { this.activeLevel.set(l); }
-  setCountry(c: string) { this.activeCountry.set(c); }
+  setLevel(l: string) {
+    this.activeLevel.set(l);
+  }
+  setCountry(c: string) {
+    this.activeCountry.set(c);
+  }
 }

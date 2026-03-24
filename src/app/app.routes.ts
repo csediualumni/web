@@ -93,9 +93,7 @@ export const routes: Routes = [
         path: 'invoices',
         title: 'My Invoices',
         loadComponent: () =>
-          import('./my-account/invoices/my-invoices.component').then(
-            (m) => m.MyInvoicesComponent,
-          ),
+          import('./my-account/invoices/my-invoices.component').then((m) => m.MyInvoicesComponent),
       },
       {
         path: 'events',
@@ -123,7 +121,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./admin/admin.component').then((m) => m.AdminComponent),
     children: [
-      { path: '', canActivate: [manageDefaultGuard], loadComponent: () => import('./admin/admin.component').then((m) => m.AdminComponent) },
+      {
+        path: '',
+        canActivate: [manageDefaultGuard],
+        loadComponent: () => import('./admin/admin.component').then((m) => m.AdminComponent),
+      },
       {
         path: 'users',
         title: 'Manage Users',
@@ -198,33 +200,25 @@ export const routes: Routes = [
         path: 'gallery',
         title: 'Manage Gallery',
         loadComponent: () =>
-          import('./admin/gallery/admin-gallery.component').then(
-            (m) => m.AdminGalleryComponent,
-          ),
+          import('./admin/gallery/admin-gallery.component').then((m) => m.AdminGalleryComponent),
       },
       {
         path: 'news',
         title: 'Manage News',
         loadComponent: () =>
-          import('./admin/news/admin-news.component').then(
-            (m) => m.AdminNewsComponent,
-          ),
+          import('./admin/news/admin-news.component').then((m) => m.AdminNewsComponent),
       },
       {
         path: 'research',
         title: 'Manage Research',
         loadComponent: () =>
-          import('./admin/research/admin-research.component').then(
-            (m) => m.AdminResearchComponent,
-          ),
+          import('./admin/research/admin-research.component').then((m) => m.AdminResearchComponent),
       },
       {
         path: 'mentors',
         title: 'Manage Mentors',
         loadComponent: () =>
-          import('./admin/mentors/admin-mentors.component').then(
-            (m) => m.AdminMentorsComponent,
-          ),
+          import('./admin/mentors/admin-mentors.component').then((m) => m.AdminMentorsComponent),
       },
       {
         path: 'scholarships',
@@ -238,17 +232,13 @@ export const routes: Routes = [
         path: 'jobs',
         title: 'Manage Jobs',
         loadComponent: () =>
-          import('./admin/jobs/admin-jobs.component').then(
-            (m) => m.AdminJobsComponent,
-          ),
+          import('./admin/jobs/admin-jobs.component').then((m) => m.AdminJobsComponent),
       },
       {
         path: 'config',
         title: 'Site Configuration',
         loadComponent: () =>
-          import('./admin/config/admin-config.component').then(
-            (m) => m.AdminConfigComponent,
-          ),
+          import('./admin/config/admin-config.component').then((m) => m.AdminConfigComponent),
       },
     ],
   },
@@ -278,7 +268,8 @@ export const routes: Routes = [
     path: 'alumni/:id',
     title: 'Alumni Profile',
     data: {
-      description: 'View the alumni profile of a CSE DIU graduate – career details, batch, and contact information.',
+      description:
+        'View the alumni profile of a CSE DIU graduate – career details, batch, and contact information.',
       keywords: 'CSE DIU alumni profile, graduate profile, DIU CSE member',
     },
     loadComponent: () =>
@@ -464,8 +455,7 @@ export const routes: Routes = [
     data: {
       description:
         'Stay up-to-date with the latest news, announcements, and achievements from the CSE DIU Alumni community.',
-      keywords:
-        'CSE DIU Alumni news, alumni announcements, DIU CSE news, alumni achievements',
+      keywords: 'CSE DIU Alumni news, alumni announcements, DIU CSE news, alumni achievements',
     },
     loadComponent: () => import('./news/news.component').then((m) => m.NewsComponent),
   },
@@ -473,7 +463,8 @@ export const routes: Routes = [
     path: 'news/:id',
     title: 'News Article',
     data: {
-      description: 'Read the latest news articles and announcements from the CSE DIU Alumni community.',
+      description:
+        'Read the latest news articles and announcements from the CSE DIU Alumni community.',
       keywords: 'CSE DIU Alumni news article, alumni announcement, DIU CSE update',
     },
     loadComponent: () =>

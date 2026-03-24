@@ -34,7 +34,13 @@
               <i class="fa-solid fa-camera text-white text-xl"></i>
             }
           </div>
-          <input #avatarInput type="file" accept="image/*" class="hidden" (change)="onAvatarChange($event)" />
+          <input
+            #avatarInput
+            type="file"
+            accept="image/*"
+            class="hidden"
+            (change)="onAvatarChange($event)"
+          />
         </div>
         @if (avatarError()) {
           <p class="text-xs text-red-300 mt-1">{{ avatarError() }}</p>

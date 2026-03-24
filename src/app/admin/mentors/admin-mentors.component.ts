@@ -45,7 +45,7 @@ export class AdminMentorsComponent implements OnInit {
   formCity = signal('');
   formInitials = signal('');
   formColor = signal('');
-  formExpertise = signal('');  // comma-separated
+  formExpertise = signal(''); // comma-separated
   formBio = signal('');
   formBioFormat = signal<'html' | 'markdown'>('html');
   formAvailability = signal('');
@@ -68,7 +68,10 @@ export class AdminMentorsComponent implements OnInit {
     this.loading.set(true);
     this.error.set('');
     this.adminSvc.listMentors().subscribe({
-      next: (data) => { this.mentors.set(data); this.loading.set(false); },
+      next: (data) => {
+        this.mentors.set(data);
+        this.loading.set(false);
+      },
       error: (err) => {
         this.error.set(
           err?.status === 403
@@ -83,8 +86,13 @@ export class AdminMentorsComponent implements OnInit {
   loadApplications(): void {
     this.loadingApps.set(true);
     this.adminSvc.listMentorApplications().subscribe({
-      next: (data) => { this.applications.set(data); this.loadingApps.set(false); },
-      error: () => { this.loadingApps.set(false); },
+      next: (data) => {
+        this.applications.set(data);
+        this.loadingApps.set(false);
+      },
+      error: () => {
+        this.loadingApps.set(false);
+      },
     });
   }
 
@@ -160,7 +168,12 @@ export class AdminMentorsComponent implements OnInit {
     }
 
     const rawExpertise = this.formExpertise().trim();
-    const expertise = rawExpertise ? rawExpertise.split(',').map((s) => s.trim()).filter(Boolean) : [];
+    const expertise = rawExpertise
+      ? rawExpertise
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     const dto: SaveMentorDto = {
       name,
@@ -184,9 +197,7 @@ export class AdminMentorsComponent implements OnInit {
 
     const id = this.editingId();
     const req =
-      id === null
-        ? this.adminSvc.adminCreateMentor(dto)
-        : this.adminSvc.adminUpdateMentor(id, dto);
+      id === null ? this.adminSvc.adminCreateMentor(dto) : this.adminSvc.adminUpdateMentor(id, dto);
 
     req.subscribe({
       next: (saved) => {
@@ -220,11 +231,19 @@ export class AdminMentorsComponent implements OnInit {
     this.adminSvc.adminDeleteMentor(m.id).subscribe({
       next: () => {
         this.mentors.update((list) => list.filter((x) => x.id !== m.id));
-        this.deleting.update((s) => { const n = new Set(s); n.delete(m.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(m.id);
+          return n;
+        });
         this.success.set(`Mentor "${m.name}" deleted.`);
       },
       error: (err) => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(m.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(m.id);
+          return n;
+        });
         this.error.set(
           err?.status === 403
             ? "You don't have permission to delete mentors."
@@ -245,10 +264,18 @@ export class AdminMentorsComponent implements OnInit {
     this.adminSvc.updateApplicationStatus(app.id, status).subscribe({
       next: (updated) => {
         this.applications.update((list) => list.map((a) => (a.id === app.id ? updated : a)));
-        this.updatingStatus.update((s) => { const n = new Set(s); n.delete(app.id); return n; });
+        this.updatingStatus.update((s) => {
+          const n = new Set(s);
+          n.delete(app.id);
+          return n;
+        });
       },
       error: () => {
-        this.updatingStatus.update((s) => { const n = new Set(s); n.delete(app.id); return n; });
+        this.updatingStatus.update((s) => {
+          const n = new Set(s);
+          n.delete(app.id);
+          return n;
+        });
       },
     });
   }
@@ -259,19 +286,19 @@ export class AdminMentorsComponent implements OnInit {
 
   statusBadgeClass(status: ApplicationStatus): string {
     const map: Record<string, string> = {
-      pending:   'bg-zinc-100 text-zinc-600 border border-zinc-200',
+      pending: 'bg-zinc-100 text-zinc-600 border border-zinc-200',
       reviewing: 'bg-sky-100 text-sky-700 border border-sky-200',
-      accepted:  'bg-emerald-100 text-emerald-700 border border-emerald-200',
-      rejected:  'bg-red-100 text-red-700 border border-red-200',
+      accepted: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+      rejected: 'bg-red-100 text-red-700 border border-red-200',
     };
     return map[status] ?? 'bg-zinc-100 text-zinc-600 border border-zinc-200';
   }
 
   availabilityBadgeClass(av: string): string {
     const map: Record<string, string> = {
-      Open:    'bg-emerald-100 text-emerald-700 border border-emerald-200',
+      Open: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
       Limited: 'bg-amber-100 text-amber-700 border border-amber-200',
-      Closed:  'bg-red-100 text-red-700 border border-red-200',
+      Closed: 'bg-red-100 text-red-700 border border-red-200',
     };
     return map[av] ?? 'bg-zinc-100 text-zinc-600 border border-zinc-200';
   }

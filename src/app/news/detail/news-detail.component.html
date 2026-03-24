@@ -41,7 +41,9 @@
           <i [class]="'fa-solid ' + a.icon + ' text-2xl text-zinc-800'"></i>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
-          <span [class]="'text-xs font-semibold rounded-full px-3 py-1 ' + categoryColor(a.category)">
+          <span
+            [class]="'text-xs font-semibold rounded-full px-3 py-1 ' + categoryColor(a.category)"
+          >
             {{ a.category }}
           </span>
           @if (a.pinned) {
@@ -50,7 +52,9 @@
             </span>
           }
           @if (a.featured) {
-            <span class="text-xs font-semibold rounded-full px-3 py-1 bg-violet-100 text-violet-700">
+            <span
+              class="text-xs font-semibold rounded-full px-3 py-1 bg-violet-100 text-violet-700"
+            >
               <i class="fa-solid fa-star mr-1"></i>Featured
             </span>
           }

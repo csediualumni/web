@@ -150,7 +150,9 @@ export class AdminNewsComponent implements OnInit {
     const color = this.formColor().trim();
 
     if (!title || !summary || !body || !author || !date || !readTime || !icon || !color) {
-      this.error.set('Title, summary, body, author, date, read time, icon and colour are required.');
+      this.error.set(
+        'Title, summary, body, author, date, read time, icon and colour are required.',
+      );
       return;
     }
 

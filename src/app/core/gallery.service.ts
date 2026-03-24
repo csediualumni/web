@@ -91,22 +91,14 @@ export class GalleryService {
   uploadImage(albumId: string, file: File): Observable<GalleryItem> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<GalleryItem>(
-      `${this.base}/albums/${albumId}/items/upload`,
-      formData,
-    );
+    return this.http.post<GalleryItem>(`${this.base}/albums/${albumId}/items/upload`, formData);
   }
 
   updateItem(albumId: string, itemId: string, dto: UpdateItemDto): Observable<GalleryItem> {
-    return this.http.patch<GalleryItem>(
-      `${this.base}/albums/${albumId}/items/${itemId}`,
-      dto,
-    );
+    return this.http.patch<GalleryItem>(`${this.base}/albums/${albumId}/items/${itemId}`, dto);
   }
 
   deleteItem(albumId: string, itemId: string): Observable<void> {
-    return this.http.delete<void>(
-      `${this.base}/albums/${albumId}/items/${itemId}`,
-    );
+    return this.http.delete<void>(`${this.base}/albums/${albumId}/items/${itemId}`);
   }
 }

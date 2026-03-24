@@ -835,7 +835,10 @@ export class AdminService {
     return this.http.post<AdminNewsArticle>(this.newsBase, dto);
   }
 
-  adminUpdateNewsArticle(id: string, dto: Partial<SaveNewsArticleDto>): Observable<AdminNewsArticle> {
+  adminUpdateNewsArticle(
+    id: string,
+    dto: Partial<SaveNewsArticleDto>,
+  ): Observable<AdminNewsArticle> {
     return this.http.patch<AdminNewsArticle>(`${this.newsBase}/${id}`, dto);
   }
 
@@ -858,7 +861,10 @@ export class AdminService {
     return this.http.post<AdminResearchPaper>(`${this.researchBase}/mine`, dto);
   }
 
-  updateMyResearchPaper(id: string, dto: Partial<SaveResearchPaperDto>): Observable<AdminResearchPaper> {
+  updateMyResearchPaper(
+    id: string,
+    dto: Partial<SaveResearchPaperDto>,
+  ): Observable<AdminResearchPaper> {
     return this.http.patch<AdminResearchPaper>(`${this.researchBase}/mine/${id}`, dto);
   }
 
@@ -870,7 +876,10 @@ export class AdminService {
     return this.http.post<AdminResearchPaper>(this.researchBase, dto);
   }
 
-  adminUpdateResearchPaper(id: string, dto: Partial<SaveResearchPaperDto>): Observable<AdminResearchPaper> {
+  adminUpdateResearchPaper(
+    id: string,
+    dto: Partial<SaveResearchPaperDto>,
+  ): Observable<AdminResearchPaper> {
     return this.http.patch<AdminResearchPaper>(`${this.researchBase}/${id}`, dto);
   }
 
@@ -906,8 +915,14 @@ export class AdminService {
     return this.http.get<AdminMentorApplication | null>(`${this.mentorsBase}/my-application`);
   }
 
-  updateApplicationStatus(id: string, status: ApplicationStatus): Observable<AdminMentorApplication> {
-    return this.http.patch<AdminMentorApplication>(`${this.mentorsBase}/admin/applications/${id}/status`, { status });
+  updateApplicationStatus(
+    id: string,
+    status: ApplicationStatus,
+  ): Observable<AdminMentorApplication> {
+    return this.http.patch<AdminMentorApplication>(
+      `${this.mentorsBase}/admin/applications/${id}/status`,
+      { status },
+    );
   }
 
   // ── Scholarships ──────────────────────────────────────────────
@@ -921,7 +936,10 @@ export class AdminService {
     return this.http.post<AdminScholarship>(this.scholarshipsBase, dto);
   }
 
-  adminUpdateScholarship(id: string, dto: Partial<SaveScholarshipDto>): Observable<AdminScholarship> {
+  adminUpdateScholarship(
+    id: string,
+    dto: Partial<SaveScholarshipDto>,
+  ): Observable<AdminScholarship> {
     return this.http.patch<AdminScholarship>(`${this.scholarshipsBase}/${id}`, dto);
   }
 

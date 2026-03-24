@@ -112,7 +112,10 @@ export class MyResearchComponent implements OnInit {
     const abstract = convertToHtml(this.formAbstract().trim(), this.formAbstractFormat());
     const venue = this.formVenue().trim();
     const link = this.formLink().trim();
-    const authors = this.formAuthors().split(',').map((s) => s.trim()).filter(Boolean);
+    const authors = this.formAuthors()
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     if (!title || !abstract || !venue || !link || authors.length === 0) {
       this.error.set('Title, authors, abstract, venue and link are required.');
@@ -120,7 +123,12 @@ export class MyResearchComponent implements OnInit {
     }
 
     const rawTags = this.formTags().trim();
-    const tags = rawTags ? rawTags.split(',').map((s) => s.trim()).filter(Boolean) : [];
+    const tags = rawTags
+      ? rawTags
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     const dto: SaveResearchPaperDto = {
       title,
@@ -200,9 +208,9 @@ export class MyResearchComponent implements OnInit {
 
   venueBadgeClass(type: VenueType): string {
     const map: Record<string, string> = {
-      journal:    'bg-sky-100 text-sky-700 border border-sky-200',
+      journal: 'bg-sky-100 text-sky-700 border border-sky-200',
       conference: 'bg-violet-100 text-violet-700 border border-violet-200',
-      preprint:   'bg-amber-100 text-amber-700 border border-amber-200',
+      preprint: 'bg-amber-100 text-amber-700 border border-amber-200',
     };
     return map[type] ?? 'bg-zinc-100 text-zinc-600 border border-zinc-200';
   }

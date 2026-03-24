@@ -6,6 +6,7 @@ import { serverConfig } from './app/app.config.server';
 
 const serverAppConfig = mergeApplicationConfig(appConfig, serverConfig);
 
-const bootstrap = (context: BootstrapContext) => bootstrapApplication(App, serverAppConfig, context);
+const bootstrap = (context: BootstrapContext) =>
+  bootstrapApplication(App, serverAppConfig, context);
 
 export default bootstrap;

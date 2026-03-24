@@ -2,11 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import {
-  GalleryService,
-  GalleryAlbum,
-  GalleryItem,
-} from '../../core/gallery.service';
+import { GalleryService, GalleryAlbum, GalleryItem } from '../../core/gallery.service';
 import { AuthService } from '../../core/auth.service';
 import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
 import { convertToHtml } from '../../shared/content.utils';
@@ -58,8 +54,16 @@ export class AdminGalleryComponent implements OnInit {
   itemCaption = signal('');
 
   readonly categoryOptions = [
-    'General', 'Reunion', 'Convocation', 'Workshop', 'Sports', 'Cultural',
-    'Seminar', 'Award', 'Trip', 'Other',
+    'General',
+    'Reunion',
+    'Convocation',
+    'Workshop',
+    'Sports',
+    'Cultural',
+    'Seminar',
+    'Award',
+    'Trip',
+    'Other',
   ];
 
   ngOnInit(): void {
@@ -144,7 +148,8 @@ export class AdminGalleryComponent implements OnInit {
 
     const dto = {
       title: this.formTitle().trim(),
-      description: convertToHtml(this.formDescription().trim(), this.formDescriptionFormat()) || undefined,
+      description:
+        convertToHtml(this.formDescription().trim(), this.formDescriptionFormat()) || undefined,
       category: this.formCategory(),
       year: Number(this.formYear()),
       isPublished: this.formIsPublished(),
@@ -152,9 +157,7 @@ export class AdminGalleryComponent implements OnInit {
     };
 
     const id = this.editingAlbumId();
-    const req = id
-      ? this.gallerySvc.updateAlbum(id, dto)
-      : this.gallerySvc.createAlbum(dto);
+    const req = id ? this.gallerySvc.updateAlbum(id, dto) : this.gallerySvc.createAlbum(dto);
 
     req.subscribe({
       next: () => {
@@ -175,11 +178,19 @@ export class AdminGalleryComponent implements OnInit {
     this.deleting.update((s) => new Set(s).add(album.id));
     this.gallerySvc.deleteAlbum(album.id).subscribe({
       next: () => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(album.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(album.id);
+          return n;
+        });
         this.loadAlbums();
       },
       error: () => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(album.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(album.id);
+          return n;
+        });
         this.error.set('Failed to delete album.');
       },
     });
@@ -251,11 +262,19 @@ export class AdminGalleryComponent implements OnInit {
     this.deleting.update((s) => new Set(s).add(item.id));
     this.gallerySvc.deleteItem(album.id, item.id).subscribe({
       next: () => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(item.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(item.id);
+          return n;
+        });
         this.refreshActiveAlbum(album.id, item, 'remove');
       },
       error: () => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(item.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(item.id);
+          return n;
+        });
         this.itemError.set('Failed to delete item.');
       },
     });
@@ -277,9 +296,7 @@ export class AdminGalleryComponent implements OnInit {
     this.activeAlbum.set(updated);
 
     // Also update the albums list
-    this.albums.update((list) =>
-      list.map((a) => (a.id === albumId ? updated : a)),
-    );
+    this.albums.update((list) => list.map((a) => (a.id === albumId ? updated : a)));
   }
 
   isYoutube(url: string): boolean {

@@ -47,16 +47,38 @@ export class MentorshipComponent implements OnInit {
   submitError = signal('');
 
   readonly steps = [
-    { icon: 'fa-file-signature', title: 'Apply', desc: 'Fill in the mentorship request form with your goals, area of interest, and preferred format.' },
-    { icon: 'fa-user-check', title: 'Get Matched', desc: 'Our team reviews your application and matches you with the most suitable mentor within 5–7 days.' },
-    { icon: 'fa-handshake', title: 'Connect', desc: 'Receive an introduction email. Schedule your first session and kick off the mentorship journey.' },
-    { icon: 'fa-chart-line', title: 'Grow', desc: 'Engage in regular sessions at your chosen cadence. Track progress and reach your goals.' },
+    {
+      icon: 'fa-file-signature',
+      title: 'Apply',
+      desc: 'Fill in the mentorship request form with your goals, area of interest, and preferred format.',
+    },
+    {
+      icon: 'fa-user-check',
+      title: 'Get Matched',
+      desc: 'Our team reviews your application and matches you with the most suitable mentor within 5–7 days.',
+    },
+    {
+      icon: 'fa-handshake',
+      title: 'Connect',
+      desc: 'Receive an introduction email. Schedule your first session and kick off the mentorship journey.',
+    },
+    {
+      icon: 'fa-chart-line',
+      title: 'Grow',
+      desc: 'Engage in regular sessions at your chosen cadence. Track progress and reach your goals.',
+    },
   ];
 
   ngOnInit(): void {
     this.mentorshipSvc.getMentors().subscribe({
-      next: (data) => { this.mentors.set(data); this.loading.set(false); },
-      error: () => { this.error.set('Failed to load mentors.'); this.loading.set(false); },
+      next: (data) => {
+        this.mentors.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to load mentors.');
+        this.loading.set(false);
+      },
     });
   }
 
@@ -73,12 +95,18 @@ export class MentorshipComponent implements OnInit {
     }
     this.submitting.set(true);
     const dto: ApplyMentorshipDto = {
-      name: name.trim(), email: email.trim(),
+      name: name.trim(),
+      email: email.trim(),
       batch: batch ? +batch : null,
-      area, goals: goals.trim(), type: this.form.type,
+      area,
+      goals: goals.trim(),
+      type: this.form.type,
     };
     this.mentorshipSvc.apply(dto).subscribe({
-      next: () => { this.submitting.set(false); this.submitted.set(true); },
+      next: () => {
+        this.submitting.set(false);
+        this.submitted.set(true);
+      },
       error: (err: any) => {
         this.submitError.set(err?.error?.message ?? 'Failed to submit. Please try again.');
         this.submitting.set(false);
@@ -88,10 +116,19 @@ export class MentorshipComponent implements OnInit {
 
   getInitials(mentor: Mentor): string {
     if (mentor.initials) return mentor.initials;
-    return mentor.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+    return mentor.name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   }
 
-  getColor(mentor: Mentor): string { return mentor.color ?? 'bg-slate-600'; }
+  getColor(mentor: Mentor): string {
+    return mentor.color ?? 'bg-slate-600';
+  }
 
-  stars(): number[] { return Array.from({ length: 5 }, (_, i) => i + 1); }
+  stars(): number[] {
+    return Array.from({ length: 5 }, (_, i) => i + 1);
+  }
 }

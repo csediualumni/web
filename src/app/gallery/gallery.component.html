@@ -60,7 +60,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
         @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
-          <div class="break-inside-avoid rounded-xl overflow-hidden border border-zinc-200 bg-white animate-pulse">
+          <div
+            class="break-inside-avoid rounded-xl overflow-hidden border border-zinc-200 bg-white animate-pulse"
+          >
             <div class="aspect-[4/3] bg-zinc-200"></div>
             <div class="p-3 space-y-2">
               <div class="h-3 bg-zinc-200 rounded w-3/4"></div>
@@ -87,7 +89,6 @@
 @if (!loading() && !error()) {
   <section class="bg-zinc-50 py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
       @if (filteredAlbums().length === 0) {
         <div class="text-center py-20 text-zinc-400">
           <i class="fa-solid fa-images text-5xl mb-4 block"></i>
@@ -103,18 +104,24 @@
             <div>
               <h2 class="text-lg font-bold text-zinc-900">{{ album.title }}</h2>
               <div class="flex items-center gap-2 mt-0.5">
-                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">{{ album.category }}</span>
+                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">{{
+                  album.category
+                }}</span>
                 <span class="text-xs text-zinc-400">{{ album.year }}</span>
                 @if (album.description) {
                   <span class="text-xs text-zinc-500">— {{ album.description }}</span>
                 }
               </div>
             </div>
-            <span class="ml-auto text-xs text-zinc-400">{{ album.items.length }} {{ album.items.length === 1 ? 'item' : 'items' }}</span>
+            <span class="ml-auto text-xs text-zinc-400"
+              >{{ album.items.length }} {{ album.items.length === 1 ? 'item' : 'items' }}</span
+            >
           </div>
 
           @if (album.items.length === 0) {
-            <div class="rounded-xl border border-dashed border-zinc-200 bg-white py-10 text-center text-zinc-400 text-sm">
+            <div
+              class="rounded-xl border border-dashed border-zinc-200 bg-white py-10 text-center text-zinc-400 text-sm"
+            >
               <i class="fa-solid fa-image text-2xl mb-2 block"></i>
               No media yet in this album.
             </div>
@@ -156,7 +163,9 @@
                     }
                     <!-- Play badge -->
                     <div class="absolute inset-0 flex items-center justify-center">
-                      <div class="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center shadow-lg">
+                      <div
+                        class="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center shadow-lg"
+                      >
                         <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
                       </div>
                     </div>
@@ -189,8 +198,6 @@
       }
     </div>
   </section>
-
-
 }
 
 <!-- ── Lightbox ── -->
@@ -250,7 +257,14 @@
             <iframe
               [src]="getYoutubeEmbedUrl(lightboxItem()!.url)"
               class="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+              "
               allowfullscreen
               title="YouTube video"
             ></iframe>

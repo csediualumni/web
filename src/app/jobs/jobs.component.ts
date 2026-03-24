@@ -32,8 +32,14 @@ export class JobsComponent implements OnInit {
 
   ngOnInit(): void {
     this.jobsSvc.getAll().subscribe({
-      next: (data) => { this.jobs.set(data); this.loading.set(false); },
-      error: () => { this.error.set('Failed to load job postings.'); this.loading.set(false); },
+      next: (data) => {
+        this.jobs.set(data);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to load job postings.');
+        this.loading.set(false);
+      },
     });
   }
 
@@ -43,7 +49,11 @@ export class JobsComponent implements OnInit {
     const industry = this.selectedIndustry();
     const exp = this.selectedExperience();
     return this.jobs().filter((j) => {
-      const matchQ = !q || j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q) || (j.skills ?? []).some((s) => s.toLowerCase().includes(q));
+      const matchQ =
+        !q ||
+        j.title.toLowerCase().includes(q) ||
+        j.company.toLowerCase().includes(q) ||
+        (j.skills ?? []).some((s) => s.toLowerCase().includes(q));
       const matchType = !type || j.type === type;
       const matchIndustry = !industry || j.industry === industry;
       const matchExp = !exp || j.experience === exp;
@@ -51,7 +61,13 @@ export class JobsComponent implements OnInit {
     });
   });
 
-  hasFilters = computed(() => !!this.searchQuery() || !!this.selectedType() || !!this.selectedIndustry() || !!this.selectedExperience());
+  hasFilters = computed(
+    () =>
+      !!this.searchQuery() ||
+      !!this.selectedType() ||
+      !!this.selectedIndustry() ||
+      !!this.selectedExperience(),
+  );
 
   clearFilters() {
     this.searchQuery.set('');

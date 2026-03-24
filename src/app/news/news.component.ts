@@ -57,9 +57,7 @@ export class NewsComponent implements OnInit {
   filteredArticles = computed(() => {
     const cat = this.activeCategory();
     const list =
-      cat === 'All'
-        ? this.articles()
-        : this.articles().filter((a) => a.category === cat);
+      cat === 'All' ? this.articles() : this.articles().filter((a) => a.category === cat);
     // Pinned first
     return [...list].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
   });

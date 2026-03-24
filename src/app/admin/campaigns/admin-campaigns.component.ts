@@ -1,7 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService, AdminCampaign, SaveCampaignDto, CampaignStatus } from '../../core/admin.service';
+import {
+  AdminService,
+  AdminCampaign,
+  SaveCampaignDto,
+  CampaignStatus,
+} from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
 import { convertToHtml } from '../../shared/content.utils';
@@ -162,7 +167,8 @@ export class AdminCampaignsComponent implements OnInit {
       color,
       featured: this.formFeatured(),
       impact: this.toLines(this.formImpact()),
-      updates: this.toLines(this.formUpdates()).length > 0 ? this.toLines(this.formUpdates()) : null,
+      updates:
+        this.toLines(this.formUpdates()).length > 0 ? this.toLines(this.formUpdates()) : null,
     };
 
     this.saving.set(true);

@@ -22,11 +22,15 @@
 </section>
 
 <!-- ── Search & Filters ──────────────────────────────────────────── -->
-<section class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-zinc-200 shadow-sm py-4">
+<section
+  class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-zinc-200 shadow-sm py-4"
+>
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="flex flex-col sm:flex-row gap-3">
       <div class="relative flex-1">
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"></i>
+        <i
+          class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+        ></i>
         <input
           type="text"
           placeholder="Search issues by title or description…"
@@ -60,7 +64,6 @@
 <!-- ── Results ──────────────────────────────────────────────────── -->
 <section class="py-12 bg-zinc-50 min-h-[400px]">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
-
     <!-- Loading -->
     @if (loading()) {
       <div class="flex flex-col items-center justify-center py-24 text-zinc-400">
@@ -107,7 +110,11 @@
         <div class="text-center py-20 text-zinc-400">
           <i class="fa-solid fa-circle-check text-5xl mb-4 text-emerald-400"></i>
           <p class="text-lg font-medium text-zinc-600">
-            {{ hasFilters() ? 'No issues match your search.' : 'No open issues — everything looks great!' }}
+            {{
+              hasFilters()
+                ? 'No issues match your search.'
+                : 'No open issues — everything looks great!'
+            }}
           </p>
           @if (hasFilters()) {
             <button (click)="clearFilters()" class="mt-4 shad-btn-primary text-sm px-6 py-2.5">

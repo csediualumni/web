@@ -280,7 +280,9 @@
       <!-- Modal Body -->
       <form [formGroup]="editForm" (ngSubmit)="saveEdit()" class="p-6 overflow-y-auto max-h-[70vh]">
         @if (editError()) {
-          <div class="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 text-xs text-red-600">
+          <div
+            class="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 text-xs text-red-600"
+          >
             {{ editError() }}
           </div>
         }
@@ -398,7 +400,9 @@
               id="openToMentoring"
               class="w-4 h-4 rounded accent-blue-600 cursor-pointer"
             />
-            <label for="openToMentoring" class="text-xs text-zinc-700 cursor-pointer">Open to Mentoring</label>
+            <label for="openToMentoring" class="text-xs text-zinc-700 cursor-pointer"
+              >Open to Mentoring</label
+            >
           </div>
           <div class="flex items-center gap-3">
             <input

@@ -1,7 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { InvoiceService, Invoice, paidAmount, dueAmount, formatBDT } from '../../core/invoice.service';
+import {
+  InvoiceService,
+  Invoice,
+  paidAmount,
+  dueAmount,
+  formatBDT,
+} from '../../core/invoice.service';
 
 @Component({
   selector: 'app-my-invoices',

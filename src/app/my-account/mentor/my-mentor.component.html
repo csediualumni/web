@@ -32,16 +32,28 @@
   <!-- Application exists -->
   <div class="bg-white rounded-xl border border-zinc-200 p-6">
     <!-- Status banner -->
-    <div class="flex items-center gap-3 p-3 rounded-lg border {{ statusClass(application()!.status) }} mb-6">
+    <div
+      class="flex items-center gap-3 p-3 rounded-lg border {{
+        statusClass(application()!.status)
+      }} mb-6"
+    >
       <i class="fa-solid {{ statusIcon(application()!.status) }} text-lg"></i>
       <div>
         <p class="text-sm font-semibold">{{ statusLabel(application()!.status) }}</p>
         <p class="text-xs opacity-75">
           @switch (application()!.status) {
-            @case ('pending') { Your application is in the queue. We'll review it soon. }
-            @case ('reviewing') { Our team is currently reviewing your application. }
-            @case ('accepted') { Congratulations! Your application has been accepted. }
-            @case ('rejected') { Unfortunately your application was not accepted at this time. }
+            @case ('pending') {
+              Your application is in the queue. We'll review it soon.
+            }
+            @case ('reviewing') {
+              Our team is currently reviewing your application.
+            }
+            @case ('accepted') {
+              Congratulations! Your application has been accepted.
+            }
+            @case ('rejected') {
+              Unfortunately your application was not accepted at this time.
+            }
           }
         </p>
       </div>
@@ -50,30 +62,58 @@
     <!-- Details -->
     <dl class="space-y-4">
       <div class="flex flex-col sm:flex-row sm:gap-4">
-        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Name</dt>
+        <dt
+          class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0"
+        >
+          Name
+        </dt>
         <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.name }}</dd>
       </div>
       <div class="flex flex-col sm:flex-row sm:gap-4">
-        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Type</dt>
+        <dt
+          class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0"
+        >
+          Type
+        </dt>
         <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0 capitalize">{{ application()!.type }}</dd>
       </div>
       <div class="flex flex-col sm:flex-row sm:gap-4">
-        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Area</dt>
+        <dt
+          class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0"
+        >
+          Area
+        </dt>
         <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.area }}</dd>
       </div>
       <div class="flex flex-col sm:flex-row sm:gap-4">
-        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Goals</dt>
-        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0 leading-relaxed">{{ application()!.goals }}</dd>
+        <dt
+          class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0"
+        >
+          Goals
+        </dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0 leading-relaxed">
+          {{ application()!.goals }}
+        </dd>
       </div>
       @if (application()!.batch) {
         <div class="flex flex-col sm:flex-row sm:gap-4">
-          <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Batch</dt>
+          <dt
+            class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0"
+          >
+            Batch
+          </dt>
           <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.batch }}</dd>
         </div>
       }
       <div class="flex flex-col sm:flex-row sm:gap-4">
-        <dt class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0">Applied</dt>
-        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">{{ application()!.createdAt | date:'mediumDate' }}</dd>
+        <dt
+          class="text-xs font-semibold uppercase tracking-wider text-zinc-400 sm:w-32 flex-shrink-0"
+        >
+          Applied
+        </dt>
+        <dd class="text-sm text-zinc-700 mt-0.5 sm:mt-0">
+          {{ application()!.createdAt | date: 'mediumDate' }}
+        </dd>
       </div>
     </dl>
   </div>

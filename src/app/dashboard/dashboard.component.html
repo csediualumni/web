@@ -189,9 +189,9 @@
           </div>
           <ul class="divide-y divide-zinc-50">
             @if (!upcomingEvents().length) {
-            <li class="px-5 py-8 text-center text-sm text-zinc-400">No upcoming events.</li>
-          }
-          @for (ev of upcomingEvents(); track ev.title) {
+              <li class="px-5 py-8 text-center text-sm text-zinc-400">No upcoming events.</li>
+            }
+            @for (ev of upcomingEvents(); track ev.title) {
               <li
                 class="flex items-start gap-4 px-5 py-4 hover:bg-zinc-50 transition-colors cursor-pointer"
               >
@@ -239,20 +239,24 @@
             @for (article of latestNews(); track article.id) {
               <li class="flex items-start gap-4 px-5 py-4 hover:bg-zinc-50 transition-colors">
                 <span
-                  class="w-9 h-9 rounded-xl bg-{{ article.color }}-50 flex items-center justify-center flex-shrink-0 mt-0.5"
+                  class="w-9 h-9 rounded-xl bg-{{
+                    article.color
+                  }}-50 flex items-center justify-center flex-shrink-0 mt-0.5"
                 >
                   <i class="fa-solid {{ article.icon }} text-sm text-{{ article.color }}-500"></i>
                 </span>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-start justify-between gap-2">
-                    <p class="text-sm font-medium text-zinc-800 leading-snug">{{ article.title }}</p>
+                    <p class="text-sm font-medium text-zinc-800 leading-snug">
+                      {{ article.title }}
+                    </p>
                     <span class="shad-badge-secondary text-[10px] flex-shrink-0 capitalize">{{
                       article.category
                     }}</span>
                   </div>
-                  <p class="text-xs text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">{{
-                    article.summary
-                  }}</p>
+                  <p class="text-xs text-zinc-500 mt-0.5 line-clamp-2 leading-relaxed">
+                    {{ article.summary }}
+                  </p>
                   <p class="text-[11px] text-zinc-400 mt-1.5 flex items-center gap-2">
                     <span>{{ article.date | date: 'mediumDate' }}</span>
                     <span class="inline-block w-1 h-1 rounded-full bg-zinc-300"></span>
@@ -291,19 +295,23 @@
                 <div class="min-w-0 flex-1">
                   <div class="flex items-start justify-between gap-2">
                     <p class="text-sm font-medium text-zinc-800">{{ job.title }}</p>
-                    <span class="shad-badge-secondary text-[10px] flex-shrink-0">{{ job.type }}</span>
+                    <span class="shad-badge-secondary text-[10px] flex-shrink-0">{{
+                      job.type
+                    }}</span>
                   </div>
                   <p class="text-xs text-zinc-500 mt-0.5">{{ job.company }}</p>
                   <p class="text-[11px] text-zinc-400 mt-1 flex items-center gap-1">
                     <i class="fa-solid fa-location-dot text-[10px]"></i>
-                    {{ job.location }}@if (job.country) {, {{ job.country }}}
+                    {{ job.location }}
+                    @if (job.country) {
+                      , {{ job.country }}
+                    }
                   </p>
                 </div>
               </li>
             }
           </ul>
         </div>
-
       </div>
       <!-- /main col -->
 
@@ -355,7 +363,11 @@
             class="border-t border-zinc-100 pt-4 text-xs text-zinc-400 flex items-center justify-center gap-1"
           >
             <i class="fa-regular fa-calendar text-[11px]"></i>
-            @if (memberSince()) { Member since {{ memberSince() }} } @else { &mdash; }
+            @if (memberSince()) {
+              Member since {{ memberSince() }}
+            } @else {
+              &mdash;
+            }
           </div>
         </div>
 
@@ -415,9 +427,9 @@
                 >
                 <div class="min-w-0">
                   <p class="text-xs font-semibold text-zinc-800 leading-snug">{{ ms.title }}</p>
-                  <p class="text-[11px] text-zinc-500 mt-0.5 leading-relaxed line-clamp-2">{{
-                    ms.description
-                  }}</p>
+                  <p class="text-[11px] text-zinc-500 mt-0.5 leading-relaxed line-clamp-2">
+                    {{ ms.description }}
+                  </p>
                 </div>
               </li>
             }

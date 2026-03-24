@@ -438,7 +438,9 @@ export class ProfileEditComponent implements OnInit {
       next: () => this.memberIdGenerating.set(false),
       error: (err) => {
         this.memberIdGenerating.set(false);
-        this.memberIdError.set(err?.error?.message ?? 'Failed to generate member ID. Please try again.');
+        this.memberIdError.set(
+          err?.error?.message ?? 'Failed to generate member ID. Please try again.',
+        );
       },
     });
   }

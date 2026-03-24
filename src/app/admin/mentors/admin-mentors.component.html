@@ -24,7 +24,9 @@
     [class.border-b-2]="tab() === 'mentors'"
     [class.border-zinc-900]="tab() === 'mentors'"
     [class.text-zinc-500]="tab() !== 'mentors'"
-  >Mentors</button>
+  >
+    Mentors
+  </button>
   <button
     (click)="switchTab('applications')"
     class="px-4 py-2 text-sm font-medium transition-colors"
@@ -32,18 +34,24 @@
     [class.border-b-2]="tab() === 'applications'"
     [class.border-zinc-900]="tab() === 'applications'"
     [class.text-zinc-500]="tab() !== 'applications'"
-  >Applications</button>
+  >
+    Applications
+  </button>
 </div>
 
 <!-- Alerts -->
 @if (error()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
     <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
     <span>{{ error() }}</span>
   </div>
 }
 @if (success()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
     <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
     <span>{{ success() }}</span>
   </div>
@@ -51,7 +59,6 @@
 
 <!-- ════════════════ MENTORS TAB ════════════════ -->
 @if (tab() === 'mentors') {
-
   <!-- Create / Edit Form -->
   @if (mode() === 'create' || mode() === 'edit') {
     <div class="shad-card p-6 mb-6">
@@ -60,16 +67,19 @@
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
         <!-- Name -->
         <div>
           <label for="mt-name" class="block text-sm font-medium text-zinc-700 mb-1">
             Name <span class="text-red-500">*</span>
           </label>
-          <input id="mt-name" type="text"
-            [ngModel]="formName()" (ngModelChange)="formName.set($event)"
+          <input
+            id="mt-name"
+            type="text"
+            [ngModel]="formName()"
+            (ngModelChange)="formName.set($event)"
             placeholder="Full name"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Batch -->
@@ -77,9 +87,15 @@
           <label for="mt-batch" class="block text-sm font-medium text-zinc-700 mb-1">
             Batch (Graduation Year) <span class="text-red-500">*</span>
           </label>
-          <input id="mt-batch" type="number" min="1980" max="2100"
-            [ngModel]="formBatch()" (ngModelChange)="formBatch.set(+$event)"
-            class="shad-input w-full" />
+          <input
+            id="mt-batch"
+            type="number"
+            min="1980"
+            max="2100"
+            [ngModel]="formBatch()"
+            (ngModelChange)="formBatch.set(+$event)"
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Role -->
@@ -87,10 +103,14 @@
           <label for="mt-role" class="block text-sm font-medium text-zinc-700 mb-1">
             Role / Title <span class="text-red-500">*</span>
           </label>
-          <input id="mt-role" type="text"
-            [ngModel]="formRole()" (ngModelChange)="formRole.set($event)"
+          <input
+            id="mt-role"
+            type="text"
+            [ngModel]="formRole()"
+            (ngModelChange)="formRole.set($event)"
             placeholder="e.g. Senior Software Engineer"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Company -->
@@ -98,10 +118,14 @@
           <label for="mt-company" class="block text-sm font-medium text-zinc-700 mb-1">
             Company <span class="text-red-500">*</span>
           </label>
-          <input id="mt-company" type="text"
-            [ngModel]="formCompany()" (ngModelChange)="formCompany.set($event)"
+          <input
+            id="mt-company"
+            type="text"
+            [ngModel]="formCompany()"
+            (ngModelChange)="formCompany.set($event)"
             placeholder="e.g. Google"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- City -->
@@ -109,10 +133,14 @@
           <label for="mt-city" class="block text-sm font-medium text-zinc-700 mb-1">
             City <span class="text-red-500">*</span>
           </label>
-          <input id="mt-city" type="text"
-            [ngModel]="formCity()" (ngModelChange)="formCity.set($event)"
+          <input
+            id="mt-city"
+            type="text"
+            [ngModel]="formCity()"
+            (ngModelChange)="formCity.set($event)"
             placeholder="e.g. Dhaka"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Country -->
@@ -120,37 +148,59 @@
           <label for="mt-country" class="block text-sm font-medium text-zinc-700 mb-1">
             Country <span class="text-red-500">*</span>
           </label>
-          <input id="mt-country" type="text"
-            [ngModel]="formCountry()" (ngModelChange)="formCountry.set($event)"
+          <input
+            id="mt-country"
+            type="text"
+            [ngModel]="formCountry()"
+            (ngModelChange)="formCountry.set($event)"
             placeholder="e.g. Bangladesh"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Initials -->
         <div>
-          <label for="mt-initials" class="block text-sm font-medium text-zinc-700 mb-1">Initials</label>
-          <input id="mt-initials" type="text"
-            [ngModel]="formInitials()" (ngModelChange)="formInitials.set($event)"
+          <label for="mt-initials" class="block text-sm font-medium text-zinc-700 mb-1"
+            >Initials</label
+          >
+          <input
+            id="mt-initials"
+            type="text"
+            [ngModel]="formInitials()"
+            (ngModelChange)="formInitials.set($event)"
             placeholder="e.g. AB (auto-generated if blank)"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Color -->
         <div>
-          <label for="mt-color" class="block text-sm font-medium text-zinc-700 mb-1">Avatar Color Class</label>
-          <input id="mt-color" type="text"
-            [ngModel]="formColor()" (ngModelChange)="formColor.set($event)"
+          <label for="mt-color" class="block text-sm font-medium text-zinc-700 mb-1"
+            >Avatar Color Class</label
+          >
+          <input
+            id="mt-color"
+            type="text"
+            [ngModel]="formColor()"
+            (ngModelChange)="formColor.set($event)"
             placeholder="e.g. bg-violet-100 (optional)"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Expertise -->
         <div class="sm:col-span-2">
-          <label for="mt-expertise" class="block text-sm font-medium text-zinc-700 mb-1">Expertise</label>
-          <input id="mt-expertise" type="text"
-            [ngModel]="formExpertise()" (ngModelChange)="formExpertise.set($event)"
+          <label for="mt-expertise" class="block text-sm font-medium text-zinc-700 mb-1"
+            >Expertise</label
+          >
+          <input
+            id="mt-expertise"
+            type="text"
+            [ngModel]="formExpertise()"
+            (ngModelChange)="formExpertise.set($event)"
             placeholder="Comma-separated, e.g. Machine Learning, Cloud"
-            class="shad-input w-full" />
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Bio -->
@@ -173,9 +223,12 @@
           <label for="mt-avail" class="block text-sm font-medium text-zinc-700 mb-1">
             Availability <span class="text-red-500">*</span>
           </label>
-          <select id="mt-avail"
-            [ngModel]="formAvailability()" (ngModelChange)="formAvailability.set($event)"
-            class="shad-input w-full">
+          <select
+            id="mt-avail"
+            [ngModel]="formAvailability()"
+            (ngModelChange)="formAvailability.set($event)"
+            class="shad-input w-full"
+          >
             @for (opt of availabilityOptions; track opt) {
               <option [value]="opt">{{ opt }}</option>
             }
@@ -184,39 +237,61 @@
 
         <!-- Mentees -->
         <div>
-          <label for="mt-mentees" class="block text-sm font-medium text-zinc-700 mb-1">Mentee Count</label>
-          <input id="mt-mentees" type="number" min="0"
-            [ngModel]="formMentees()" (ngModelChange)="formMentees.set(+$event)"
-            class="shad-input w-full" />
+          <label for="mt-mentees" class="block text-sm font-medium text-zinc-700 mb-1"
+            >Mentee Count</label
+          >
+          <input
+            id="mt-mentees"
+            type="number"
+            min="0"
+            [ngModel]="formMentees()"
+            (ngModelChange)="formMentees.set(+$event)"
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Rating -->
         <div>
-          <label for="mt-rating" class="block text-sm font-medium text-zinc-700 mb-1">Rating (0–5)</label>
-          <input id="mt-rating" type="number" min="0" max="5" step="0.1"
-            [ngModel]="formRating()" (ngModelChange)="formRating.set(+$event)"
-            class="shad-input w-full" />
+          <label for="mt-rating" class="block text-sm font-medium text-zinc-700 mb-1"
+            >Rating (0–5)</label
+          >
+          <input
+            id="mt-rating"
+            type="number"
+            min="0"
+            max="5"
+            step="0.1"
+            [ngModel]="formRating()"
+            (ngModelChange)="formRating.set(+$event)"
+            class="shad-input w-full"
+          />
         </div>
 
         <!-- Featured -->
         <div class="sm:col-span-2">
           <label for="mt-featured" class="flex items-center gap-2.5 cursor-pointer select-none">
-            <input id="mt-featured" type="checkbox"
-              [ngModel]="formFeatured()" (ngModelChange)="formFeatured.set($event)"
-              class="w-4 h-4 rounded border-zinc-300 accent-violet-600" />
+            <input
+              id="mt-featured"
+              type="checkbox"
+              [ngModel]="formFeatured()"
+              (ngModelChange)="formFeatured.set($event)"
+              class="w-4 h-4 rounded border-zinc-300 accent-violet-600"
+            />
             <div>
               <span class="text-sm font-medium text-zinc-700">Featured</span>
               <p class="text-xs text-zinc-400">Highlighted at the top of the Mentorship page</p>
             </div>
           </label>
         </div>
-
       </div>
 
       <!-- Form Actions -->
       <div class="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
-        <button (click)="save()" [disabled]="saving()"
-          class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50">
+        <button
+          (click)="save()"
+          [disabled]="saving()"
+          class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50"
+        >
           @if (saving()) {
             <i class="fa-solid fa-spinner fa-spin text-xs"></i> Saving…
           } @else {
@@ -224,8 +299,11 @@
             {{ mode() === 'create' ? 'Create Mentor' : 'Save Changes' }}
           }
         </button>
-        <button (click)="cancelForm()" [disabled]="saving()"
-          class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50">
+        <button
+          (click)="cancelForm()"
+          [disabled]="saving()"
+          class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50"
+        >
           Cancel
         </button>
       </div>
@@ -250,10 +328,18 @@
           <thead class="bg-zinc-50 border-b border-zinc-200">
             <tr>
               <th class="px-4 py-3 text-left font-medium text-zinc-500">Name</th>
-              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">Role</th>
-              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">Company</th>
-              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Availability</th>
-              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Featured</th>
+              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">
+                Role
+              </th>
+              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">
+                Company
+              </th>
+              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">
+                Availability
+              </th>
+              <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">
+                Featured
+              </th>
               <th class="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>
             </tr>
           </thead>
@@ -269,13 +355,18 @@
                 <td class="px-4 py-3 text-zinc-500 hidden sm:table-cell">{{ mentor.role }}</td>
                 <td class="px-4 py-3 text-zinc-500 hidden md:table-cell">{{ mentor.company }}</td>
                 <td class="px-4 py-3 hidden lg:table-cell">
-                  <span class="text-xs font-medium rounded-full px-2.5 py-1" [class]="availabilityBadgeClass(mentor.availability)">
+                  <span
+                    class="text-xs font-medium rounded-full px-2.5 py-1"
+                    [class]="availabilityBadgeClass(mentor.availability)"
+                  >
                     {{ mentor.availability }}
                   </span>
                 </td>
                 <td class="px-4 py-3 hidden lg:table-cell">
                   @if (mentor.featured) {
-                    <span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-full px-2 py-0.5">
+                    <span
+                      class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-full px-2 py-0.5"
+                    >
                       <i class="fa-solid fa-star mr-1"></i>Featured
                     </span>
                   }
@@ -283,12 +374,17 @@
                 <td class="px-4 py-3 text-right">
                   <div class="flex items-center justify-end gap-2">
                     @if (auth.hasPermission('mentors:write')) {
-                      <button (click)="openEdit(mentor)"
-                        class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600">
+                      <button
+                        (click)="openEdit(mentor)"
+                        class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600"
+                      >
                         <i class="fa-solid fa-pen-to-square"></i>
                       </button>
-                      <button (click)="delete(mentor)" [disabled]="isDeleting(mentor.id)"
-                        class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50">
+                      <button
+                        (click)="delete(mentor)"
+                        [disabled]="isDeleting(mentor.id)"
+                        class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                      >
                         @if (isDeleting(mentor.id)) {
                           <i class="fa-solid fa-spinner fa-spin"></i>
                         } @else {
@@ -343,9 +439,14 @@
                 </div>
               </td>
               <td class="px-4 py-3 text-zinc-500 hidden sm:table-cell">{{ app.area }}</td>
-              <td class="px-4 py-3 text-zinc-500 hidden md:table-cell capitalize">{{ app.type }}</td>
+              <td class="px-4 py-3 text-zinc-500 hidden md:table-cell capitalize">
+                {{ app.type }}
+              </td>
               <td class="px-4 py-3">
-                <span class="text-xs font-medium rounded-full px-2.5 py-1" [class]="statusBadgeClass(app.status)">
+                <span
+                  class="text-xs font-medium rounded-full px-2.5 py-1"
+                  [class]="statusBadgeClass(app.status)"
+                >
                   {{ app.status | titlecase }}
                 </span>
               </td>
@@ -360,7 +461,8 @@
                           <button
                             (click)="updateStatus(app, s)"
                             class="shad-btn-ghost px-2 h-6 text-xs text-zinc-600"
-                            [title]="'Mark as ' + s">
+                            [title]="'Mark as ' + s"
+                          >
                             {{ s | titlecase }}
                           </button>
                         }

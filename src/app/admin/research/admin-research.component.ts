@@ -32,13 +32,13 @@ export class AdminResearchComponent implements OnInit {
   // ── Form fields ────────────────────────────────────────────────
   editingId = signal<string | null>(null);
   formTitle = signal('');
-  formAuthors = signal('');  // comma-separated
+  formAuthors = signal(''); // comma-separated
   formAbstract = signal('');
   formAbstractFormat = signal<'html' | 'markdown'>('html');
   formYear = signal<number>(new Date().getFullYear());
   formVenue = signal('');
   formVenueType = signal<VenueType>('conference');
-  formTags = signal('');  // comma-separated
+  formTags = signal(''); // comma-separated
   formDoi = signal('');
   formLink = signal('');
   formCitations = signal(0);
@@ -121,7 +121,10 @@ export class AdminResearchComponent implements OnInit {
     const abstract = convertToHtml(this.formAbstract().trim(), this.formAbstractFormat());
     const venue = this.formVenue().trim();
     const link = this.formLink().trim();
-    const authors = this.formAuthors().split(',').map((s) => s.trim()).filter(Boolean);
+    const authors = this.formAuthors()
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     if (!title || !abstract || !venue || !link || authors.length === 0) {
       this.error.set('Title, authors, abstract, venue and link are required.');
@@ -129,7 +132,12 @@ export class AdminResearchComponent implements OnInit {
     }
 
     const rawTags = this.formTags().trim();
-    const tags = rawTags ? rawTags.split(',').map((s) => s.trim()).filter(Boolean) : [];
+    const tags = rawTags
+      ? rawTags
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     const dto: SaveResearchPaperDto = {
       title,
@@ -186,11 +194,19 @@ export class AdminResearchComponent implements OnInit {
     this.adminSvc.adminDeleteResearchPaper(p.id).subscribe({
       next: () => {
         this.papers.update((list) => list.filter((x) => x.id !== p.id));
-        this.deleting.update((s) => { const n = new Set(s); n.delete(p.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(p.id);
+          return n;
+        });
         this.success.set(`"${p.title}" deleted.`);
       },
       error: (err) => {
-        this.deleting.update((s) => { const n = new Set(s); n.delete(p.id); return n; });
+        this.deleting.update((s) => {
+          const n = new Set(s);
+          n.delete(p.id);
+          return n;
+        });
         this.error.set(
           err?.status === 403
             ? "You don't have permission to delete papers."
@@ -206,9 +222,9 @@ export class AdminResearchComponent implements OnInit {
 
   venueBadgeClass(type: VenueType): string {
     const map: Record<string, string> = {
-      journal:    'bg-sky-100 text-sky-700 border border-sky-200',
+      journal: 'bg-sky-100 text-sky-700 border border-sky-200',
       conference: 'bg-violet-100 text-violet-700 border border-violet-200',
-      preprint:   'bg-amber-100 text-amber-700 border border-amber-200',
+      preprint: 'bg-amber-100 text-amber-700 border border-amber-200',
     };
     return map[type] ?? 'bg-zinc-100 text-zinc-600 border border-zinc-200';
   }

@@ -2,7 +2,9 @@
 <div class="flex items-center justify-between mb-6">
   <div>
     <h1 class="text-lg font-semibold text-zinc-900">Scholarships</h1>
-    <p class="text-sm text-zinc-500 mt-0.5">Manage scholarship listings shown on the Scholarships page.</p>
+    <p class="text-sm text-zinc-500 mt-0.5">
+      Manage scholarship listings shown on the Scholarships page.
+    </p>
   </div>
   @if (mode() === 'list' && auth.hasPermission('scholarships:write')) {
     <button
@@ -17,13 +19,17 @@
 
 <!-- Alerts -->
 @if (error()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
     <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
     <span>{{ error() }}</span>
   </div>
 }
 @if (success()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
     <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
     <span>{{ success() }}</span>
   </div>
@@ -37,16 +43,19 @@
     </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
       <!-- Title -->
       <div class="sm:col-span-2">
         <label for="sc-title" class="block text-sm font-medium text-zinc-700 mb-1">
           Title <span class="text-red-500">*</span>
         </label>
-        <input id="sc-title" type="text"
-          [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)"
+        <input
+          id="sc-title"
+          type="text"
+          [ngModel]="formTitle()"
+          (ngModelChange)="formTitle.set($event)"
           placeholder="Scholarship name"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Provider -->
@@ -54,10 +63,14 @@
         <label for="sc-provider" class="block text-sm font-medium text-zinc-700 mb-1">
           Provider <span class="text-red-500">*</span>
         </label>
-        <input id="sc-provider" type="text"
-          [ngModel]="formProvider()" (ngModelChange)="formProvider.set($event)"
+        <input
+          id="sc-provider"
+          type="text"
+          [ngModel]="formProvider()"
+          (ngModelChange)="formProvider.set($event)"
           placeholder="e.g. CSE Department, CSEDU Alumni"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Country -->
@@ -65,10 +78,14 @@
         <label for="sc-country" class="block text-sm font-medium text-zinc-700 mb-1">
           Country <span class="text-red-500">*</span>
         </label>
-        <input id="sc-country" type="text"
-          [ngModel]="formCountry()" (ngModelChange)="formCountry.set($event)"
+        <input
+          id="sc-country"
+          type="text"
+          [ngModel]="formCountry()"
+          (ngModelChange)="formCountry.set($event)"
           placeholder="e.g. Bangladesh"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Amount -->
@@ -76,19 +93,29 @@
         <label for="sc-amount" class="block text-sm font-medium text-zinc-700 mb-1">
           Amount (display text) <span class="text-red-500">*</span>
         </label>
-        <input id="sc-amount" type="text"
-          [ngModel]="formAmount()" (ngModelChange)="formAmount.set($event)"
+        <input
+          id="sc-amount"
+          type="text"
+          [ngModel]="formAmount()"
+          (ngModelChange)="formAmount.set($event)"
           placeholder="e.g. 50,000 or Full Tuition"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Currency -->
       <div>
-        <label for="sc-currency" class="block text-sm font-medium text-zinc-700 mb-1">Currency</label>
-        <input id="sc-currency" type="text"
-          [ngModel]="formCurrency()" (ngModelChange)="formCurrency.set($event)"
+        <label for="sc-currency" class="block text-sm font-medium text-zinc-700 mb-1"
+          >Currency</label
+        >
+        <input
+          id="sc-currency"
+          type="text"
+          [ngModel]="formCurrency()"
+          (ngModelChange)="formCurrency.set($event)"
           placeholder="e.g. BDT, USD"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Deadline -->
@@ -96,10 +123,14 @@
         <label for="sc-deadline" class="block text-sm font-medium text-zinc-700 mb-1">
           Deadline (display text) <span class="text-red-500">*</span>
         </label>
-        <input id="sc-deadline" type="text"
-          [ngModel]="formDeadline()" (ngModelChange)="formDeadline.set($event)"
+        <input
+          id="sc-deadline"
+          type="text"
+          [ngModel]="formDeadline()"
+          (ngModelChange)="formDeadline.set($event)"
           placeholder="e.g. March 31, 2026"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Level -->
@@ -107,9 +138,12 @@
         <label for="sc-level" class="block text-sm font-medium text-zinc-700 mb-1">
           Level <span class="text-red-500">*</span>
         </label>
-        <select id="sc-level"
-          [ngModel]="formLevel()" (ngModelChange)="formLevel.set($event)"
-          class="shad-input w-full">
+        <select
+          id="sc-level"
+          [ngModel]="formLevel()"
+          (ngModelChange)="formLevel.set($event)"
+          class="shad-input w-full"
+        >
           @for (opt of levelOptions; track opt) {
             <option [value]="opt">{{ opt }}</option>
           }
@@ -121,9 +155,12 @@
         <label for="sc-type" class="block text-sm font-medium text-zinc-700 mb-1">
           Type <span class="text-red-500">*</span>
         </label>
-        <select id="sc-type"
-          [ngModel]="formType()" (ngModelChange)="formType.set($event)"
-          class="shad-input w-full">
+        <select
+          id="sc-type"
+          [ngModel]="formType()"
+          (ngModelChange)="formType.set($event)"
+          class="shad-input w-full"
+        >
           @for (opt of typeOptions; track opt) {
             <option [value]="opt">{{ opt }}</option>
           }
@@ -163,10 +200,14 @@
       <!-- Tags -->
       <div>
         <label for="sc-tags" class="block text-sm font-medium text-zinc-700 mb-1">Tags</label>
-        <input id="sc-tags" type="text"
-          [ngModel]="formTags()" (ngModelChange)="formTags.set($event)"
+        <input
+          id="sc-tags"
+          type="text"
+          [ngModel]="formTags()"
+          (ngModelChange)="formTags.set($event)"
           placeholder="Comma-separated, e.g. STEM, Women in Tech"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Link -->
@@ -174,40 +215,54 @@
         <label for="sc-link" class="block text-sm font-medium text-zinc-700 mb-1">
           Apply/Info URL <span class="text-red-500">*</span>
         </label>
-        <input id="sc-link" type="url"
-          [ngModel]="formLink()" (ngModelChange)="formLink.set($event)"
+        <input
+          id="sc-link"
+          type="url"
+          [ngModel]="formLink()"
+          (ngModelChange)="formLink.set($event)"
           placeholder="https://..."
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Flags -->
       <div class="sm:col-span-2 flex flex-wrap gap-6">
         <label for="sc-featured" class="flex items-center gap-2.5 cursor-pointer select-none">
-          <input id="sc-featured" type="checkbox"
-            [ngModel]="formFeatured()" (ngModelChange)="formFeatured.set($event)"
-            class="w-4 h-4 rounded border-zinc-300 accent-violet-600" />
+          <input
+            id="sc-featured"
+            type="checkbox"
+            [ngModel]="formFeatured()"
+            (ngModelChange)="formFeatured.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 accent-violet-600"
+          />
           <div>
             <span class="text-sm font-medium text-zinc-700">Featured</span>
             <p class="text-xs text-zinc-400">Shown in the Featured section</p>
           </div>
         </label>
         <label for="sc-urgent" class="flex items-center gap-2.5 cursor-pointer select-none">
-          <input id="sc-urgent" type="checkbox"
-            [ngModel]="formUrgent()" (ngModelChange)="formUrgent.set($event)"
-            class="w-4 h-4 rounded border-zinc-300 accent-red-500" />
+          <input
+            id="sc-urgent"
+            type="checkbox"
+            [ngModel]="formUrgent()"
+            (ngModelChange)="formUrgent.set($event)"
+            class="w-4 h-4 rounded border-zinc-300 accent-red-500"
+          />
           <div>
             <span class="text-sm font-medium text-zinc-700">Urgent</span>
             <p class="text-xs text-zinc-400">Deadline is approaching soon</p>
           </div>
         </label>
       </div>
-
     </div>
 
     <!-- Form Actions -->
     <div class="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
-      <button (click)="save()" [disabled]="saving()"
-        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50">
+      <button
+        (click)="save()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50"
+      >
         @if (saving()) {
           <i class="fa-solid fa-spinner fa-spin text-xs"></i> Saving…
         } @else {
@@ -215,8 +270,11 @@
           {{ mode() === 'create' ? 'Create Scholarship' : 'Save Changes' }}
         }
       </button>
-      <button (click)="cancelForm()" [disabled]="saving()"
-        class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50">
+      <button
+        (click)="cancelForm()"
+        [disabled]="saving()"
+        class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50"
+      >
         Cancel
       </button>
     </div>
@@ -242,9 +300,15 @@
           <tr>
             <th class="px-4 py-3 text-left font-medium text-zinc-500">Title</th>
             <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">Type</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">Provider</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Deadline</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">Flags</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">
+              Provider
+            </th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">
+              Deadline
+            </th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden lg:table-cell">
+              Flags
+            </th>
             <th class="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>
           </tr>
         </thead>
@@ -256,7 +320,10 @@
                 <span class="text-xs text-zinc-400">{{ s.country }}</span>
               </td>
               <td class="px-4 py-3 hidden sm:table-cell">
-                <span class="text-xs font-medium rounded-full px-2.5 py-1" [class]="typeBadgeClass(s.type)">
+                <span
+                  class="text-xs font-medium rounded-full px-2.5 py-1"
+                  [class]="typeBadgeClass(s.type)"
+                >
                   {{ s.type }}
                 </span>
               </td>
@@ -265,12 +332,16 @@
               <td class="px-4 py-3 hidden lg:table-cell">
                 <div class="flex gap-1.5 flex-wrap">
                   @if (s.featured) {
-                    <span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-full px-2 py-0.5">
+                    <span
+                      class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-full px-2 py-0.5"
+                    >
                       <i class="fa-solid fa-star mr-1"></i>Featured
                     </span>
                   }
                   @if (s.urgent) {
-                    <span class="text-xs bg-red-100 text-red-700 border border-red-200 rounded-full px-2 py-0.5">
+                    <span
+                      class="text-xs bg-red-100 text-red-700 border border-red-200 rounded-full px-2 py-0.5"
+                    >
                       <i class="fa-solid fa-fire mr-1"></i>Urgent
                     </span>
                   }
@@ -279,12 +350,17 @@
               <td class="px-4 py-3 text-right">
                 <div class="flex items-center justify-end gap-2">
                   @if (auth.hasPermission('scholarships:write')) {
-                    <button (click)="openEdit(s)"
-                      class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600">
+                    <button
+                      (click)="openEdit(s)"
+                      class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600"
+                    >
                       <i class="fa-solid fa-pen-to-square"></i>
                     </button>
-                    <button (click)="delete(s)" [disabled]="isDeleting(s.id)"
-                      class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50">
+                    <button
+                      (click)="delete(s)"
+                      [disabled]="isDeleting(s.id)"
+                      class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                    >
                       @if (isDeleting(s.id)) {
                         <i class="fa-solid fa-spinner fa-spin"></i>
                       } @else {

@@ -109,7 +109,9 @@
               </div>
             </div>
 
-            <div class="text-sm text-zinc-600 leading-relaxed"><app-content-renderer [content]="mentor.bio" /></div>
+            <div class="text-sm text-zinc-600 leading-relaxed">
+              <app-content-renderer [content]="mentor.bio" />
+            </div>
 
             <div class="flex flex-wrap gap-2">
               @for (exp of mentor.expertise; track exp) {

@@ -151,7 +151,9 @@ export class DonationsComponent implements OnInit {
   // ── Computed lists ─────────────────────────────────────────────
   readonly activeCampaigns = computed(() => this.campaigns().filter((c) => c.status === 'active'));
   readonly pastCampaigns = computed(() => this.campaigns().filter((c) => c.status === 'completed'));
-  readonly upcomingCampaigns = computed(() => this.campaigns().filter((c) => c.status === 'upcoming'));
+  readonly upcomingCampaigns = computed(() =>
+    this.campaigns().filter((c) => c.status === 'upcoming'),
+  );
 
   readonly visibleCampaigns = computed<Campaign[]>(() => {
     const t = this.activeTab();

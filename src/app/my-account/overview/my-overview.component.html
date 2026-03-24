@@ -8,17 +8,22 @@
   </div>
 } @else {
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
     <!-- Membership card -->
-    <a routerLink="../membership"
-      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group">
+    <a
+      routerLink="../membership"
+      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+    >
       <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0">
         <i class="fa-solid fa-id-card text-indigo-500 text-base"></i>
       </div>
       <div class="min-w-0">
         <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">Membership</p>
         @if (application()) {
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ membershipClass(application()!.status) }}">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{
+              membershipClass(application()!.status)
+            }}"
+          >
             {{ membershipLabel(application()!.status) }}
           </span>
         } @else {
@@ -29,8 +34,10 @@
     </a>
 
     <!-- Pending invoices card -->
-    <a routerLink="../invoices"
-      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group">
+    <a
+      routerLink="../invoices"
+      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+    >
       <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
         <i class="fa-solid fa-file-invoice-dollar text-amber-500 text-base"></i>
       </div>
@@ -47,8 +54,10 @@
     </a>
 
     <!-- Upcoming events card -->
-    <a routerLink="../events"
-      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group">
+    <a
+      routerLink="../events"
+      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+    >
       <div class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
         <i class="fa-solid fa-calendar-check text-green-500 text-base"></i>
       </div>
@@ -56,9 +65,7 @@
         <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">Events</p>
         @if (upcomingRsvps.length > 0) {
           <p class="text-sm font-semibold text-zinc-800">{{ upcomingRsvps.length }} upcoming</p>
-          <p class="text-xs text-zinc-400 mt-0.5">
-            Next: {{ upcomingRsvps[0].event.title }}
-          </p>
+          <p class="text-xs text-zinc-400 mt-0.5">Next: {{ upcomingRsvps[0].event.title }}</p>
         } @else {
           <p class="text-sm text-zinc-500">No upcoming RSVPs</p>
           <p class="text-xs text-zinc-400 mt-0.5">Browse events to register</p>
@@ -67,15 +74,21 @@
     </a>
 
     <!-- Mentorship card -->
-    <a routerLink="../mentor"
-      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group">
+    <a
+      routerLink="../mentor"
+      class="flex items-start gap-4 p-4 bg-white rounded-xl border border-zinc-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+    >
       <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
         <i class="fa-solid fa-chalkboard-user text-purple-500 text-base"></i>
       </div>
       <div class="min-w-0">
         <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">Mentorship</p>
         @if (mentorApp()) {
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ mentorStatusClass(mentorApp()!.status) }}">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{
+              mentorStatusClass(mentorApp()!.status)
+            }}"
+          >
             {{ mentorStatusLabel(mentorApp()!.status) }}
           </span>
         } @else {
@@ -84,30 +97,37 @@
         }
       </div>
     </a>
-
   </div>
 
   <!-- Quick navigation -->
   <div class="mt-8">
     <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">Quick Links</p>
     <div class="flex flex-wrap gap-2">
-      <a routerLink="../profile"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors">
+      <a
+        routerLink="../profile"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors"
+      >
         <i class="fa-solid fa-user-pen text-zinc-400 text-xs"></i>
         Edit Profile
       </a>
-      <a routerLink="/events"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors">
+      <a
+        routerLink="/events"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors"
+      >
         <i class="fa-solid fa-calendar-days text-zinc-400 text-xs"></i>
         Browse Events
       </a>
-      <a routerLink="/mentorship"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors">
+      <a
+        routerLink="/mentorship"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors"
+      >
         <i class="fa-solid fa-people-arrows text-zinc-400 text-xs"></i>
         Mentorship
       </a>
-      <a routerLink="/dashboard"
-        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors">
+      <a
+        routerLink="/dashboard"
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-zinc-600 bg-white border border-zinc-200 hover:bg-zinc-50 transition-colors"
+      >
         <i class="fa-solid fa-gauge-high text-zinc-400 text-xs"></i>
         Dashboard
       </a>

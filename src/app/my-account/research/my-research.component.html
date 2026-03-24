@@ -17,13 +17,17 @@
 
 <!-- Alerts -->
 @if (error()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+  >
     <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
     <span>{{ error() }}</span>
   </div>
 }
 @if (success()) {
-  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+  <div
+    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+  >
     <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
     <span>{{ success() }}</span>
   </div>
@@ -37,16 +41,19 @@
     </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
       <!-- Title -->
       <div class="sm:col-span-2">
         <label for="rp-title" class="block text-sm font-medium text-zinc-700 mb-1">
           Title <span class="text-red-500">*</span>
         </label>
-        <input id="rp-title" type="text"
-          [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)"
+        <input
+          id="rp-title"
+          type="text"
+          [ngModel]="formTitle()"
+          (ngModelChange)="formTitle.set($event)"
           placeholder="Full paper title"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Authors -->
@@ -54,10 +61,14 @@
         <label for="rp-authors" class="block text-sm font-medium text-zinc-700 mb-1">
           Authors <span class="text-red-500">*</span>
         </label>
-        <input id="rp-authors" type="text"
-          [ngModel]="formAuthors()" (ngModelChange)="formAuthors.set($event)"
+        <input
+          id="rp-authors"
+          type="text"
+          [ngModel]="formAuthors()"
+          (ngModelChange)="formAuthors.set($event)"
           placeholder="Comma-separated, e.g. Dr. Alice, Dr. Bob"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Abstract -->
@@ -80,9 +91,15 @@
         <label for="rp-year" class="block text-sm font-medium text-zinc-700 mb-1">
           Year <span class="text-red-500">*</span>
         </label>
-        <input id="rp-year" type="number" min="1990" max="2100"
-          [ngModel]="formYear()" (ngModelChange)="formYear.set(+$event)"
-          class="shad-input w-full" />
+        <input
+          id="rp-year"
+          type="number"
+          min="1990"
+          max="2100"
+          [ngModel]="formYear()"
+          (ngModelChange)="formYear.set(+$event)"
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Venue Type -->
@@ -90,9 +107,12 @@
         <label for="rp-vType" class="block text-sm font-medium text-zinc-700 mb-1">
           Venue Type <span class="text-red-500">*</span>
         </label>
-        <select id="rp-vType"
-          [ngModel]="formVenueType()" (ngModelChange)="formVenueType.set($event)"
-          class="shad-input w-full">
+        <select
+          id="rp-vType"
+          [ngModel]="formVenueType()"
+          (ngModelChange)="formVenueType.set($event)"
+          class="shad-input w-full"
+        >
           @for (vt of venueTypes; track vt) {
             <option [value]="vt">{{ vt | titlecase }}</option>
           }
@@ -104,10 +124,14 @@
         <label for="rp-venue" class="block text-sm font-medium text-zinc-700 mb-1">
           Venue <span class="text-red-500">*</span>
         </label>
-        <input id="rp-venue" type="text"
-          [ngModel]="formVenue()" (ngModelChange)="formVenue.set($event)"
+        <input
+          id="rp-venue"
+          type="text"
+          [ngModel]="formVenue()"
+          (ngModelChange)="formVenue.set($event)"
           placeholder="e.g. Nature, NeurIPS 2024"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Link -->
@@ -115,44 +139,65 @@
         <label for="rp-link" class="block text-sm font-medium text-zinc-700 mb-1">
           Paper URL <span class="text-red-500">*</span>
         </label>
-        <input id="rp-link" type="url"
-          [ngModel]="formLink()" (ngModelChange)="formLink.set($event)"
+        <input
+          id="rp-link"
+          type="url"
+          [ngModel]="formLink()"
+          (ngModelChange)="formLink.set($event)"
           placeholder="https://..."
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- DOI -->
       <div>
         <label for="rp-doi" class="block text-sm font-medium text-zinc-700 mb-1">DOI</label>
-        <input id="rp-doi" type="text"
-          [ngModel]="formDoi()" (ngModelChange)="formDoi.set($event)"
+        <input
+          id="rp-doi"
+          type="text"
+          [ngModel]="formDoi()"
+          (ngModelChange)="formDoi.set($event)"
           placeholder="10.xxxx/xxxxx (optional)"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Tags -->
       <div>
         <label for="rp-tags" class="block text-sm font-medium text-zinc-700 mb-1">Tags</label>
-        <input id="rp-tags" type="text"
-          [ngModel]="formTags()" (ngModelChange)="formTags.set($event)"
+        <input
+          id="rp-tags"
+          type="text"
+          [ngModel]="formTags()"
+          (ngModelChange)="formTags.set($event)"
           placeholder="Comma-separated, e.g. ML, NLP"
-          class="shad-input w-full" />
+          class="shad-input w-full"
+        />
       </div>
 
       <!-- Citations -->
       <div>
-        <label for="rp-citations" class="block text-sm font-medium text-zinc-700 mb-1">Citations</label>
-        <input id="rp-citations" type="number" min="0"
-          [ngModel]="formCitations()" (ngModelChange)="formCitations.set(+$event)"
-          class="shad-input w-full" />
+        <label for="rp-citations" class="block text-sm font-medium text-zinc-700 mb-1"
+          >Citations</label
+        >
+        <input
+          id="rp-citations"
+          type="number"
+          min="0"
+          [ngModel]="formCitations()"
+          (ngModelChange)="formCitations.set(+$event)"
+          class="shad-input w-full"
+        />
       </div>
-
     </div>
 
     <!-- Form Actions -->
     <div class="flex items-center gap-3 mt-6 pt-4 border-t border-zinc-100">
-      <button (click)="save()" [disabled]="saving()"
-        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50">
+      <button
+        (click)="save()"
+        [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-9 text-sm gap-2 disabled:opacity-50"
+      >
         @if (saving()) {
           <i class="fa-solid fa-spinner fa-spin text-xs"></i> Saving…
         } @else {
@@ -160,8 +205,11 @@
           {{ mode() === 'create' ? 'Submit Paper' : 'Save Changes' }}
         }
       </button>
-      <button (click)="cancelForm()" [disabled]="saving()"
-        class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50">
+      <button
+        (click)="cancelForm()"
+        [disabled]="saving()"
+        class="shad-btn-ghost px-4 h-9 text-sm text-zinc-600 disabled:opacity-50"
+      >
         Cancel
       </button>
     </div>
@@ -179,8 +227,7 @@
     <div class="text-center py-16 text-zinc-400">
       <i class="fa-solid fa-microscope text-4xl mb-3 block opacity-30"></i>
       <p class="text-sm mb-3">You haven't added any research papers yet.</p>
-      <button (click)="openCreate()"
-        class="text-sm text-blue-600 hover:underline font-medium">
+      <button (click)="openCreate()" class="text-sm text-blue-600 hover:underline font-medium">
         Add your first paper →
       </button>
     </div>
@@ -190,7 +237,9 @@
         <thead class="bg-zinc-50 border-b border-zinc-200">
           <tr>
             <th class="px-4 py-3 text-left font-medium text-zinc-500">Title</th>
-            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">Venue</th>
+            <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden sm:table-cell">
+              Venue
+            </th>
             <th class="px-4 py-3 text-left font-medium text-zinc-500 hidden md:table-cell">Year</th>
             <th class="px-4 py-3 text-right font-medium text-zinc-500">Actions</th>
           </tr>
@@ -203,7 +252,10 @@
                 <span class="text-xs text-zinc-400">{{ paper.authors.join(', ') }}</span>
               </td>
               <td class="px-4 py-3 hidden sm:table-cell">
-                <span class="text-xs font-medium rounded-full px-2.5 py-1" [class]="venueBadgeClass(paper.venueType)">
+                <span
+                  class="text-xs font-medium rounded-full px-2.5 py-1"
+                  [class]="venueBadgeClass(paper.venueType)"
+                >
                   {{ paper.venueType | titlecase }}
                 </span>
                 <span class="block text-xs text-zinc-400 mt-0.5 truncate">{{ paper.venue }}</span>
@@ -211,12 +263,17 @@
               <td class="px-4 py-3 text-zinc-500 hidden md:table-cell">{{ paper.year }}</td>
               <td class="px-4 py-3 text-right">
                 <div class="flex items-center justify-end gap-2">
-                  <button (click)="openEdit(paper)"
-                    class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600">
+                  <button
+                    (click)="openEdit(paper)"
+                    class="shad-btn-ghost px-2.5 h-7 text-xs text-zinc-600"
+                  >
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
-                  <button (click)="delete(paper)" [disabled]="isDeleting(paper.id)"
-                    class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50">
+                  <button
+                    (click)="delete(paper)"
+                    [disabled]="isDeleting(paper.id)"
+                    class="shad-btn-ghost px-2.5 h-7 text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                  >
                     @if (isDeleting(paper.id)) {
                       <i class="fa-solid fa-spinner fa-spin"></i>
                     } @else {

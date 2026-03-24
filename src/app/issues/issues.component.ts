@@ -57,9 +57,7 @@ export class IssuesComponent implements OnInit {
     const label = this.selectedLabel();
     return this.issues().filter((issue) => {
       const matchQ =
-        !q ||
-        issue.title.toLowerCase().includes(q) ||
-        (issue.body ?? '').toLowerCase().includes(q);
+        !q || issue.title.toLowerCase().includes(q) || (issue.body ?? '').toLowerCase().includes(q);
       const matchLabel = !label || issue.labels.some((l) => l.name === label);
       return matchQ && matchLabel;
     });
