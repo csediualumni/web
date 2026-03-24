@@ -45,6 +45,7 @@ export class SitemapComponent {
         { label: 'Research Papers', path: '/research' },
         { label: 'News & Announcements', path: '/news' },
         { label: 'Events', path: '/events' },
+        { label: 'Audit Reports', path: '/accounting/reports' },
         { label: 'GitHub Issues', path: '/issues' },
         { label: 'Contributors', path: '/contributors' },
       ],
