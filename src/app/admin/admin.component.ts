@@ -56,6 +56,7 @@ export class AdminComponent {
     },
     { label: 'Job Board', path: 'jobs', icon: 'fa-briefcase', permission: 'jobs:read' },
     { label: 'Site Config', path: 'config', icon: 'fa-gear', permission: 'config:edit' },
+    { label: 'Accounting', path: 'accounting', icon: 'fa-coins', permission: 'accounting:read' },
   ];
 
   readonly auth = inject(AuthService);

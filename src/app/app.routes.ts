@@ -240,6 +240,41 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/config/admin-config.component').then((m) => m.AdminConfigComponent),
       },
+      {
+        path: 'accounting',
+        title: 'Accounting',
+        loadComponent: () =>
+          import('./admin/accounting/admin-accounting.component').then(
+            (m) => m.AdminAccountingComponent,
+          ),
+        children: [
+          { path: '', redirectTo: 'transactions', pathMatch: 'full' },
+          {
+            path: 'transactions',
+            title: 'Transactions',
+            loadComponent: () =>
+              import('./admin/accounting/transactions/admin-accounting-transactions.component').then(
+                (m) => m.AdminAccountingTransactionsComponent,
+              ),
+          },
+          {
+            path: 'categories',
+            title: 'Account Categories',
+            loadComponent: () =>
+              import('./admin/accounting/categories/admin-accounting-categories.component').then(
+                (m) => m.AdminAccountingCategoriesComponent,
+              ),
+          },
+          {
+            path: 'reports',
+            title: 'Audit Reports',
+            loadComponent: () =>
+              import('./admin/accounting/reports/admin-accounting-reports.component').then(
+                (m) => m.AdminAccountingReportsComponent,
+              ),
+          },
+        ],
+      },
     ],
   },
   {
@@ -492,6 +527,21 @@ export const routes: Routes = [
     },
     loadComponent: () =>
       import('./contributors/contributors.component').then((m) => m.ContributorsComponent),
+  },
+  {
+    path: 'accounting/reports',
+    title: 'Audit Reports',
+    canActivate: [authGuard],
+    data: {
+      description:
+        'Monthly financial audit reports published by the CSE DIU Alumni Association Treasurer. Full transparency on fund income, expenses, and closing balance.',
+      keywords:
+        'CSE DIU Alumni audit report, financial transparency, alumni fund report, treasurer report',
+    },
+    loadComponent: () =>
+      import('./accounting/accounting-reports.component').then(
+        (m) => m.AccountingReportsComponent,
+      ),
   },
   {
     path: '**',
