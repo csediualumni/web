@@ -250,8 +250,25 @@
         <!-- Receipt URL -->
         <div>
           <label class="text-xs font-medium text-zinc-600 block mb-1">Receipt URL <span class="text-zinc-400">(optional)</span></label>
-          <input type="url" [value]="form().receiptUrl ?? ''" (input)="patchForm({ receiptUrl: $any($event.target).value })"
-            class="w-full text-sm border border-zinc-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-400" placeholder="https://..." />
+          <div class="flex gap-2">
+            <input type="url" [value]="form().receiptUrl ?? ''" (input)="patchForm({ receiptUrl: $any($event.target).value })"
+              class="flex-1 text-sm border border-zinc-200 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-400" placeholder="https://..." />
+            <label class="flex items-center gap-1.5 px-3 py-2 text-xs border border-zinc-200 rounded-md text-zinc-600 hover:bg-zinc-50 cursor-pointer transition-colors flex-shrink-0"
+              [class.opacity-50]="uploadingReceipt()">
+              @if (uploadingReceipt()) {
+                <i class="fa-solid fa-spinner fa-spin text-[11px]"></i>
+              } @else {
+                <i class="fa-solid fa-upload text-[11px]"></i>
+              }
+              Upload
+              <input type="file" class="hidden" accept="image/*,.pdf" (change)="onReceiptFileSelected($event)" [disabled]="uploadingReceipt()" />
+            </label>
+          </div>
+          @if (form().receiptUrl) {
+            <a [href]="form().receiptUrl" target="_blank" class="mt-1 inline-flex items-center gap-1 text-[11px] text-indigo-500 hover:underline">
+              <i class="fa-solid fa-paperclip text-[10px]"></i> View uploaded file
+            </a>
+          }
         </div>
       </div>
       <div class="flex gap-2 mt-5">

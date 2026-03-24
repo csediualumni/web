@@ -48,6 +48,8 @@ export class AdminAccountingTransactionsComponent implements OnInit {
     receiptUrl: '',
   });
 
+  uploadingReceipt = signal(false);
+
   // Auto-import dialog
   showImport = signal(false);
   importMonth = signal<number>(new Date().getMonth() + 1);
@@ -60,6 +62,23 @@ export class AdminAccountingTransactionsComponent implements OnInit {
 
   readonly auth = inject(AuthService);
   private readonly svc = inject(AccountingService);
+
+  onReceiptFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.uploadingReceipt.set(true);
+    this.svc.uploadReceipt(file).subscribe({
+      next: ({ url }) => {
+        this.patchForm({ receiptUrl: url });
+        this.uploadingReceipt.set(false);
+      },
+      error: () => {
+        this.error.set('Receipt upload failed.');
+        this.uploadingReceipt.set(false);
+        (event.target as HTMLInputElement).value = '';
+      },
+    });
+  }
 
   readonly incomeTotal = computed(() =>
     this.transactions()

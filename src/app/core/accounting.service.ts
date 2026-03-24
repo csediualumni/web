@@ -207,4 +207,10 @@ export class AccountingService {
   deleteReport(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/reports/${id}`);
   }
+
+  uploadReceipt(file: File): Observable<{ url: string }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<{ url: string }>(`${this.base}/receipts/upload`, form);
+  }
 }
