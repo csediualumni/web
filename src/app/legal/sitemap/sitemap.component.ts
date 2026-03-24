@@ -46,6 +46,7 @@ export class SitemapComponent {
         { label: 'News & Announcements', path: '/news' },
         { label: 'Events', path: '/events' },
         { label: 'GitHub Issues', path: '/issues' },
+        { label: 'Contributors', path: '/contributors' },
       ],
     },
     {

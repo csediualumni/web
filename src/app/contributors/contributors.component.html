@@ -1,0 +1,150 @@
+<!-- ── Hero ──────────────────────────────────────────────────────── -->
+<section class="bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 text-white py-24">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+    <div
+      class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-zinc-300 mb-6"
+    >
+      <i class="fa-brands fa-github text-white"></i> GitHub Organisation
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">Contributors</h1>
+    <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+      Meet the members of the
+      <a
+        href="https://github.com/csediualumni"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-blue-300 hover:text-white underline underline-offset-4 transition-colors"
+        >&#64;csediualumni</a
+      >
+      GitHub organisation who help build and maintain this platform.
+    </p>
+    <a
+      href="https://github.com/csediualumni/web"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-8 inline-flex items-center gap-2 bg-white text-blue-900 font-semibold px-6 py-2.5 rounded-xl hover:bg-blue-50 transition-colors text-sm"
+    >
+      <i class="fa-brands fa-github"></i> View Repository
+    </a>
+  </div>
+</section>
+
+<!-- ── Content ──────────────────────────────────────────────────── -->
+<section class="py-16 bg-zinc-50 min-h-[400px]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        @for (_ of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track $index) {
+          <div class="flex flex-col items-center gap-3 bg-white border border-zinc-100 rounded-2xl p-6 animate-pulse">
+            <div class="w-20 h-20 rounded-full bg-zinc-100"></div>
+            <div class="h-4 w-24 bg-zinc-100 rounded"></div>
+            <div class="h-3 w-16 bg-zinc-100 rounded"></div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Error -->
+    @if (!loading() && error()) {
+      <div class="flex flex-col items-center justify-center py-24 text-zinc-500">
+        <i class="fa-solid fa-triangle-exclamation text-4xl mb-4 text-rose-400"></i>
+        <p class="text-lg font-medium text-zinc-700">{{ error() }}</p>
+        <a
+          href="https://github.com/orgs/csediualumni/people"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 inline-flex items-center gap-2 bg-zinc-900 hover:bg-zinc-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm"
+        >
+          <i class="fa-brands fa-github"></i> View on GitHub
+        </a>
+      </div>
+    }
+
+    <!-- Members grid -->
+    @if (!loading() && !error()) {
+      <div class="flex items-center justify-between mb-8">
+        <p class="text-zinc-500 text-sm">
+          <i class="fa-solid fa-users text-blue-500 mr-1.5"></i>
+          <span class="font-semibold text-zinc-800">{{ members().length }}</span>
+          organisation member{{ members().length === 1 ? '' : 's' }}
+        </p>
+        <a
+          href="https://github.com/orgs/csediualumni/people"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+        >
+          <i class="fa-brands fa-github"></i> View on GitHub
+        </a>
+      </div>
+
+      @if (members().length === 0) {
+        <div class="text-center py-20 text-zinc-400">
+          <i class="fa-brands fa-github text-5xl mb-4"></i>
+          <p class="text-lg font-medium text-zinc-600">No public members found.</p>
+        </div>
+      }
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        @for (member of members(); track member.id) {
+          <a
+            [href]="member.html_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex flex-col items-center gap-3 bg-white border border-zinc-100 rounded-2xl p-6 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+          >
+            <img
+              [src]="member.avatar_url"
+              [alt]="member.login"
+              class="w-20 h-20 rounded-full object-cover ring-2 ring-zinc-100 group-hover:ring-blue-200 transition-all group-hover:scale-105"
+            />
+            <div class="text-center min-w-0 w-full">
+              <p
+                class="text-sm font-semibold text-zinc-800 group-hover:text-blue-700 transition-colors truncate"
+              >
+                {{ member.login }}
+              </p>
+              <span
+                class="mt-1 inline-flex items-center gap-1 text-[11px] font-medium bg-blue-50 border border-blue-200 text-blue-700 rounded-full px-2 py-0.5"
+              >
+                <i class="fa-brands fa-github text-[9px]"></i> Member
+              </span>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ── CTA ──────────────────────────────────────────────────────── -->
+<section class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 text-white py-16">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <i class="fa-solid fa-code-pull-request text-4xl mb-4 opacity-80"></i>
+    <h2 class="text-3xl font-bold mb-3">Want to Contribute?</h2>
+    <p class="text-blue-100 text-lg mb-8 max-w-xl mx-auto">
+      This project is open source. Help us improve the platform by submitting bug reports, feature
+      requests, or pull requests on GitHub.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="https://github.com/csediualumni/web/issues/new"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-blue-50 transition-colors"
+      >
+        <i class="fa-solid fa-bug"></i> Report a Bug
+      </a>
+      <a
+        href="https://github.com/csediualumni/web"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-white/10 border border-white/30 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-white/20 transition-colors"
+      >
+        <i class="fa-brands fa-github"></i> View Repository
+      </a>
+    </div>
+  </div>
+</section>
