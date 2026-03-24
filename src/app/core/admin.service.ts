@@ -102,6 +102,25 @@ export interface NewsletterSubscription {
   subscribedAt: string;
 }
 
+export interface NewsletterSend {
+  id: string;
+  subject: string;
+  htmlBody: string;
+  recipientCount: number;
+  type: 'manual' | 'monthly_digest';
+  sentByName: string | null;
+  sentAt: string;
+}
+
+export interface NewsletterDraft {
+  id: string;
+  subject: string;
+  htmlBody: string;
+  digestMonth: string;
+  status: 'pending' | 'sent';
+  createdAt: string;
+}
+
 export interface AdminUser {
   id: string;
   email: string;
@@ -539,6 +558,22 @@ export class AdminService {
       subject,
       htmlBody,
     });
+  }
+
+  listNewsletterSends(): Observable<NewsletterSend[]> {
+    return this.http.get<NewsletterSend[]>(`${this.adminBase}/newsletter/sends`);
+  }
+
+  listNewsletterDrafts(): Observable<NewsletterDraft[]> {
+    return this.http.get<NewsletterDraft[]>(`${this.adminBase}/newsletter/drafts`);
+  }
+
+  deleteNewsletterDraft(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/newsletter/drafts/${id}`);
+  }
+
+  sendNewsletterDraft(id: string): Observable<{ sent: number }> {
+    return this.http.post<{ sent: number }>(`${this.adminBase}/newsletter/drafts/${id}/send`, {});
   }
 
   // ── Contact Tickets (public submit) ────────────────────────

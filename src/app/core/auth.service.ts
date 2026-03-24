@@ -302,7 +302,10 @@ export class AuthService {
   } | null {
     try {
       const payload = token.split('.')[1];
-      return JSON.parse(atob(payload));
+      // JWT uses base64url encoding (uses - and _ instead of + and /)
+      // atob() requires standard base64, so convert first
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(base64));
     } catch {
       return null;
     }
