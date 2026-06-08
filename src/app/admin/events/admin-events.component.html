@@ -322,7 +322,7 @@
 
   <!-- Tabs -->
   <div class="flex items-center gap-1 border-b border-zinc-200 mb-6">
-    @for (tab of [['registrations','Registrations','fa-users'],['sponsors','Sponsors','fa-handshake'],['expenses','Expenses','fa-arrow-trend-down'],['income','Income','fa-arrow-trend-up']] as tabs; track tab[0]) {
+    @for (tab of [['registrations','Registrations','fa-users'],['sponsors','Sponsors','fa-handshake'],['expenses','Expenses','fa-arrow-trend-down'],['income','Income','fa-arrow-trend-up']]; track tab[0]) {
       <button (click)="switchTab($any(tab[0]))"
         class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px"
         [class]="detailTab() === tab[0] ? 'border-blue-600 text-blue-600' : 'border-transparent text-zinc-500 hover:text-zinc-800'">
@@ -365,10 +365,10 @@
                 <tr class="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
                   <td class="px-4 py-3 text-zinc-400 text-xs">{{ i + 1 }}</td>
                   <td class="px-2 py-3">
-                    <p class="font-medium text-zinc-800 text-xs">{{ reg.user?.displayName || '—' }}</p>
-                    <p class="text-[10px] text-zinc-400">{{ reg.user?.email }}</p>
+                    <p class="font-medium text-zinc-800 text-xs">{{ reg.user.displayName || '—' }}</p>
+                    <p class="text-[10px] text-zinc-400">{{ reg.user.email }}</p>
                   </td>
-                  <td class="px-2 py-3 text-xs text-zinc-500 font-mono">{{ reg.user?.phone || '—' }}</td>
+                  <td class="px-2 py-3 text-xs text-zinc-500 font-mono">{{ reg.user.phone || '—' }}</td>
                   <td class="px-2 py-3 text-xs text-zinc-600">{{ reg.tShirtSize || '—' }}</td>
                   <td class="px-2 py-3 text-xs text-zinc-500">{{ reg.familyMembersCount }}</td>
                   <td class="px-2 py-3">

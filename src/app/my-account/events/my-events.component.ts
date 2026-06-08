@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../core/admin.service';
 import type { EventRsvp, ApiEvent, EventRegistration } from '../../core/admin.service';
+import { AuthService } from '../../core/auth.service';
 import { formatBDT } from '../../core/invoice.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -21,6 +22,7 @@ const PAID_CUTOFF_DAYS = 7;
 })
 export class MyEventsComponent implements OnInit {
   private readonly admin = inject(AdminService);
+  private readonly auth = inject(AuthService);
 
   rsvps = signal<RsvpWithEvent[]>([]);
   registrations = signal<RegistrationWithEvent[]>([]);
@@ -104,11 +106,13 @@ export class MyEventsComponent implements OnInit {
   }
 
   private async generateQrCodes(registrations: RegistrationWithEvent[]): Promise<void> {
+    const phone = this.auth.currentUser()?.phone;
+    if (!phone) return;
     const map = new Map<string, string>();
     for (const reg of registrations) {
-      if (reg.status === 'confirmed' && reg.user?.phone) {
+      if (reg.status === 'confirmed') {
         try {
-          const url = await QRCode.toDataURL(reg.user.phone, {
+          const url = await QRCode.toDataURL(phone, {
             width: 256,
             margin: 2,
             color: { dark: '#18181b', light: '#ffffff' },
