@@ -179,10 +179,16 @@ export interface EventTimelineItem {
   description?: string;
 }
 
+export interface EventGuest {
+  name: string;
+  designation?: string;
+  image?: string;
+}
+
 export interface EventGuestList {
-  president?: string;
-  chiefGuest?: string;
-  specialGuests?: string[];
+  president?: EventGuest;
+  chiefGuest?: EventGuest;
+  specialGuests?: EventGuest[];
 }
 
 export interface ApiEvent {

@@ -16,6 +16,7 @@ import {
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
+import { ImageInputComponent } from '../../shared/image-input/image-input.component';
 import { convertToHtml } from '../../shared/content.utils';
 
 type Mode = 'list' | 'create' | 'edit' | 'detail';
@@ -36,7 +37,7 @@ type RegistrationRow = EventRegistration & {
 @Component({
   selector: 'app-admin-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, ImageInputComponent],
   templateUrl: './admin-events.component.html',
 })
 export class AdminEventsComponent implements OnInit {
@@ -119,9 +120,9 @@ export class AdminEventsComponent implements OnInit {
   formTicketPrice = signal<number | null>(null);
   // Extended fields
   formTimeline = signal<{ time: string; title: string; description: string }[]>([]);
-  formGuestPresident = signal('');
-  formGuestChief = signal('');
-  formGuestSpecial = signal<string[]>([]);
+  formGuestPresident = signal<{ name: string; designation: string; image: string }>({ name: '', designation: '', image: '' });
+  formGuestChief = signal<{ name: string; designation: string; image: string }>({ name: '', designation: '', image: '' });
+  formGuestSpecial = signal<{ name: string; designation: string; image: string }[]>([]);
   formActivities = signal('');
   formActivitiesFormat = signal<'html' | 'markdown'>('html');
   formAllowFamily = signal(false);
@@ -185,9 +186,15 @@ export class AdminEventsComponent implements OnInit {
     this.formSortOrder.set(e.sortOrder);
     this.formTicketPrice.set(e.ticketPrice ?? null);
     this.formTimeline.set(e.timeline ? e.timeline.map(t => ({ ...t, description: t.description ?? '' })) : []);
-    this.formGuestPresident.set(e.guestList?.president ?? '');
-    this.formGuestChief.set(e.guestList?.chiefGuest ?? '');
-    this.formGuestSpecial.set(e.guestList?.specialGuests ? [...e.guestList.specialGuests] : []);
+    this.formGuestPresident.set(e.guestList?.president
+      ? { name: e.guestList.president.name, designation: e.guestList.president.designation ?? '', image: e.guestList.president.image ?? '' }
+      : { name: '', designation: '', image: '' });
+    this.formGuestChief.set(e.guestList?.chiefGuest
+      ? { name: e.guestList.chiefGuest.name, designation: e.guestList.chiefGuest.designation ?? '', image: e.guestList.chiefGuest.image ?? '' }
+      : { name: '', designation: '', image: '' });
+    this.formGuestSpecial.set(e.guestList?.specialGuests
+      ? e.guestList.specialGuests.map(g => ({ name: g.name, designation: g.designation ?? '', image: g.image ?? '' }))
+      : []);
     this.formActivities.set(e.activities ?? '');
     this.formActivitiesFormat.set('html');
     this.formAllowFamily.set(e.allowFamilyMembers ?? false);
@@ -283,19 +290,27 @@ export class AdminEventsComponent implements OnInit {
   }
 
   addSpecialGuest(): void {
-    this.formGuestSpecial.update(list => [...list, '']);
+    this.formGuestSpecial.update(list => [...list, { name: '', designation: '', image: '' }]);
   }
 
   removeSpecialGuest(i: number): void {
     this.formGuestSpecial.update(list => list.filter((_, idx) => idx !== i));
   }
 
-  updateSpecialGuest(i: number, value: string): void {
+  updateSpecialGuest(i: number, field: 'name' | 'designation' | 'image', value: string): void {
     this.formGuestSpecial.update(list => {
       const updated = [...list];
-      updated[i] = value;
+      updated[i] = { ...updated[i], [field]: value };
       return updated;
     });
+  }
+
+  updateGuestField(type: 'president' | 'chief', field: 'name' | 'designation' | 'image', value: string): void {
+    if (type === 'president') {
+      this.formGuestPresident.update(g => ({ ...g, [field]: value }));
+    } else {
+      this.formGuestChief.update(g => ({ ...g, [field]: value }));
+    }
   }
 
   // ── Image upload ────────────────────────────────────────────────────────────
@@ -350,9 +365,9 @@ export class AdminEventsComponent implements OnInit {
       ticketPrice: this.formTicketPrice() || null,
       timeline: this.formTimeline().filter(t => t.time.trim() && t.title.trim()),
       guestList: {
-        president: this.formGuestPresident().trim() || undefined,
-        chiefGuest: this.formGuestChief().trim() || undefined,
-        specialGuests: this.formGuestSpecial().filter(g => g.trim()),
+        president: this.formGuestPresident().name.trim() ? { name: this.formGuestPresident().name.trim(), designation: this.formGuestPresident().designation.trim() || undefined, image: this.formGuestPresident().image.trim() || undefined } : undefined,
+        chiefGuest: this.formGuestChief().name.trim() ? { name: this.formGuestChief().name.trim(), designation: this.formGuestChief().designation.trim() || undefined, image: this.formGuestChief().image.trim() || undefined } : undefined,
+        specialGuests: this.formGuestSpecial().filter(g => g.name.trim()).map(g => ({ name: g.name.trim(), designation: g.designation.trim() || undefined, image: g.image.trim() || undefined })),
       },
       activities: convertToHtml(this.formActivities().trim(), this.formActivitiesFormat()) || undefined,
       allowFamilyMembers: this.formAllowFamily(),
@@ -580,8 +595,10 @@ export class AdminEventsComponent implements OnInit {
     this.formMode.set('In-Person'); this.formCategory.set('Reunion'); this.formStatus.set('upcoming');
     this.formSeats.set(null); this.formImageUrl.set(''); this.formColor.set('bg-zinc-200');
     this.formFeatured.set(false); this.formRegistrationUrl.set(''); this.formSortOrder.set(0);
-    this.formTicketPrice.set(null); this.formTimeline.set([]); this.formGuestPresident.set('');
-    this.formGuestChief.set(''); this.formGuestSpecial.set([]); this.formActivities.set('');
+    this.formTicketPrice.set(null); this.formTimeline.set([]);
+    this.formGuestPresident.set({ name: '', designation: '', image: '' });
+    this.formGuestChief.set({ name: '', designation: '', image: '' });
+    this.formGuestSpecial.set([]); this.formActivities.set('');
     this.formActivitiesFormat.set('html'); this.formAllowFamily.set(false);
     this.formFamilyFee.set(null); this.formDonationEnabled.set(false);
   }

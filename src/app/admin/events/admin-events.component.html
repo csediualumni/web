@@ -185,17 +185,36 @@
     <!-- ── Guests of Honour ── -->
     <div class="shad-card p-6">
       <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Guests of Honour</h2>
-      <div class="space-y-3">
-        <div>
-          <label class="block text-sm font-medium text-zinc-700 mb-1">President</label>
-          <input type="text" [ngModel]="formGuestPresident()" (ngModelChange)="formGuestPresident.set($event)"
-            placeholder="Name of the president" class="shad-input w-full" />
+      <div class="space-y-5">
+        <!-- President -->
+        <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+          <p class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-3">President</p>
+          <div class="space-y-2">
+            <input type="text" [ngModel]="formGuestPresident().name" (ngModelChange)="updateGuestField('president','name',$event)"
+              placeholder="Full name" class="shad-input w-full text-sm" />
+            <input type="text" [ngModel]="formGuestPresident().designation" (ngModelChange)="updateGuestField('president','designation',$event)"
+              placeholder="Designation / Title (e.g. Dr., Prof.)" class="shad-input w-full text-sm" />
+            <label class="block text-xs text-zinc-500 mb-1">Photo</label>
+            <app-image-input [value]="formGuestPresident().image"
+              (valueChange)="updateGuestField('president','image',$event)"
+              placeholder="https://photo-url…" />
+          </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-zinc-700 mb-1">Chief Guest</label>
-          <input type="text" [ngModel]="formGuestChief()" (ngModelChange)="formGuestChief.set($event)"
-            placeholder="Name of the chief guest" class="shad-input w-full" />
+        <!-- Chief Guest -->
+        <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl">
+          <p class="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-3">Chief Guest</p>
+          <div class="space-y-2">
+            <input type="text" [ngModel]="formGuestChief().name" (ngModelChange)="updateGuestField('chief','name',$event)"
+              placeholder="Full name" class="shad-input w-full text-sm" />
+            <input type="text" [ngModel]="formGuestChief().designation" (ngModelChange)="updateGuestField('chief','designation',$event)"
+              placeholder="Designation / Title" class="shad-input w-full text-sm" />
+            <label class="block text-xs text-zinc-500 mb-1">Photo</label>
+            <app-image-input [value]="formGuestChief().image"
+              (valueChange)="updateGuestField('chief','image',$event)"
+              placeholder="https://photo-url…" />
+          </div>
         </div>
+        <!-- Special Guests -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="block text-sm font-medium text-zinc-700">Special Guests</label>
@@ -204,12 +223,21 @@
             </button>
           </div>
           @for (guest of formGuestSpecial(); track $index; let i = $index) {
-            <div class="flex items-center gap-2 mb-2">
-              <input type="text" [value]="guest" (input)="updateSpecialGuest(i, $any($event.target).value)"
-                placeholder="Guest name" class="shad-input flex-1 text-sm" />
-              <button type="button" (click)="removeSpecialGuest(i)" class="text-zinc-400 hover:text-red-500 transition-colors p-1">
-                <i class="fa-solid fa-xmark text-sm"></i>
-              </button>
+            <div class="mb-3 p-3 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-medium text-zinc-400">Guest {{ i + 1 }}</p>
+                <button type="button" (click)="removeSpecialGuest(i)" class="text-zinc-400 hover:text-red-500 transition-colors">
+                  <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+              </div>
+              <input type="text" [value]="guest.name" (input)="updateSpecialGuest(i, 'name', $any($event.target).value)"
+                placeholder="Full name" class="shad-input w-full text-sm" />
+              <input type="text" [value]="guest.designation" (input)="updateSpecialGuest(i, 'designation', $any($event.target).value)"
+                placeholder="Designation / Title" class="shad-input w-full text-sm" />
+              <label class="block text-xs text-zinc-500 mb-1">Photo</label>
+              <app-image-input [value]="guest.image"
+                (valueChange)="updateSpecialGuest(i, 'image', $event)"
+                placeholder="https://photo-url…" />
             </div>
           }
         </div>
@@ -230,21 +258,9 @@
       <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Media & Display</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="sm:col-span-2">
-          <label class="block text-sm font-medium text-zinc-700 mb-1">Cover Image</label>
-          <div class="flex items-center gap-3">
-            <input type="url" [ngModel]="formImageUrl()" (ngModelChange)="formImageUrl.set($event)" placeholder="Image URL or upload below" class="shad-input flex-1" />
-            <button type="button" (click)="triggerImageUpload()" [disabled]="uploadingImage()"
-              class="shad-btn-ghost border border-zinc-200 text-zinc-600 hover:bg-zinc-50 h-9 px-3 text-sm gap-1.5 disabled:opacity-50">
-              @if (uploadingImage()) {
-                <i class="fa-solid fa-spinner animate-spin text-xs"></i> Uploading…
-              } @else {
-                <i class="fa-solid fa-upload text-xs"></i> Upload
-              }
-            </button>
-          </div>
-          @if (formImageUrl()) {
-            <img [src]="formImageUrl()" alt="Preview" class="mt-2 h-24 w-full object-cover rounded-lg" />
-          }
+          <label class="block text-sm font-medium text-zinc-700 mb-2">Cover Image</label>
+          <app-image-input [value]="formImageUrl()" (valueChange)="formImageUrl.set($event)"
+            placeholder="https://cdn.example.com/event-cover.jpg" />
         </div>
         <div>
           <label class="block text-sm font-medium text-zinc-700 mb-1">Card Color Class</label>
@@ -428,8 +444,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-medium text-zinc-600 mb-1">Logo URL</label>
-            <input type="url" [ngModel]="sponsorLogoUrl()" (ngModelChange)="sponsorLogoUrl.set($event)" placeholder="https://..." class="shad-input w-full text-sm" />
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Logo</label>
+            <app-image-input [value]="sponsorLogoUrl()" (valueChange)="sponsorLogoUrl.set($event)" placeholder="https://logo-url…" />
           </div>
           <div>
             <label class="block text-xs font-medium text-zinc-600 mb-1">Website URL</label>

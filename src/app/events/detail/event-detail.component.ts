@@ -44,9 +44,19 @@ export class EventDetailComponent implements OnInit {
 
   // Registration form
   tShirtSize = signal<TShirtSize>('L');
+  showSizeChart = signal(false);
   familyCount = signal(0);
-  familyMembers = signal<{ name: string; tShirtSize: TShirtSize }[]>([]);
   donationAmount = signal(0);
+
+  readonly sizeChartRows: { size: TShirtSize; chest: string; length: string }[] = [
+    { size: 'XS', chest: '34"', length: '27"' },
+    { size: 'S',  chest: '36"', length: '28"' },
+    { size: 'M',  chest: '38"', length: '29"' },
+    { size: 'L',  chest: '40"', length: '30"' },
+    { size: 'XL', chest: '42"', length: '31"' },
+    { size: 'XXL', chest: '44"', length: '32"' },
+    { size: 'XXXL', chest: '46"', length: '33"' },
+  ];
 
   readonly tShirtSizes: TShirtSize[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
 
@@ -96,19 +106,7 @@ export class EventDetailComponent implements OnInit {
   setFamilyCount(n: number): void {
     const ev = this.event();
     if (!ev?.allowFamilyMembers) return;
-    const clamped = Math.max(0, n);
-    const current = this.familyMembers();
-    const updated = Array.from({ length: clamped }, (_, i) => current[i] ?? { name: '', tShirtSize: 'L' as TShirtSize });
-    this.familyCount.set(clamped);
-    this.familyMembers.set(updated);
-  }
-
-  updateFamilyMember(i: number, field: 'name' | 'tShirtSize', value: string): void {
-    this.familyMembers.update((list) => {
-      const updated = [...list];
-      updated[i] = { ...updated[i], [field]: value };
-      return updated;
-    });
+    this.familyCount.set(Math.max(0, n));
   }
 
   register(): void {
@@ -124,7 +122,6 @@ export class EventDetailComponent implements OnInit {
       .registerForEvent(ev.id, {
         tShirtSize: this.tShirtSize(),
         familyMembersCount: this.familyCount(),
-        familyMembers: this.familyMembers(),
         donationAmount: this.donationAmount(),
       })
       .subscribe({

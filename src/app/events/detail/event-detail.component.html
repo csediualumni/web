@@ -125,42 +125,66 @@
         }
 
         <!-- Guests of Honour -->
-        @if (ev.guestList && (ev.guestList.president || ev.guestList.chiefGuest || (ev.guestList.specialGuests && ev.guestList.specialGuests.length))) {
+        @if (ev.guestList && (ev.guestList.president?.name || ev.guestList.chiefGuest?.name || (ev.guestList.specialGuests && ev.guestList.specialGuests.length))) {
           <div>
             <h2 class="text-2xl font-bold text-zinc-800 mb-6 flex items-center gap-2">
               <i class="fa-solid fa-star-half-stroke text-blue-500 text-lg"></i> Guests of Honour
             </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              @if (ev.guestList.president) {
+              @if (ev.guestList.president?.name) {
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-5 flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-crown text-white text-sm"></i>
-                  </div>
+                  @if (ev.guestList.president!.image) {
+                    <img [src]="ev.guestList.president!.image" [alt]="ev.guestList.president!.name"
+                      class="w-14 h-14 rounded-full object-cover border-2 border-blue-200 shrink-0" />
+                  } @else {
+                    <div class="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-crown text-white text-lg"></i>
+                    </div>
+                  }
                   <div>
                     <p class="text-xs font-medium text-blue-500 uppercase tracking-wide mb-0.5">President</p>
-                    <p class="font-semibold text-zinc-800">{{ ev.guestList.president }}</p>
+                    <p class="font-semibold text-zinc-800">{{ ev.guestList.president!.name }}</p>
+                    @if (ev.guestList.president!.designation) {
+                      <p class="text-xs text-zinc-500 mt-0.5">{{ ev.guestList.president!.designation }}</p>
+                    }
                   </div>
                 </div>
               }
-              @if (ev.guestList.chiefGuest) {
+              @if (ev.guestList.chiefGuest?.name) {
                 <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-5 flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-medal text-white text-sm"></i>
-                  </div>
+                  @if (ev.guestList.chiefGuest!.image) {
+                    <img [src]="ev.guestList.chiefGuest!.image" [alt]="ev.guestList.chiefGuest!.name"
+                      class="w-14 h-14 rounded-full object-cover border-2 border-amber-200 shrink-0" />
+                  } @else {
+                    <div class="w-14 h-14 rounded-full bg-amber-500 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-medal text-white text-lg"></i>
+                    </div>
+                  }
                   <div>
                     <p class="text-xs font-medium text-amber-600 uppercase tracking-wide mb-0.5">Chief Guest</p>
-                    <p class="font-semibold text-zinc-800">{{ ev.guestList.chiefGuest }}</p>
+                    <p class="font-semibold text-zinc-800">{{ ev.guestList.chiefGuest!.name }}</p>
+                    @if (ev.guestList.chiefGuest!.designation) {
+                      <p class="text-xs text-zinc-500 mt-0.5">{{ ev.guestList.chiefGuest!.designation }}</p>
+                    }
                   </div>
                 </div>
               }
               @for (guest of ev.guestList.specialGuests; track $index) {
                 <div class="bg-zinc-50 border border-zinc-100 rounded-xl p-5 flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-full bg-zinc-600 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-user-tie text-white text-sm"></i>
-                  </div>
+                  @if (guest.image) {
+                    <img [src]="guest.image" [alt]="guest.name"
+                      class="w-14 h-14 rounded-full object-cover border-2 border-zinc-200 shrink-0" />
+                  } @else {
+                    <div class="w-14 h-14 rounded-full bg-zinc-600 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-user-tie text-white text-lg"></i>
+                    </div>
+                  }
                   <div>
                     <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-0.5">Special Guest</p>
-                    <p class="font-semibold text-zinc-800">{{ guest }}</p>
+                    <p class="font-semibold text-zinc-800">{{ guest.name }}</p>
+                    @if (guest.designation) {
+                      <p class="text-xs text-zinc-500 mt-0.5">{{ guest.designation }}</p>
+                    }
                   </div>
                 </div>
               }
@@ -278,7 +302,14 @@
 
                 <!-- T-shirt size -->
                 <div class="mb-4">
-                  <label class="block text-xs font-medium text-zinc-600 mb-1.5">T-Shirt Size</label>
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <label class="text-xs font-medium text-zinc-600">T-Shirt Size</label>
+                    <button type="button" (click)="showSizeChart.set(true)"
+                      class="w-5 h-5 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center transition-colors"
+                      title="View size chart">
+                      <i class="fa-solid fa-question text-[9px] text-zinc-500"></i>
+                    </button>
+                  </div>
                   <div class="flex flex-wrap gap-2">
                     @for (size of tShirtSizes; track size) {
                       <button (click)="tShirtSize.set(size)"
@@ -305,18 +336,11 @@
                         <i class="fa-solid fa-plus text-xs"></i>
                       </button>
                     </div>
-                    @for (member of familyMembers(); track $index; let i = $index) {
-                      <div class="mt-3 p-3 bg-zinc-50 rounded-lg space-y-2">
-                        <p class="text-xs font-medium text-zinc-500">Member {{ i + 1 }}</p>
-                        <input type="text" [value]="member.name" (input)="updateFamilyMember(i, 'name', $any($event.target).value)"
-                          placeholder="Full name" class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400" />
-                        <select [value]="member.tShirtSize" (change)="updateFamilyMember(i, 'tShirtSize', $any($event.target).value)"
-                          class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400">
-                          @for (size of tShirtSizes; track size) {
-                            <option [value]="size">{{ size }}</option>
-                          }
-                        </select>
-                      </div>
+                    @if (familyCount() > 0) {
+                      <p class="text-[11px] text-zinc-400 mt-2 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-info text-[9px]"></i>
+                        Family members receive entry + meals only. Kit &amp; t-shirt are for the main registrant only.
+                      </p>
                     }
                   </div>
                 }
@@ -383,6 +407,49 @@
         </div>
       </div><!-- end sidebar -->
 
+    </div>
+  </div>
+}
+
+<!-- ── T-Shirt Size Chart Modal ── -->
+@if (showSizeChart()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    (click)="showSizeChart.set(false)">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6" (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-base font-bold text-zinc-800 flex items-center gap-2">
+          <i class="fa-solid fa-shirt text-blue-500"></i> T-Shirt Size Chart
+        </h3>
+        <button (click)="showSizeChart.set(false)" class="text-zinc-400 hover:text-zinc-600 transition-colors">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-zinc-100">
+            <th class="text-left text-xs font-semibold text-zinc-500 pb-2">Size</th>
+            <th class="text-left text-xs font-semibold text-zinc-500 pb-2">Chest</th>
+            <th class="text-left text-xs font-semibold text-zinc-500 pb-2">Length</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of sizeChartRows; track row.size) {
+            <tr class="border-b border-zinc-50 hover:bg-zinc-50 transition-colors"
+              [class.bg-blue-50]="tShirtSize() === row.size">
+              <td class="py-2 pr-4">
+                <button (click)="tShirtSize.set(row.size); showSizeChart.set(false)"
+                  class="px-2.5 py-0.5 rounded-md text-xs font-medium transition-all"
+                  [class]="tShirtSize() === row.size ? 'bg-blue-600 text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-blue-100'">
+                  {{ row.size }}
+                </button>
+              </td>
+              <td class="py-2 pr-4 text-zinc-600 text-xs">{{ row.chest }}</td>
+              <td class="py-2 text-zinc-600 text-xs">{{ row.length }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <p class="text-[11px] text-zinc-400 mt-4">Measurements are approximate. Click a size to select it.</p>
     </div>
   </div>
 }
