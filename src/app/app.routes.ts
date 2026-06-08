@@ -363,6 +363,18 @@ export const routes: Routes = [
     loadComponent: () => import('./payment/payment.component').then((m) => m.PaymentComponent),
   },
   {
+    path: 'payment/success',
+    title: 'Payment Successful',
+    loadComponent: () =>
+      import('./payment/success/payment-success.component').then((m) => m.PaymentSuccessComponent),
+  },
+  {
+    path: 'payment/fail',
+    title: 'Payment Failed',
+    loadComponent: () =>
+      import('./payment/fail/payment-fail.component').then((m) => m.PaymentFailComponent),
+  },
+  {
     path: 'contact',
     title: 'Contact',
     data: {

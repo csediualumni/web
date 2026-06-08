@@ -89,7 +89,7 @@ export class MembershipStatusComponent implements OnInit {
     const status = this.application()?.status;
     switch (status) {
       case 'payment_required':
-        return 'Your application has been received. Please complete the ৳500 bKash payment to proceed.';
+        return 'Your application has been received. Please complete the ৳500 payment to proceed.';
       case 'payment_submitted':
         return 'Your payment has been received and is being verified by our team. This usually takes 1–2 business days.';
       case 'approved':

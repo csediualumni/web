@@ -21,7 +21,6 @@ export class SiteConfigService {
   favicon = () => this.config()['faviconUrl'] ?? null;
   supportEmail = () => this.config()['supportEmail'] ?? null;
   supportPhone = () => this.config()['supportPhone'] ?? null;
-  bkashNumber = () => this.config()['bkashNumber'] ?? null;
   location = () => this.config()['location'] ?? null;
   facebookUrl = () => this.config()['facebookUrl'] ?? null;
   twitterUrl = () => this.config()['twitterUrl'] ?? null;

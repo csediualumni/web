@@ -14,7 +14,8 @@ export interface InvoicePayment {
   invoiceId: string;
   amount: number;
   transactionId: string;
-  senderBkash: string | null;
+  gateway: string;
+  valId: string | null;
   status: PaymentStatus;
   adminNote: string | null;
   createdAt: string;
@@ -49,12 +50,6 @@ export interface CreateInvoiceDto {
   donorMessage?: string;
   isAnonymous?: boolean;
   metadata?: Record<string, unknown>;
-}
-
-export interface SubmitPaymentDto {
-  amount: number;
-  transactionId: string;
-  senderBkash?: string;
 }
 
 export interface RecentDonor {
@@ -103,9 +98,6 @@ export class InvoiceService {
   getRecentDonors(limit = 8): Observable<RecentDonor[]> {
     return this.http.get<RecentDonor[]>(`${this.base}/donations/recent?limit=${limit}`);
   }
-  submitPayment(invoiceId: string, dto: SubmitPaymentDto): Observable<Invoice> {
-    return this.http.post<Invoice>(`${this.base}/${invoiceId}/payments`, dto);
-  }
   // ── User self-service ─────────────────────────────
   getMyInvoices(): Observable<Invoice[]> {
     return this.http.get<Invoice[]>(`${this.base}/my`);
@@ -119,21 +111,16 @@ export class InvoiceService {
     return this.http.patch<Invoice>(`${this.base}/${id}/status`, { status });
   }
 
-  updatePaymentStatus(
-    invoiceId: string,
-    paymentId: string,
-    status: PaymentStatus,
-    adminNote?: string,
-  ): Observable<Invoice> {
-    return this.http.patch<Invoice>(`${this.base}/${invoiceId}/payments/${paymentId}/status`, {
-      status,
-      adminNote,
-    });
-  }
-
   refundPayment(invoiceId: string, paymentId: string, adminNote?: string): Observable<Invoice> {
     return this.http.post<Invoice>(`${this.base}/${invoiceId}/payments/${paymentId}/refund`, {
       adminNote,
     });
+  }
+
+  initSslPayment(invoiceId: string): Observable<{ gatewayUrl: string }> {
+    return this.http.post<{ gatewayUrl: string }>(
+      `${this.base}/${invoiceId}/sslcommerz/init`,
+      {},
+    );
   }
 }

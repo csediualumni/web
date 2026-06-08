@@ -21,7 +21,6 @@ export class AdminConfigComponent implements OnInit {
   // Contact info
   supportEmail = signal('');
   supportPhone = signal('');
-  bkashNumber = signal('');
   location = signal('');
 
   // Social links
@@ -40,7 +39,6 @@ export class AdminConfigComponent implements OnInit {
     const cfg = this.siteConfig.config();
     this.supportEmail.set(cfg['supportEmail'] ?? '');
     this.supportPhone.set(cfg['supportPhone'] ?? '');
-    this.bkashNumber.set(cfg['bkashNumber'] ?? '');
     this.location.set(cfg['location'] ?? '');
     this.facebookUrl.set(cfg['facebookUrl'] ?? '');
     this.twitterUrl.set(cfg['twitterUrl'] ?? '');
@@ -60,7 +58,6 @@ export class AdminConfigComponent implements OnInit {
     const payload: Record<string, string | null> = {
       supportEmail: this.supportEmail().trim() || null,
       supportPhone: this.supportPhone().trim() || null,
-      bkashNumber: this.bkashNumber().trim() || null,
       location: this.location().trim() || null,
       facebookUrl: this.facebookUrl().trim() || null,
       twitterUrl: this.twitterUrl().trim() || null,

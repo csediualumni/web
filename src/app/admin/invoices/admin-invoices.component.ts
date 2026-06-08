@@ -4,7 +4,6 @@ import {
   InvoiceService,
   Invoice,
   InvoicePayment,
-  PaymentStatus,
   paidAmount,
   dueAmount,
   formatBDT,
@@ -23,9 +22,6 @@ export class AdminInvoicesComponent implements OnInit {
   invoices = signal<Invoice[]>([]);
   expandedInvoiceId = signal<string | null>(null);
   updatingInvoiceId = signal<string | null>(null);
-  updatingPaymentId = signal<string | null>(null);
-  paymentDraftStatus = signal<Map<string, PaymentStatus>>(new Map());
-  paymentAdminNote = signal<Map<string, string>>(new Map());
 
   readonly auth = inject(AuthService);
   private readonly invoiceService = inject(InvoiceService);
@@ -76,58 +72,6 @@ export class AdminInvoicesComponent implements OnInit {
     });
   }
 
-  getPaymentDraftStatus(paymentId: string, currentStatus: PaymentStatus): PaymentStatus {
-    return this.paymentDraftStatus().get(paymentId) ?? currentStatus;
-  }
-
-  setPaymentDraftStatus(paymentId: string, status: PaymentStatus): void {
-    const map = new Map(this.paymentDraftStatus());
-    map.set(paymentId, status);
-    this.paymentDraftStatus.set(map);
-  }
-
-  getPaymentNote(paymentId: string): string {
-    return this.paymentAdminNote().get(paymentId) ?? '';
-  }
-
-  setPaymentNote(paymentId: string, note: string): void {
-    const map = new Map(this.paymentAdminNote());
-    map.set(paymentId, note);
-    this.paymentAdminNote.set(map);
-  }
-
-  isPaymentDirty(payment: InvoicePayment): boolean {
-    const draft = this.paymentDraftStatus().get(payment.id);
-    return !!draft && draft !== payment.status;
-  }
-
-  savePaymentStatus(invoice: Invoice, payment: InvoicePayment): void {
-    if (!this.auth.hasPermission('invoices:write')) return;
-    const status = this.getPaymentDraftStatus(payment.id, payment.status);
-    const note = this.getPaymentNote(payment.id) || undefined;
-    this.updatingPaymentId.set(payment.id);
-    this.invoiceService.updatePaymentStatus(invoice.id, payment.id, status, note).subscribe({
-      next: (updated) => {
-        this.invoices.update((list) => list.map((i) => (i.id === updated.id ? updated : i)));
-        const ds = new Map(this.paymentDraftStatus());
-        ds.delete(payment.id);
-        this.paymentDraftStatus.set(ds);
-        const ns = new Map(this.paymentAdminNote());
-        ns.delete(payment.id);
-        this.paymentAdminNote.set(ns);
-        this.updatingPaymentId.set(null);
-      },
-      error: (err) => {
-        this.error.set(
-          err?.status === 403
-            ? "You don't have sufficient permissions."
-            : (err.error?.message ?? 'Failed to update payment.'),
-        );
-        this.updatingPaymentId.set(null);
-      },
-    });
-  }
-
   invoicePaid(invoice: Invoice): number {
     return paidAmount(invoice);
   }
@@ -157,5 +101,24 @@ export class AdminInvoicesComponent implements OnInit {
       refunded: 'bg-purple-50 text-purple-700',
     };
     return map[status] ?? 'bg-zinc-100 text-zinc-500';
+  }
+
+  refundPayment(invoice: Invoice, payment: InvoicePayment): void {
+    if (!this.auth.hasPermission('invoices:write')) return;
+    this.updatingInvoiceId.set(invoice.id);
+    this.invoiceService.refundPayment(invoice.id, payment.id).subscribe({
+      next: (updated) => {
+        this.invoices.update((list) => list.map((i) => (i.id === updated.id ? updated : i)));
+        this.updatingInvoiceId.set(null);
+      },
+      error: (err) => {
+        this.error.set(
+          err?.status === 403
+            ? "You don't have sufficient permissions."
+            : (err.error?.message ?? 'Failed to refund payment.'),
+        );
+        this.updatingInvoiceId.set(null);
+      },
+    });
   }
 }
