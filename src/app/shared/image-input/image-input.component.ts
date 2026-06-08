@@ -1,4 +1,4 @@
-import { Component, input, output, signal, inject } from '@angular/core';
+import { Component, model, signal, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../core/admin.service';
@@ -25,7 +25,7 @@ import { AdminService } from '../../core/admin.service';
 
       <!-- URL input -->
       @if (tab() === 'url') {
-        <input type="url" [ngModel]="value()" (ngModelChange)="value.set($event); valueChange.emit($event)"
+        <input type="url" [ngModel]="value()" (ngModelChange)="value.set($event)"
           [placeholder]="placeholder()"
           class="shad-input w-full text-sm" />
       }
@@ -60,7 +60,7 @@ import { AdminService } from '../../core/admin.service';
       @if (value() && !uploading()) {
         <div class="flex items-center gap-2 mt-1">
           <img [src]="value()" alt="preview" class="h-10 w-10 rounded object-cover border border-zinc-200" />
-          <button type="button" (click)="clear()" class="text-xs text-red-500 hover:text-red-700">
+          <button type="button" (click)="value.set('')" class="text-xs text-red-500 hover:text-red-700">
             <i class="fa-solid fa-xmark"></i> Remove
           </button>
         </div>
@@ -71,9 +71,9 @@ import { AdminService } from '../../core/admin.service';
 export class ImageInputComponent {
   private readonly adminSvc = inject(AdminService);
 
-  readonly value = input<string>('');
+  /** Two-way bindable value — supports both [value]="x" (valueChange)="x=$event" and [(value)]="x" */
+  readonly value = model<string>('');
   readonly placeholder = input('https://…');
-  readonly valueChange = output<string>();
 
   tab = signal<'url' | 'upload'>('url');
   uploading = signal(false);
@@ -85,7 +85,7 @@ export class ImageInputComponent {
     this.uploadError.set(null);
     this.adminSvc.uploadEventImage(file).subscribe({
       next: ({ url }) => {
-        this.valueChange.emit(url);
+        this.value.set(url);
         this.uploading.set(false);
       },
       error: () => {
@@ -93,9 +93,5 @@ export class ImageInputComponent {
         this.uploading.set(false);
       },
     });
-  }
-
-  clear(): void {
-    this.valueChange.emit('');
   }
 }
