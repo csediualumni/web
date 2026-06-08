@@ -106,7 +106,7 @@ export class MyEventsComponent implements OnInit {
   }
 
   private async generateQrCodes(registrations: RegistrationWithEvent[]): Promise<void> {
-    const phone = this.auth.currentUser()?.phone;
+    const phone = this.auth.currentUser()?.profile?.phone;
     if (!phone) return;
     const map = new Map<string, string>();
     for (const reg of registrations) {
