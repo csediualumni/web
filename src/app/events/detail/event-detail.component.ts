@@ -152,15 +152,21 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
-  formatDate(d: string): string {
-    return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(d));
+  formatDate(d: string | null | undefined): string {
+    if (!d) return '';
+    const dt = new Date(d);
+    if (isNaN(dt.getTime())) return d;
+    return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(dt);
   }
 
-  formatTime(t: string): string {
-    if (!t) return '';
+  formatTime(t: string | null | undefined): string {
+    if (!t || typeof t !== 'string') return '';
     const [h, m] = t.split(':');
+    const hours = parseInt(h, 10);
+    const mins = parseInt(m ?? '0', 10);
+    if (isNaN(hours) || isNaN(mins)) return t;
     const dt = new Date();
-    dt.setHours(+h, +m);
+    dt.setHours(hours, mins, 0, 0);
     return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(dt);
   }
 
