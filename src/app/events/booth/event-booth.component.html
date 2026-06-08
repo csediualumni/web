@@ -1,0 +1,248 @@
+<div class="min-h-screen bg-zinc-950 text-white">
+
+  <!-- Header -->
+  <header class="bg-zinc-900 border-b border-zinc-800 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-qrcode text-sm"></i>
+      </div>
+      <div>
+        <p class="text-xs text-zinc-400">Event Booth</p>
+        <p class="text-sm font-semibold">Check-in Scanner</p>
+      </div>
+    </div>
+    <a routerLink="/events" class="text-xs text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </a>
+  </header>
+
+  <div class="max-w-2xl mx-auto px-4 py-8">
+
+    <!-- Search -->
+    @if (!registration()) {
+      <div class="text-center mb-10">
+        <h1 class="text-2xl font-bold mb-1">Scan or Look Up</h1>
+        <p class="text-zinc-400 text-sm">Enter the attendee's mobile phone number</p>
+      </div>
+
+      <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-6">
+        <label class="block text-xs font-medium text-zinc-400 mb-2 uppercase tracking-wider">Phone Number</label>
+        <div class="flex gap-3">
+          <input
+            type="tel"
+            [(ngModel)]="phoneInput"
+            (keydown.enter)="lookup()"
+            placeholder="+880 1X XX XX XXXX"
+            class="flex-1 bg-zinc-800 border border-zinc-600 text-white placeholder-zinc-500 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+          />
+          <button (click)="lookup()" [disabled]="loading() || !phoneInput().trim()"
+            class="bg-blue-600 text-white px-5 py-3 rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-2">
+            @if (loading()) {
+              <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            } @else {
+              <i class="fa-solid fa-magnifying-glass"></i>
+            }
+            Find
+          </button>
+        </div>
+
+        @if (error()) {
+          <div class="mt-4 bg-red-900/40 border border-red-700/50 rounded-xl px-4 py-3 flex items-center gap-3">
+            <i class="fa-solid fa-circle-xmark text-red-400"></i>
+            <p class="text-sm text-red-300">{{ error() }}</p>
+          </div>
+        }
+
+        <p class="mt-4 text-xs text-zinc-500 text-center">
+          <i class="fa-solid fa-circle-info mr-1"></i>
+          After scanning a QR code, the phone number will auto-populate in this field.
+        </p>
+      </div>
+    }
+
+    <!-- Registration card -->
+    @if (registration(); as reg) {
+      <div class="space-y-5">
+
+        <!-- Header bar -->
+        <div class="flex items-center justify-between">
+          <button (click)="clear()" class="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors">
+            <i class="fa-solid fa-arrow-left"></i> Search Again
+          </button>
+          <span class="text-xs px-3 py-1 rounded-full font-medium"
+            [class]="reg.status === 'confirmed' ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-700/50' : 'bg-amber-900/60 text-amber-300 border border-amber-700/50'">
+            {{ reg.status === 'confirmed' ? '✓ Confirmed' : reg.status }}
+          </span>
+        </div>
+
+        <!-- Profile card -->
+        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-6">
+          <div class="flex items-start gap-4">
+            @if (reg.user.avatar) {
+              <img [src]="reg.user.avatar" [alt]="reg.user.displayName || reg.user.email"
+                class="w-16 h-16 rounded-full object-cover shrink-0" />
+            } @else {
+              <div class="w-16 h-16 rounded-full bg-blue-700 flex items-center justify-center shrink-0 text-xl font-bold">
+                {{ (reg.user.displayName || reg.user.email)[0].toUpperCase() }}
+              </div>
+            }
+            <div class="flex-1 min-w-0">
+              <h2 class="text-xl font-bold text-white mb-0.5">{{ reg.user.displayName || reg.user.email }}</h2>
+              @if (reg.user.batch) {
+                <p class="text-sm text-zinc-400 mb-1">Batch {{ reg.user.batch }}</p>
+              }
+              @if (reg.user.studentId) {
+                <p class="text-xs text-zinc-500">ID: {{ reg.user.studentId }}</p>
+              }
+              <p class="text-sm text-blue-400 mt-1 font-mono">{{ reg.user.phone }}</p>
+            </div>
+          </div>
+
+          <!-- Details grid -->
+          <div class="mt-4 pt-4 border-t border-zinc-700 grid grid-cols-3 gap-3 text-center">
+            <div class="bg-zinc-800 rounded-xl p-3">
+              <p class="text-xs text-zinc-400 mb-1">T-Shirt</p>
+              <p class="text-lg font-bold text-white">{{ reg.tShirtSize || '—' }}</p>
+            </div>
+            <div class="bg-zinc-800 rounded-xl p-3">
+              <p class="text-xs text-zinc-400 mb-1">Family</p>
+              <p class="text-lg font-bold text-white">{{ reg.familyMembersCount }}</p>
+            </div>
+            <div class="bg-zinc-800 rounded-xl p-3">
+              <p class="text-xs text-zinc-400 mb-1">Checked In</p>
+              <p class="text-lg font-bold text-emerald-400">{{ reg.checkIns?.length ?? 0 }}</p>
+            </div>
+          </div>
+
+          <!-- Family members -->
+          @if (reg.familyMembers && reg.familyMembers.length > 0) {
+            <div class="mt-4 pt-4 border-t border-zinc-700">
+              <p class="text-xs font-medium text-zinc-400 uppercase tracking-wide mb-3">Family Members</p>
+              <div class="space-y-2">
+                @for (member of reg.familyMembers; track member.id) {
+                  <div class="flex items-center justify-between bg-zinc-800 rounded-lg px-3 py-2">
+                    <span class="text-sm text-zinc-300">{{ member.name }}</span>
+                    @if (member.tShirtSize) {
+                      <span class="text-xs font-medium bg-zinc-700 text-zinc-300 px-2 py-0.5 rounded">{{ member.tShirtSize }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Check-in actions -->
+        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5">
+          <h3 class="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wide">Check-in Items</h3>
+          <div class="grid grid-cols-3 gap-3">
+            @for (item of checkInTypes; track item.type) {
+              @if (getCheckIn(item.type); as ci) {
+                <!-- Already checked in -->
+                <div class="bg-emerald-900/30 border border-emerald-700/40 rounded-xl p-3 text-center">
+                  <i class="fa-solid {{ item.icon }} text-emerald-400 text-lg mb-2"></i>
+                  <p class="text-xs font-medium text-emerald-300">{{ item.label }}</p>
+                  <p class="text-[10px] text-emerald-500 mt-1">{{ formatTime(ci.checkedAt) }}</p>
+                </div>
+              } @else {
+                <!-- Not yet checked in -->
+                <button (click)="checkIn(item.type)" [disabled]="checkingIn().has(item.type)"
+                  class="bg-zinc-800 border border-zinc-600 rounded-xl p-3 text-center hover:bg-zinc-700 hover:border-zinc-500 active:bg-zinc-600 transition-all disabled:opacity-50">
+                  @if (checkingIn().has(item.type)) {
+                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  } @else {
+                    <i class="fa-solid {{ item.icon }} text-zinc-400 text-lg mb-2"></i>
+                  }
+                  <p class="text-xs font-medium text-zinc-400">{{ item.label }}</p>
+                </button>
+              }
+            }
+          </div>
+
+          <!-- Custom check-in -->
+          <div class="mt-4 pt-4 border-t border-zinc-700">
+            @if (!showCustomInput()) {
+              <button (click)="showCustomInput.set(true)"
+                class="w-full bg-zinc-800 border border-dashed border-zinc-600 rounded-xl p-3 text-sm text-zinc-400 hover:text-white hover:border-zinc-400 transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus text-xs"></i> Custom Check-in
+              </button>
+            } @else {
+              <div class="flex gap-2">
+                <input type="text" [(ngModel)]="customLabel" (keydown.enter)="submitCustom()"
+                  placeholder="e.g. Premium Kit, VIP Gift..."
+                  class="flex-1 bg-zinc-800 border border-zinc-600 text-white placeholder-zinc-500 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500" />
+                <button (click)="submitCustom()" [disabled]="!customLabel().trim()"
+                  class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                  Mark
+                </button>
+                <button (click)="showCustomInput.set(false)"
+                  class="text-zinc-500 hover:text-zinc-300 px-2 transition-colors">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Custom check-ins list -->
+        @if (reg.checkIns && reg.checkIns.some(c => c.type === 'custom')) {
+          <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5">
+            <h3 class="text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wide">Custom Items</h3>
+            <div class="space-y-2">
+              @for (ci of reg.checkIns; track ci.id) {
+                @if (ci.type === 'custom') {
+                  <div class="flex items-center justify-between bg-zinc-800 rounded-lg px-3 py-2">
+                    <span class="text-sm text-zinc-300 flex items-center gap-2">
+                      <i class="fa-solid fa-check text-emerald-400 text-xs"></i>
+                      {{ ci.customLabel }}
+                    </span>
+                    <span class="text-xs text-zinc-500">{{ formatTime(ci.checkedAt) }}</span>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Volunteer notes -->
+        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-zinc-300 uppercase tracking-wide">Volunteer Notes</h3>
+            @if (!notesEditing()) {
+              <button (click)="notesEditing.set(true)" class="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                <i class="fa-solid fa-pen text-xs mr-1"></i> Edit
+              </button>
+            }
+          </div>
+          @if (notesEditing()) {
+            <textarea [(ngModel)]="notesValue" rows="3" placeholder="Add a note..."
+              class="w-full bg-zinc-800 border border-zinc-600 text-white placeholder-zinc-500 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 resize-none"></textarea>
+            <div class="flex gap-2 mt-2">
+              <button (click)="saveNotes()" class="text-sm bg-blue-600 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 transition-colors">Save</button>
+              <button (click)="notesEditing.set(false)" class="text-sm text-zinc-400 hover:text-white transition-colors px-2">Cancel</button>
+            </div>
+          } @else {
+            <p class="text-sm text-zinc-400 leading-relaxed">{{ reg.notes || 'No notes.' }}</p>
+          }
+        </div>
+
+        <!-- Check-in history -->
+        @if (reg.checkIns && reg.checkIns.length > 0) {
+          <div class="bg-zinc-900 border border-zinc-700 rounded-2xl p-5">
+            <h3 class="text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wide">Check-in History</h3>
+            <div class="space-y-2">
+              @for (ci of reg.checkIns; track ci.id) {
+                <div class="flex items-center justify-between text-sm text-zinc-400">
+                  <span class="capitalize">{{ ci.customLabel || ci.type }}</span>
+                  <span class="text-zinc-500 text-xs">{{ formatTime(ci.checkedAt) }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      </div>
+    }
+
+  </div>
+</div>

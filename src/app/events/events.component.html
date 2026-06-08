@@ -147,50 +147,11 @@
             </div>
           }
           <div class="flex gap-3">
-            @if (isRegistered(featuredEvent()!.id)) {
-              <button
-                (click)="cancelRsvp(featuredEvent()!)"
-                [disabled]="isRsvping(featuredEvent()!.id)"
-                [title]="
-                  !isPaidCancellationAllowed(featuredEvent()!)
-                    ? 'Cancellation not allowed within 7 days of the event'
-                    : ''
-                "
-                class="shad-btn-outline gap-2 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
-              >
-                @if (isRsvping(featuredEvent()!.id)) {
-                  <i class="fa-solid fa-spinner animate-spin text-xs"></i>
-                } @else if (!isPaidCancellationAllowed(featuredEvent()!)) {
-                  <i class="fa-solid fa-lock text-xs"></i>
-                } @else {
-                  <i class="fa-solid fa-circle-check text-xs"></i>
-                }
-                Registered
-              </button>
-            } @else if (!isPaidRegistrationOpen(featuredEvent()!)) {
-              <button disabled class="shad-btn-outline gap-2 opacity-50 cursor-not-allowed">
-                <i class="fa-solid fa-lock text-xs"></i>
-                Registration Closed
-              </button>
-            } @else {
-              <button
-                (click)="register(featuredEvent()!)"
-                [disabled]="isRsvping(featuredEvent()!.id)"
-                class="shad-btn-primary gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                @if (isRsvping(featuredEvent()!.id)) {
-                  <i class="fa-solid fa-spinner animate-spin text-xs"></i>
-                  Registering…
-                } @else {
-                  <i class="fa-solid fa-ticket"></i>
-                  @if (featuredEvent()!.ticketPrice) {
-                    Register Now &middot; BDT {{ featuredEvent()!.ticketPrice | number }}
-                  } @else {
-                    Register Now
-                  }
-                }
-              </button>
-            }
+            <a [routerLink]="['/events', featuredEvent()!.id]"
+              class="shad-btn-primary gap-2">
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+              View Event & Register
+            </a>
             <button class="shad-btn-outline gap-2">
               <i class="fa-regular fa-bookmark"></i>
               Save
@@ -319,7 +280,9 @@
 
               <!-- Title + description -->
               <div>
-                <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
+                <a [routerLink]="['/events', event.id]" class="hover:text-blue-600 transition-colors">
+                  <h3 class="text-base font-bold text-zinc-900 leading-snug">{{ event.title }}</h3>
+                </a>
                 <div class="text-sm text-zinc-500 leading-relaxed mt-1.5 line-clamp-2">
                   <app-content-renderer [content]="event.description" />
                 </div>
@@ -358,59 +321,43 @@
               }
 
               <!-- CTA -->
-              <div class="mt-auto pt-3">
+              <div class="mt-auto pt-3 flex gap-2">
+                <a [routerLink]="['/events', event.id]"
+                  class="shad-btn-ghost border border-zinc-200 text-zinc-700 hover:bg-zinc-50 text-sm h-9 px-4 flex items-center gap-1.5 flex-shrink-0">
+                  <i class="fa-solid fa-arrow-right text-xs"></i> Details
+                </a>
                 @if (event.status === 'upcoming' || event.status === 'ongoing') {
                   @if (isRegistered(event.id)) {
                     <button
                       (click)="cancelRsvp(event)"
                       [disabled]="isRsvping(event.id)"
-                      [title]="
-                        !isPaidCancellationAllowed(event)
-                          ? 'Cancellation not allowed within 7 days of the event'
-                          : ''
-                      "
-                      class="shad-btn-outline w-full gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
+                      class="shad-btn-outline flex-1 gap-2 text-sm h-9 text-green-700 border-green-300 hover:bg-green-50 disabled:opacity-60"
                     >
                       @if (isRsvping(event.id)) {
                         <i class="fa-solid fa-spinner animate-spin text-xs"></i>
-                      } @else if (!isPaidCancellationAllowed(event)) {
-                        <i class="fa-solid fa-lock text-xs"></i>
                       } @else {
                         <i class="fa-solid fa-circle-check text-xs"></i>
                       }
                       Registered
                     </button>
-                  } @else if (!isPaidRegistrationOpen(event)) {
-                    <button
-                      disabled
-                      class="shad-btn-outline w-full gap-2 text-sm h-9 opacity-50 cursor-not-allowed"
-                    >
-                      <i class="fa-solid fa-lock text-xs"></i>
-                      Registration Closed
-                    </button>
-                  } @else {
-                    <button
-                      (click)="register(event)"
-                      [disabled]="isRsvping(event.id)"
-                      class="shad-btn-primary w-full gap-2 text-sm h-9 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      @if (isRsvping(event.id)) {
-                        <i class="fa-solid fa-spinner animate-spin text-xs"></i>
-                        Registering…
+                  } @else if (isPaidRegistrationOpen(event)) {
+                    <a [routerLink]="['/events', event.id]"
+                      class="shad-btn-primary flex-1 gap-2 text-sm h-9 flex items-center justify-center">
+                      <i class="fa-solid fa-ticket text-xs"></i>
+                      @if (event.ticketPrice) {
+                        Register · ৳{{ event.ticketPrice | number }}
                       } @else {
-                        <i class="fa-solid fa-ticket text-xs"></i>
-                        @if (event.ticketPrice) {
-                          Register &middot; BDT {{ event.ticketPrice | number }}
-                        } @else {
-                          Register
-                        }
+                        Register Free
                       }
+                    </a>
+                  } @else {
+                    <button disabled class="shad-btn-outline flex-1 gap-2 text-sm h-9 opacity-50 cursor-not-allowed">
+                      <i class="fa-solid fa-lock text-xs"></i> Closed
                     </button>
                   }
                 } @else {
-                  <button class="shad-btn-outline w-full gap-2 text-sm h-9" disabled>
-                    <i class="fa-solid fa-circle-check text-xs"></i>
-                    Completed
+                  <button class="shad-btn-outline flex-1 gap-2 text-sm h-9" disabled>
+                    <i class="fa-solid fa-circle-check text-xs"></i> Completed
                   </button>
                 }
               </div>

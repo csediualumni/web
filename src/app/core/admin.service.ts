@@ -168,6 +168,22 @@ export type ContactTicketStatus = 'open' | 'in_progress' | 'resolved';
 export type EventMode = 'In-Person' | 'Online' | 'Hybrid';
 export type EventStatus = 'upcoming' | 'ongoing' | 'past';
 export type RsvpStatus = 'registered' | 'cancelled' | 'pending_payment';
+export type RegistrationStatus = 'pending_payment' | 'confirmed' | 'cancelled';
+export type TShirtSize = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL';
+export type SponsorTier = 'title' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'supporter';
+export type CheckInType = 'kit' | 'breakfast' | 'lunch' | 'snacks' | 'dinner' | 'gift' | 'custom';
+
+export interface EventTimelineItem {
+  time: string;
+  title: string;
+  description?: string;
+}
+
+export interface EventGuestList {
+  president?: string;
+  chiefGuest?: string;
+  specialGuests?: string[];
+}
 
 export interface ApiEvent {
   id: string;
@@ -190,8 +206,83 @@ export interface ApiEvent {
   sortOrder: number;
   /** Ticket price in BDT. null or 0 = free event. */
   ticketPrice: number | null;
+  /** New fields for reunion-class events */
+  published: boolean;
+  timeline: EventTimelineItem[] | null;
+  guestList: EventGuestList | null;
+  activities: string | null;
+  allowFamilyMembers: boolean;
+  familyMemberFee: number | null;
+  donationEnabled: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface EventSponsor {
+  id: string;
+  eventId: string;
+  name: string;
+  logoUrl: string | null;
+  websiteUrl: string | null;
+  tier: SponsorTier;
+  sortOrder: number;
+}
+
+export interface EventFamilyMember {
+  id: string;
+  registrationId: string;
+  name: string;
+  tShirtSize: TShirtSize | null;
+}
+
+export interface EventCheckIn {
+  id: string;
+  registrationId: string;
+  type: CheckInType;
+  customLabel: string | null;
+  checkedAt: string;
+  checkedByUserId: string;
+}
+
+export interface EventRegistration {
+  id: string;
+  eventId: string;
+  userId: string;
+  status: RegistrationStatus;
+  invoiceId: string | null;
+  tShirtSize: TShirtSize | null;
+  familyMembersCount: number;
+  donationAmount: number;
+  notes: string | null;
+  event?: ApiEvent;
+  familyMembers?: EventFamilyMember[];
+  checkIns?: EventCheckIn[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EventExpense {
+  id: string;
+  eventId: string;
+  title: string;
+  amount: number;
+  category: string;
+  note: string | null;
+  expenseDate: string;
+  addedByUserId: string;
+  accountTransactionId: string | null;
+}
+
+export interface EventIncome {
+  id: string;
+  eventId: string;
+  title: string;
+  amount: number;
+  category: string;
+  note: string | null;
+  incomeDate: string;
+  addedByUserId: string;
+  accountTransactionId: string | null;
 }
 
 export interface EventRsvp {
@@ -761,9 +852,12 @@ export class AdminService {
   getMyRsvps(): Observable<(EventRsvp & { event: ApiEvent })[]> {
     return this.http.get<(EventRsvp & { event: ApiEvent })[]>(`${this.eventsBase}/my-rsvps`);
   }
-  // ── Events (admin) ───────────────────────────────────
   adminListEvents(): Observable<ApiEvent[]> {
     return this.http.get<ApiEvent[]>(`${this.adminBase}/events`);
+  }
+
+  adminGetEvent(id: string): Observable<ApiEvent & { sponsors: EventSponsor[] }> {
+    return this.http.get<ApiEvent & { sponsors: EventSponsor[] }>(`${this.adminBase}/events/${id}`);
   }
 
   adminCreateEvent(data: {
@@ -783,6 +877,12 @@ export class AdminService {
     registrationUrl?: string | null;
     sortOrder?: number;
     ticketPrice?: number | null;
+    timeline?: EventTimelineItem[];
+    guestList?: EventGuestList;
+    activities?: string;
+    allowFamilyMembers?: boolean;
+    familyMemberFee?: number | null;
+    donationEnabled?: boolean;
   }): Observable<ApiEvent> {
     return this.http.post<ApiEvent>(`${this.adminBase}/events`, data);
   }
@@ -806,6 +906,12 @@ export class AdminService {
       registrationUrl: string | null;
       sortOrder: number;
       ticketPrice: number | null;
+      timeline: EventTimelineItem[];
+      guestList: EventGuestList;
+      activities: string;
+      allowFamilyMembers: boolean;
+      familyMemberFee: number | null;
+      donationEnabled: boolean;
     }>,
   ): Observable<ApiEvent> {
     return this.http.patch<ApiEvent>(`${this.adminBase}/events/${id}`, data);
@@ -813,6 +919,92 @@ export class AdminService {
 
   adminDeleteEvent(id: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/events/${id}`);
+  }
+
+  adminPublishEvent(id: string): Observable<ApiEvent> {
+    return this.http.post<ApiEvent>(`${this.adminBase}/events/${id}/publish`, {});
+  }
+
+  adminUnpublishEvent(id: string): Observable<ApiEvent> {
+    return this.http.delete<ApiEvent>(`${this.adminBase}/events/${id}/publish`);
+  }
+
+  adminListEventRegistrations(
+    id: string,
+  ): Observable<(EventRegistration & { user: { id: string; email: string; displayName: string | null; phone: string | null; avatar: string | null } })[]> {
+    return this.http.get<any[]>(`${this.adminBase}/events/${id}/registrations`);
+  }
+
+  adminConfirmEventRegistration(eventId: string, regId: string): Observable<EventRegistration> {
+    return this.http.post<EventRegistration>(
+      `${this.adminBase}/events/${eventId}/registrations/${regId}/confirm`,
+      {},
+    );
+  }
+
+  // ── Sponsors ─────────────────────────────────────────────────────────────
+  adminCreateSponsor(
+    eventId: string,
+    data: { name: string; logoUrl?: string; websiteUrl?: string; tier: SponsorTier; sortOrder?: number },
+  ): Observable<EventSponsor> {
+    return this.http.post<EventSponsor>(`${this.adminBase}/events/${eventId}/sponsors`, data);
+  }
+
+  adminUpdateSponsor(
+    eventId: string,
+    sponsorId: string,
+    data: Partial<{ name: string; logoUrl: string; websiteUrl: string; tier: SponsorTier; sortOrder: number }>,
+  ): Observable<EventSponsor> {
+    return this.http.patch<EventSponsor>(`${this.adminBase}/events/${eventId}/sponsors/${sponsorId}`, data);
+  }
+
+  adminDeleteSponsor(eventId: string, sponsorId: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/events/${eventId}/sponsors/${sponsorId}`);
+  }
+
+  // ── Expenses ─────────────────────────────────────────────────────────────
+  adminListExpenses(eventId: string): Observable<EventExpense[]> {
+    return this.http.get<EventExpense[]>(`${this.adminBase}/events/${eventId}/expenses`);
+  }
+
+  adminCreateExpense(
+    eventId: string,
+    data: { title: string; amount: number; category: string; note?: string; expenseDate: string; accountCategoryId?: string },
+  ): Observable<EventExpense> {
+    return this.http.post<EventExpense>(`${this.adminBase}/events/${eventId}/expenses`, data);
+  }
+
+  adminUpdateExpense(eventId: string, expenseId: string, data: Partial<{ title: string; amount: number; category: string; note: string; expenseDate: string }>): Observable<EventExpense> {
+    return this.http.patch<EventExpense>(`${this.adminBase}/events/${eventId}/expenses/${expenseId}`, data);
+  }
+
+  adminDeleteExpense(eventId: string, expenseId: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/events/${eventId}/expenses/${expenseId}`);
+  }
+
+  // ── Income ───────────────────────────────────────────────────────────────
+  adminListIncome(eventId: string): Observable<{
+    items: EventIncome[];
+    registrationTotal: number;
+    supplementaryTotal: number;
+    grandTotal: number;
+  }> {
+    return this.http.get<any>(`${this.adminBase}/events/${eventId}/income`);
+  }
+
+  adminCreateIncome(
+    eventId: string,
+    data: { title: string; amount: number; category: string; note?: string; incomeDate: string; accountCategoryId?: string },
+  ): Observable<EventIncome> {
+    return this.http.post<EventIncome>(`${this.adminBase}/events/${eventId}/income`, data);
+  }
+
+  adminUpdateIncome(eventId: string, incomeId: string, data: Partial<{ title: string; amount: number; category: string; note: string; incomeDate: string }>): Observable<EventIncome> {
+    return this.http.patch<EventIncome>(`${this.adminBase}/events/${eventId}/income/${incomeId}`, data);
+  }
+
+  adminDeleteIncome(eventId: string, incomeId: string): Observable<void> {
+    return this.http.delete<void>(`${this.adminBase}/events/${eventId}/income/${incomeId}`);
   }
 
   adminListEventRsvps(id: string): Observable<EventRsvp[]> {
@@ -824,6 +1016,51 @@ export class AdminService {
       `${this.adminBase}/events/${eventId}/rsvps/${rsvpId}/confirm`,
       {},
     );
+  }
+
+  // ── User: Registrations ──────────────────────────────────────────────────
+  getMyRegistrations(): Observable<(EventRegistration & { event: ApiEvent })[]> {
+    return this.http.get<any[]>(`${this.eventsBase}/my/registrations`);
+  }
+
+  getMyRegistration(eventId: string): Observable<EventRegistration | null> {
+    return this.http.get<EventRegistration | null>(`${this.eventsBase}/${eventId}/registration`);
+  }
+
+  registerForEvent(
+    eventId: string,
+    data: {
+      tShirtSize?: TShirtSize;
+      familyMembersCount?: number;
+      familyMembers?: { name: string; tShirtSize?: TShirtSize }[];
+      donationAmount?: number;
+    },
+  ): Observable<{ registration: EventRegistration; invoiceId?: string; paymentUrl?: string }> {
+    return this.http.post<any>(`${this.eventsBase}/${eventId}/register`, data);
+  }
+
+  cancelEventRegistration(eventId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.eventsBase}/${eventId}/register`);
+  }
+
+  // ── Booth ─────────────────────────────────────────────────────────────────
+  boothLookup(eventId: string, phone: string): Observable<EventRegistration & {
+    user: { id: string; email: string; displayName: string | null; phone: string | null; avatar: string | null; studentId: string | null; batch: string | null };
+    familyMembers: EventFamilyMember[];
+    checkIns: EventCheckIn[];
+  }> {
+    return this.http.get<any>(`${this.eventsBase}/${eventId}/booth/lookup`, { params: { phone } });
+  }
+
+  boothCheckIn(
+    registrationId: string,
+    data: { type: CheckInType; customLabel?: string },
+  ): Observable<EventCheckIn> {
+    return this.http.post<EventCheckIn>(`${this.eventsBase}/registrations/${registrationId}/checkin`, data);
+  }
+
+  boothUpdateNotes(registrationId: string, notes: string): Observable<EventRegistration> {
+    return this.http.post<EventRegistration>(`${this.eventsBase}/registrations/${registrationId}/notes`, { notes });
   }
 
   // ── Bulk member import ───────────────────────────────────

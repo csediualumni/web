@@ -1,510 +1,699 @@
-<!-- Header -->
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
 <div class="flex items-center justify-between mb-6">
   <div>
     <h1 class="text-lg font-semibold text-zinc-900">Events</h1>
-    <p class="text-sm text-zinc-500 mt-0.5">Create and manage alumni events and RSVP lists.</p>
+    <p class="text-sm text-zinc-500 mt-0.5">
+      @if (mode() === 'list') { Manage alumni events, registrations, sponsors and finances. }
+      @else if (mode() === 'create') { Create a new event (saved as draft). }
+      @else if (mode() === 'edit') { Editing: {{ viewingEvent()?.title || editingId() }} }
+      @else if (mode() === 'detail') { {{ viewingEvent()?.title }} }
+    </p>
   </div>
-  @if (mode() === 'list' && auth.hasPermission('events:write')) {
-    <button
-      (click)="openCreate()"
-      class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2"
-    >
-      <i class="fa-solid fa-plus text-xs"></i>
-      Add Event
-    </button>
-  }
-  @if (mode() === 'rsvps') {
-    <button
-      (click)="cancelForm()"
-      class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm gap-1.5"
-    >
-      <i class="fa-solid fa-arrow-left text-xs"></i>
-      Back to Events
-    </button>
-  }
+  <div class="flex items-center gap-2">
+    @if (mode() === 'list' && auth.hasPermission('events:write')) {
+      <button (click)="openCreate()" class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-4 h-9 text-sm gap-2">
+        <i class="fa-solid fa-plus text-xs"></i> Add Event
+      </button>
+    }
+    @if (mode() !== 'list') {
+      <button (click)="cancelForm()" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm gap-1.5">
+        <i class="fa-solid fa-arrow-left text-xs"></i> Back
+      </button>
+    }
+  </div>
 </div>
 
-<!-- Alerts -->
+<!-- ── Alerts ─────────────────────────────────────────────────────────────── -->
 @if (error()) {
-  <div
-    class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-  >
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
     <i class="fa-solid fa-circle-exclamation mt-0.5 shrink-0"></i>
     <span>{{ error() }}</span>
+    <button (click)="error.set('')" class="ml-auto text-red-400 hover:text-red-600"><i class="fa-solid fa-xmark"></i></button>
   </div>
 }
 @if (success()) {
-  <div
-    class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
-  >
+  <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
     <i class="fa-solid fa-circle-check mt-0.5 shrink-0"></i>
     <span>{{ success() }}</span>
+    <button (click)="success.set('')" class="ml-auto text-green-400 hover:text-green-600"><i class="fa-solid fa-xmark"></i></button>
   </div>
 }
 
-<!-- Create / Edit Form -->
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CREATE / EDIT FORM
+════════════════════════════════════════════════════════════════════════════ -->
 @if (mode() === 'create' || mode() === 'edit') {
-  <div class="shad-card p-6 mb-6">
-    <h2 class="text-base font-semibold text-zinc-900 mb-5">
-      {{ mode() === 'create' ? 'New Event' : 'Edit Event' }}
-    </h2>
+  <input #imageFileInput type="file" accept="image/*" class="hidden" (change)="onImageFileSelected($event)" />
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <!-- Title -->
-      <div class="sm:col-span-2">
-        <label for="evt-title" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Title <span class="text-red-500">*</span></label
-        >
-        <input
-          id="evt-title"
-          type="text"
-          [ngModel]="formTitle()"
-          (ngModelChange)="formTitle.set($event)"
-          placeholder="e.g. Grand Alumni Reunion 2027"
-          class="shad-input w-full"
-        />
-      </div>
+  <div class="space-y-6">
 
-      <!-- Description -->
-      <div class="sm:col-span-2">
-        <app-rich-text-editor
-          inputId="evt-description"
-          label="Description"
-          [required]="true"
-          [rows]="4"
-          placeholder="A brief description of this event…"
-          [content]="formDescription()"
-          [format]="formDescriptionFormat()"
-          (contentChange)="formDescription.set($event)"
-          (formatChange)="formDescriptionFormat.set($event)"
-        />
-      </div>
-
-      <!-- Date -->
-      <div>
-        <label for="evt-date" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Date <span class="text-red-500">*</span></label
-        >
-        <input
-          id="evt-date"
-          type="date"
-          [ngModel]="formDate()"
-          (ngModelChange)="formDate.set($event)"
-          class="shad-input w-full"
-        />
-      </div>
-
-      <!-- Time -->
-      <div>
-        <label for="evt-time" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Time <span class="text-red-500">*</span></label
-        >
-        <input
-          id="evt-time"
-          type="text"
-          [ngModel]="formTime()"
-          (ngModelChange)="formTime.set($event)"
-          placeholder="e.g. 5:00 PM – 10:00 PM"
-          class="shad-input w-full"
-        />
-      </div>
-
-      <!-- Location -->
-      <div>
-        <label for="evt-location" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Location <span class="text-red-500">*</span></label
-        >
-        <input
-          id="evt-location"
-          type="text"
-          [ngModel]="formLocation()"
-          (ngModelChange)="formLocation.set($event)"
-          placeholder="e.g. DIU Permanent Campus"
-          class="shad-input w-full"
-        />
-      </div>
-
-      <!-- City -->
-      <div>
-        <label for="evt-city" class="block text-sm font-medium text-zinc-700 mb-1"
-          >City <span class="text-red-500">*</span></label
-        >
-        <input
-          id="evt-city"
-          type="text"
-          [ngModel]="formCity()"
-          (ngModelChange)="formCity.set($event)"
-          placeholder="e.g. Dhaka"
-          class="shad-input w-full"
-        />
-      </div>
-
-      <!-- Mode -->
-      <div>
-        <label for="evt-mode" class="block text-sm font-medium text-zinc-700 mb-1">Mode</label>
-        <select
-          id="evt-mode"
-          [ngModel]="formMode()"
-          (ngModelChange)="formMode.set($event)"
-          class="shad-input w-full"
-        >
-          @for (m of modes; track m) {
-            <option [value]="m">{{ m }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Category -->
-      <div>
-        <label for="evt-category" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Category</label
-        >
-        <select
-          id="evt-category"
-          [ngModel]="formCategory()"
-          (ngModelChange)="formCategory.set($event)"
-          class="shad-input w-full"
-        >
-          @for (cat of categories; track cat) {
-            <option [value]="cat">{{ cat }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Status -->
-      <div>
-        <label for="evt-status" class="block text-sm font-medium text-zinc-700 mb-1">Status</label>
-        <select
-          id="evt-status"
-          [ngModel]="formStatus()"
-          (ngModelChange)="formStatus.set($event)"
-          class="shad-input w-full"
-        >
-          @for (s of statuses; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-        <p class="mt-1 text-xs text-zinc-400">
-          Status is manually controlled — not auto-derived from date.
-        </p>
-      </div>
-
-      <!-- Seats -->
-      <div>
-        <label for="evt-seats" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Total seats</label
-        >
-        <input
-          id="evt-seats"
-          type="number"
-          [ngModel]="formSeats()"
-          (ngModelChange)="formSeats.set($event === '' || $event === null ? null : +$event)"
-          min="1"
-          placeholder="Leave blank for unlimited"
-          class="shad-input w-full"
-        />
-        <p class="mt-1 text-xs text-zinc-400">Leave blank for unlimited capacity.</p>
-      </div>
-
-      <!-- Ticket Price -->
-      <div>
-        <label for="evt-ticket-price" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Ticket price (BDT)</label
-        >
-        <input
-          id="evt-ticket-price"
-          type="number"
-          [ngModel]="formTicketPrice()"
-          (ngModelChange)="formTicketPrice.set($event === '' || $event === null ? null : +$event)"
-          min="0"
-          placeholder="Leave blank or 0 for free"
-          class="shad-input w-full"
-        />
-        <p class="mt-1 text-xs text-zinc-400">
-          Set a price to make this a paid event. Registration and cancellation close 7 days before
-          the event date.
-        </p>
-      </div>
-
-      <!-- Image URL -->
-      <div class="sm:col-span-2">
-        <label for="evt-image-url" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Cover image</label
-        >
-
-        <!-- Hidden file picker -->
-        <input
-          #imageFileInput
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          class="hidden"
-          (change)="onImageFileSelected($event)"
-        />
-
-        <!-- URL input + Upload button -->
-        <div class="flex gap-2">
-          <input
-            id="evt-image-url"
-            type="url"
-            [ngModel]="formImageUrl()"
-            (ngModelChange)="formImageUrl.set($event)"
-            placeholder="https://example.com/event-cover.jpg"
-            class="shad-input flex-1 min-w-0"
-          />
-          <button
-            type="button"
-            (click)="triggerImageUpload()"
-            [disabled]="uploadingImage()"
-            class="inline-flex items-center gap-1.5 rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-          >
-            @if (uploadingImage()) {
-              <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                />
-                <path
-                  class="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                />
-              </svg>
-              Uploading…
-            } @else {
-              <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fill-rule="evenodd"
-                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              Upload
-            }
-          </button>
+    <!-- ── Basic info ── -->
+    <div class="shad-card p-6">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-5">Basic Info</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Title <span class="text-red-500">*</span></label>
+          <input type="text" [ngModel]="formTitle()" (ngModelChange)="formTitle.set($event)" placeholder="e.g. Grand Alumni Reunion 2027" class="shad-input w-full" />
         </div>
-        <p class="mt-1 text-xs text-zinc-400">
-          Optional. Upload an image or paste a URL. Leave blank to use a placeholder colour.
-        </p>
+        <div class="sm:col-span-2">
+          <app-rich-text-editor inputId="evt-description" label="Description" [required]="true" [rows]="4"
+            placeholder="A brief overview of this event…"
+            [content]="formDescription()" [format]="formDescriptionFormat()"
+            (contentChange)="formDescription.set($event)" (formatChange)="formDescriptionFormat.set($event)" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Date <span class="text-red-500">*</span></label>
+          <input type="date" [ngModel]="formDate()" (ngModelChange)="formDate.set($event)" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Time <span class="text-red-500">*</span></label>
+          <input type="text" [ngModel]="formTime()" (ngModelChange)="formTime.set($event)" placeholder="e.g. 10:00 AM – 8:00 PM" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Location <span class="text-red-500">*</span></label>
+          <input type="text" [ngModel]="formLocation()" (ngModelChange)="formLocation.set($event)" placeholder="e.g. DIU Permanent Campus" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">City <span class="text-red-500">*</span></label>
+          <input type="text" [ngModel]="formCity()" (ngModelChange)="formCity.set($event)" placeholder="e.g. Dhaka" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Mode</label>
+          <select [ngModel]="formMode()" (ngModelChange)="formMode.set($event)" class="shad-input w-full">
+            @for (m of modes; track m) { <option [value]="m">{{ m }}</option> }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Category</label>
+          <select [ngModel]="formCategory()" (ngModelChange)="formCategory.set($event)" class="shad-input w-full">
+            @for (cat of categories; track cat) { <option [value]="cat">{{ cat }}</option> }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Status</label>
+          <select [ngModel]="formStatus()" (ngModelChange)="formStatus.set($event)" class="shad-input w-full">
+            @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Total Seats</label>
+          <input type="number" [ngModel]="formSeats()" (ngModelChange)="formSeats.set($event || null)" placeholder="Leave blank for unlimited" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Ticket Price (BDT)</label>
+          <input type="number" [ngModel]="formTicketPrice()" (ngModelChange)="formTicketPrice.set($event || null)" placeholder="0 = free" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Sort Order</label>
+          <input type="number" [ngModel]="formSortOrder()" (ngModelChange)="formSortOrder.set(+$event)" class="shad-input w-full" />
+        </div>
+        <div class="flex flex-col gap-2 sm:col-span-2 sm:flex-row sm:gap-6">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" [ngModel]="formFeatured()" (ngModelChange)="formFeatured.set($event)" class="rounded" />
+            <span class="text-sm text-zinc-700">Featured event</span>
+          </label>
+        </div>
+      </div>
+    </div>
 
-        <!-- Image preview -->
-        @if (formImageUrl()) {
-          <div class="mt-2">
-            <img
-              [src]="formImageUrl()"
-              alt="Cover preview"
-              class="h-28 w-full rounded-md object-cover border border-zinc-200"
-              (error)="$any($event.target).style.display = 'none'"
-            />
+    <!-- ── Registration settings ── -->
+    <div class="shad-card p-6">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-5">Registration Settings</h2>
+      <div class="space-y-4">
+        <label class="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" [ngModel]="formAllowFamily()" (ngModelChange)="formAllowFamily.set($event)" class="rounded" />
+          <div>
+            <span class="text-sm font-medium text-zinc-800">Allow family members</span>
+            <p class="text-xs text-zinc-400">Registrants can add family members with individual t-shirt sizes</p>
+          </div>
+        </label>
+        @if (formAllowFamily()) {
+          <div class="pl-7">
+            <label class="block text-sm font-medium text-zinc-700 mb-1">Family member fee (BDT)</label>
+            <input type="number" [ngModel]="formFamilyFee()" (ngModelChange)="formFamilyFee.set($event || null)"
+              placeholder="Leave blank to use ticket price" class="shad-input w-full max-w-xs" />
           </div>
         }
-      </div>
-
-      <!-- Color -->
-      <div>
-        <label for="evt-color" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Placeholder colour</label
-        >
-        <select
-          id="evt-color"
-          [ngModel]="formColor()"
-          (ngModelChange)="formColor.set($event)"
-          class="shad-input w-full"
-        >
-          <option value="bg-zinc-200">Grey</option>
-          <option value="bg-violet-100">Violet</option>
-          <option value="bg-sky-100">Sky</option>
-          <option value="bg-emerald-100">Emerald</option>
-          <option value="bg-amber-100">Amber</option>
-          <option value="bg-cyan-100">Cyan</option>
-          <option value="bg-lime-100">Lime</option>
-          <option value="bg-rose-100">Rose</option>
-          <option value="bg-red-100">Red</option>
-          <option value="bg-yellow-100">Yellow</option>
-          <option value="bg-indigo-100">Indigo</option>
-          <option value="bg-pink-100">Pink</option>
-        </select>
-        <p class="mt-1 text-xs text-zinc-400">Used when no cover image is set.</p>
-      </div>
-
-      <!-- Sort order -->
-      <div>
-        <label for="evt-sort" class="block text-sm font-medium text-zinc-700 mb-1"
-          >Sort order</label
-        >
-        <input
-          id="evt-sort"
-          type="number"
-          [ngModel]="formSortOrder()"
-          (ngModelChange)="formSortOrder.set(+$event)"
-          min="0"
-          class="shad-input w-full"
-        />
-        <p class="mt-1 text-xs text-zinc-400">Lower numbers appear first.</p>
-      </div>
-
-      <!-- Registration URL -->
-      <div class="sm:col-span-2">
-        <label for="evt-reg-url" class="block text-sm font-medium text-zinc-700 mb-1"
-          >External registration URL</label
-        >
-        <input
-          id="evt-reg-url"
-          type="url"
-          [ngModel]="formRegistrationUrl()"
-          (ngModelChange)="formRegistrationUrl.set($event)"
-          placeholder="https://forms.google.com/…"
-          class="shad-input w-full"
-        />
-        <p class="mt-1 text-xs text-zinc-400">
-          Optional. Leave blank to use the built-in RSVP system.
-        </p>
-      </div>
-
-      <!-- Featured -->
-      <div class="sm:col-span-2">
-        <label class="flex items-center gap-2.5 cursor-pointer">
-          <input
-            type="checkbox"
-            [ngModel]="formFeatured()"
-            (ngModelChange)="formFeatured.set($event)"
-            class="w-4 h-4 rounded border-zinc-300 text-blue-600"
-          />
-          <span class="text-sm font-medium text-zinc-700">Featured event</span>
-          <span class="text-xs text-zinc-400">(shown in the hero banner on the events page)</span>
+        <label class="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" [ngModel]="formDonationEnabled()" (ngModelChange)="formDonationEnabled.set($event)" class="rounded" />
+          <div>
+            <span class="text-sm font-medium text-zinc-800">Enable optional donation</span>
+            <p class="text-xs text-zinc-400">Registrants can add a donation amount during registration</p>
+          </div>
         </label>
       </div>
     </div>
 
-    <div class="flex gap-3 mt-6">
-      <button
-        (click)="save()"
-        [disabled]="saving()"
-        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-5 h-9 text-sm gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-      >
+    <!-- ── Schedule / Timeline ── -->
+    <div class="shad-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide">Event Schedule / Timeline</h2>
+        <button type="button" (click)="addTimelineItem()"
+          class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          <i class="fa-solid fa-plus text-[10px]"></i> Add item
+        </button>
+      </div>
+      @if (formTimeline().length === 0) {
+        <p class="text-sm text-zinc-400 italic">No timeline items yet. Add items like Breakfast, Registration, Opening Ceremony, Lunch, etc.</p>
+      } @else {
+        <div class="space-y-3">
+          @for (item of formTimeline(); track $index; let i = $index) {
+            <div class="grid grid-cols-12 gap-2 items-start bg-zinc-50 rounded-lg p-3">
+              <div class="col-span-3">
+                <input type="text" [value]="item.time" (input)="updateTimelineItem(i, 'time', $any($event.target).value)"
+                  placeholder="9:00 AM" class="shad-input w-full text-sm" />
+              </div>
+              <div class="col-span-4">
+                <input type="text" [value]="item.title" (input)="updateTimelineItem(i, 'title', $any($event.target).value)"
+                  placeholder="Title *" class="shad-input w-full text-sm" />
+              </div>
+              <div class="col-span-4">
+                <input type="text" [value]="item.description" (input)="updateTimelineItem(i, 'description', $any($event.target).value)"
+                  placeholder="Description (optional)" class="shad-input w-full text-sm" />
+              </div>
+              <div class="col-span-1 flex justify-end pt-1">
+                <button type="button" (click)="removeTimelineItem(i)" class="text-zinc-400 hover:text-red-500 transition-colors">
+                  <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ── Guests of Honour ── -->
+    <div class="shad-card p-6">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Guests of Honour</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">President</label>
+          <input type="text" [ngModel]="formGuestPresident()" (ngModelChange)="formGuestPresident.set($event)"
+            placeholder="Name of the president" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Chief Guest</label>
+          <input type="text" [ngModel]="formGuestChief()" (ngModelChange)="formGuestChief.set($event)"
+            placeholder="Name of the chief guest" class="shad-input w-full" />
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-zinc-700">Special Guests</label>
+            <button type="button" (click)="addSpecialGuest()" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+              <i class="fa-solid fa-plus text-[10px]"></i> Add
+            </button>
+          </div>
+          @for (guest of formGuestSpecial(); track $index; let i = $index) {
+            <div class="flex items-center gap-2 mb-2">
+              <input type="text" [value]="guest" (input)="updateSpecialGuest(i, $any($event.target).value)"
+                placeholder="Guest name" class="shad-input flex-1 text-sm" />
+              <button type="button" (click)="removeSpecialGuest(i)" class="text-zinc-400 hover:text-red-500 transition-colors p-1">
+                <i class="fa-solid fa-xmark text-sm"></i>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Activities ── -->
+    <div class="shad-card p-6">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Activities & Highlights</h2>
+      <app-rich-text-editor inputId="evt-activities" label="Activities" [rows]="5"
+        placeholder="Describe the activities, program highlights, performances, etc."
+        [content]="formActivities()" [format]="formActivitiesFormat()"
+        (contentChange)="formActivities.set($event)" (formatChange)="formActivitiesFormat.set($event)" />
+    </div>
+
+    <!-- ── Media ── -->
+    <div class="shad-card p-6">
+      <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Media & Display</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Cover Image</label>
+          <div class="flex items-center gap-3">
+            <input type="url" [ngModel]="formImageUrl()" (ngModelChange)="formImageUrl.set($event)" placeholder="Image URL or upload below" class="shad-input flex-1" />
+            <button type="button" (click)="triggerImageUpload()" [disabled]="uploadingImage()"
+              class="shad-btn-ghost border border-zinc-200 text-zinc-600 hover:bg-zinc-50 h-9 px-3 text-sm gap-1.5 disabled:opacity-50">
+              @if (uploadingImage()) {
+                <i class="fa-solid fa-spinner animate-spin text-xs"></i> Uploading…
+              } @else {
+                <i class="fa-solid fa-upload text-xs"></i> Upload
+              }
+            </button>
+          </div>
+          @if (formImageUrl()) {
+            <img [src]="formImageUrl()" alt="Preview" class="mt-2 h-24 w-full object-cover rounded-lg" />
+          }
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Card Color Class</label>
+          <input type="text" [ngModel]="formColor()" (ngModelChange)="formColor.set($event)" placeholder="bg-zinc-200" class="shad-input w-full" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">External Registration URL</label>
+          <input type="url" [ngModel]="formRegistrationUrl()" (ngModelChange)="formRegistrationUrl.set($event)" placeholder="Optional external link" class="shad-input w-full" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Save button ── -->
+    <div class="flex items-center justify-end gap-3 pb-6">
+      <button type="button" (click)="cancelForm()" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-5 h-10 text-sm">Cancel</button>
+      <button type="button" (click)="save()" [disabled]="saving()"
+        class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 px-6 h-10 text-sm gap-2 disabled:opacity-60">
         @if (saving()) {
-          <i class="fa-solid fa-spinner animate-spin text-xs"></i>
-          Saving…
+          <i class="fa-solid fa-spinner animate-spin text-xs"></i> Saving…
         } @else {
           <i class="fa-solid fa-floppy-disk text-xs"></i>
-          {{ mode() === 'create' ? 'Create' : 'Save Changes' }}
+          {{ editingId() ? 'Save Changes' : 'Create Draft' }}
         }
       </button>
-      <button
-        (click)="cancelForm()"
-        class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 px-4 h-9 text-sm"
-      >
-        Cancel
-      </button>
     </div>
+
   </div>
 }
 
-<!-- RSVP List -->
-@if (mode() === 'rsvps' && viewingEvent()) {
-  <div class="shad-card p-6 mb-6">
-    <h2 class="text-base font-semibold text-zinc-900 mb-1">
-      RSVPs for "{{ viewingEvent()!.title }}"
-    </h2>
-    <p class="text-sm text-zinc-500 mb-5">
-      {{ viewingEvent()!.rsvpCount }} registered
-      @if (viewingEvent()!.seats !== null) {
-        / {{ viewingEvent()!.seats }} total seats
-      }
-    </p>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     DETAIL VIEW (tabbed)
+════════════════════════════════════════════════════════════════════════════ -->
+@if (mode() === 'detail' && viewingEvent(); as ev) {
 
-    @if (rsvpsLoading()) {
-      <div class="space-y-3">
-        @for (_ of [1, 2, 3]; track $index) {
-          <div class="flex items-center gap-3 animate-pulse">
-            <div class="w-8 h-8 rounded-full bg-zinc-200"></div>
-            <div class="h-4 bg-zinc-200 rounded w-48"></div>
+  <!-- Event summary bar -->
+  <div class="shad-card p-4 mb-5 flex flex-wrap items-center gap-4">
+    @if (ev.imageUrl) {
+      <img [src]="ev.imageUrl" class="w-16 h-12 object-cover rounded-lg shrink-0" />
+    }
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center gap-2 mb-0.5">
+        <span class="font-semibold text-zinc-800 truncate">{{ ev.title }}</span>
+        @if (ev.published) {
+          <span class="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-1.5 py-0.5 rounded-full">LIVE</span>
+        } @else {
+          <span class="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded-full">DRAFT</span>
+        }
+      </div>
+      <p class="text-xs text-zinc-400">{{ formatDate(ev.date) }} · {{ ev.location }}, {{ ev.city }}</p>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <button (click)="openEdit(ev)" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 h-8 px-3 text-xs gap-1">
+        <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
+      </button>
+      @if (auth.hasPermission('events:write')) {
+        @if (ev.published) {
+          <button (click)="unpublish(ev)" [disabled]="publishing().has(ev.id)"
+            class="shad-btn-ghost text-amber-600 hover:bg-amber-50 border border-amber-200 h-8 px-3 text-xs gap-1 disabled:opacity-50">
+            <i class="fa-solid fa-eye-slash text-[10px]"></i> Unpublish
+          </button>
+        } @else {
+          <button (click)="publish(ev)" [disabled]="publishing().has(ev.id)"
+            class="shad-btn-primary bg-emerald-600 hover:bg-emerald-700 h-8 px-3 text-xs gap-1 disabled:opacity-50">
+            @if (publishing().has(ev.id)) {
+              <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
+            } @else {
+              <i class="fa-solid fa-rocket text-[10px]"></i>
+            }
+            Publish
+          </button>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex items-center gap-1 border-b border-zinc-200 mb-6">
+    @for (tab of [['registrations','Registrations','fa-users'],['sponsors','Sponsors','fa-handshake'],['expenses','Expenses','fa-arrow-trend-down'],['income','Income','fa-arrow-trend-up']] as tabs; track tab[0]) {
+      <button (click)="switchTab($any(tab[0]))"
+        class="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px"
+        [class]="detailTab() === tab[0] ? 'border-blue-600 text-blue-600' : 'border-transparent text-zinc-500 hover:text-zinc-800'">
+        <i class="fa-solid {{ tab[2] }} text-xs"></i> {{ tab[1] }}
+      </button>
+    }
+  </div>
+
+  <!-- ── Tab: Registrations ── -->
+  @if (detailTab() === 'registrations') {
+    @if (registrationsLoading()) {
+      <div class="text-center py-10 text-zinc-400"><i class="fa-solid fa-spinner animate-spin text-xl"></i></div>
+    } @else if (registrations().length === 0) {
+      <div class="shad-card p-10 text-center text-zinc-400">
+        <i class="fa-solid fa-users text-3xl mb-3 block"></i>
+        <p>No registrations yet.</p>
+      </div>
+    } @else {
+      <div class="shad-card overflow-hidden">
+        <div class="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
+          <p class="text-sm font-medium text-zinc-700">{{ registrations().length }} registrations</p>
+          <p class="text-xs text-zinc-400">{{ registrations().length - registrations().filter(r => r.status === 'cancelled').length }} active</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-zinc-100 text-xs text-zinc-500 text-left">
+                <th class="px-4 pb-2 pt-3 font-medium">#</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Attendee</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Phone</th>
+                <th class="px-2 pb-2 pt-3 font-medium">T-Shirt</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Family</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Status</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Registered</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (reg of registrations(); track reg.id; let i = $index) {
+                <tr class="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
+                  <td class="px-4 py-3 text-zinc-400 text-xs">{{ i + 1 }}</td>
+                  <td class="px-2 py-3">
+                    <p class="font-medium text-zinc-800 text-xs">{{ reg.user?.displayName || '—' }}</p>
+                    <p class="text-[10px] text-zinc-400">{{ reg.user?.email }}</p>
+                  </td>
+                  <td class="px-2 py-3 text-xs text-zinc-500 font-mono">{{ reg.user?.phone || '—' }}</td>
+                  <td class="px-2 py-3 text-xs text-zinc-600">{{ reg.tShirtSize || '—' }}</td>
+                  <td class="px-2 py-3 text-xs text-zinc-500">{{ reg.familyMembersCount }}</td>
+                  <td class="px-2 py-3">
+                    @if (reg.status === 'confirmed') {
+                      <span class="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-1.5 py-0.5 rounded-full">Confirmed</span>
+                    } @else if (reg.status === 'pending_payment') {
+                      <span class="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded-full">Pending</span>
+                    } @else {
+                      <span class="text-[10px] bg-zinc-100 text-zinc-500 font-semibold px-1.5 py-0.5 rounded-full">Cancelled</span>
+                    }
+                  </td>
+                  <td class="px-2 py-3 text-[10px] text-zinc-400 whitespace-nowrap">{{ reg.createdAt | date:'MMM d, y' }}</td>
+                  <td class="px-2 py-3">
+                    @if (reg.status === 'pending_payment' && auth.hasPermission('events:write')) {
+                      <button (click)="confirmRegistration(reg)" [disabled]="confirmingReg().has(reg.id)"
+                        class="inline-flex items-center gap-1 rounded border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50">
+                        @if (confirmingReg().has(reg.id)) {
+                          <i class="fa-solid fa-spinner animate-spin text-[10px]"></i> Confirming…
+                        } @else {
+                          <i class="fa-solid fa-circle-check text-[10px]"></i> Confirm
+                        }
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- ── Tab: Sponsors ── -->
+  @if (detailTab() === 'sponsors') {
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm text-zinc-500">{{ sponsors().length }} sponsor(s) for this event.</p>
+      @if (auth.hasPermission('events:write') && !showSponsorForm()) {
+        <button (click)="openSponsorForm()" class="shad-btn-ghost border border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-8 px-3 text-xs gap-1">
+          <i class="fa-solid fa-plus text-[10px]"></i> Add Sponsor
+        </button>
+      }
+    </div>
+
+    @if (showSponsorForm()) {
+      <div class="shad-card p-5 mb-5 border-blue-100 bg-blue-50/30">
+        <h3 class="text-sm font-semibold text-zinc-800 mb-4">{{ editingSponsor() ? 'Edit' : 'Add' }} Sponsor</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Name *</label>
+            <input type="text" [ngModel]="sponsorName()" (ngModelChange)="sponsorName.set($event)" placeholder="Sponsor name" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Tier</label>
+            <select [ngModel]="sponsorTier()" (ngModelChange)="sponsorTier.set($event)" class="shad-input w-full text-sm capitalize">
+              @for (t of sponsorTiers; track t) { <option [value]="t" class="capitalize">{{ t }}</option> }
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Logo URL</label>
+            <input type="url" [ngModel]="sponsorLogoUrl()" (ngModelChange)="sponsorLogoUrl.set($event)" placeholder="https://..." class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Website URL</label>
+            <input type="url" [ngModel]="sponsorWebsiteUrl()" (ngModelChange)="sponsorWebsiteUrl.set($event)" placeholder="https://..." class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Sort Order</label>
+            <input type="number" [ngModel]="sponsorSortOrder()" (ngModelChange)="sponsorSortOrder.set(+$event)" class="shad-input w-full text-sm" />
+          </div>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button (click)="saveSponsor()" [disabled]="savingSponsor() || !sponsorName().trim()"
+            class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 h-8 px-4 text-xs gap-1 disabled:opacity-50">
+            @if (savingSponsor()) { <i class="fa-solid fa-spinner animate-spin text-[10px]"></i> } Save
+          </button>
+          <button (click)="showSponsorForm.set(false)" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 h-8 px-3 text-xs">Cancel</button>
+        </div>
+      </div>
+    }
+
+    @if (sponsors().length === 0 && !showSponsorForm()) {
+      <div class="shad-card p-10 text-center text-zinc-400">
+        <i class="fa-solid fa-handshake text-3xl mb-3 block"></i>
+        <p class="text-sm">No sponsors yet. Add sponsors to showcase on the event page.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        @for (sponsor of sponsors(); track sponsor.id) {
+          <div class="shad-card p-4 flex items-start gap-3">
+            @if (sponsor.logoUrl) {
+              <img [src]="sponsor.logoUrl" [alt]="sponsor.name" class="w-12 h-10 object-contain shrink-0 rounded" />
+            } @else {
+              <div class="w-12 h-10 bg-zinc-100 rounded flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-building text-zinc-400"></i>
+              </div>
+            }
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-sm text-zinc-800 truncate">{{ sponsor.name }}</p>
+              <span class="text-[10px] font-medium text-zinc-400 uppercase">{{ sponsor.tier }}</span>
+            </div>
+            @if (auth.hasPermission('events:write')) {
+              <div class="flex gap-1 shrink-0">
+                <button (click)="openSponsorForm(sponsor)" class="text-zinc-400 hover:text-zinc-700 p-1 transition-colors">
+                  <i class="fa-solid fa-pen-to-square text-xs"></i>
+                </button>
+                <button (click)="deleteSponsor(sponsor)" class="text-zinc-400 hover:text-red-500 p-1 transition-colors">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+              </div>
+            }
           </div>
         }
       </div>
-    } @else if (rsvps().length === 0) {
-      <p class="text-sm text-zinc-400 py-6 text-center">No active registrations yet.</p>
+    }
+  }
+
+  <!-- ── Tab: Expenses ── -->
+  @if (detailTab() === 'expenses') {
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm font-semibold text-zinc-700">Total: {{ formatCurrency(expenseTotal) }}</p>
+      @if (auth.hasPermission('events:write') && !showExpenseForm()) {
+        <button (click)="showExpenseForm.set(true)" class="shad-btn-ghost border border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-8 px-3 text-xs gap-1">
+          <i class="fa-solid fa-plus text-[10px]"></i> Add Expense
+        </button>
+      }
+    </div>
+
+    @if (showExpenseForm()) {
+      <div class="shad-card p-5 mb-5 border-red-100 bg-red-50/20">
+        <h3 class="text-sm font-semibold text-zinc-800 mb-4">Add Expense</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Title *</label>
+            <input type="text" [ngModel]="expenseTitle()" (ngModelChange)="expenseTitle.set($event)" placeholder="e.g. Venue booking" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Amount (BDT) *</label>
+            <input type="number" [ngModel]="expenseAmount()" (ngModelChange)="expenseAmount.set($event || null)" placeholder="0" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Category</label>
+            <select [ngModel]="expenseCategory()" (ngModelChange)="expenseCategory.set($event)" class="shad-input w-full text-sm">
+              @for (c of expenseCategories; track c) { <option>{{ c }}</option> }
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Date *</label>
+            <input type="date" [ngModel]="expenseDate()" (ngModelChange)="expenseDate.set($event)" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Note</label>
+            <input type="text" [ngModel]="expenseNote()" (ngModelChange)="expenseNote.set($event)" placeholder="Optional note" class="shad-input w-full text-sm" />
+          </div>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button (click)="saveExpense()" [disabled]="savingExpense()"
+            class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 h-8 px-4 text-xs gap-1 disabled:opacity-50">
+            @if (savingExpense()) { <i class="fa-solid fa-spinner animate-spin text-[10px]"></i> } Save
+          </button>
+          <button (click)="showExpenseForm.set(false)" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 h-8 px-3 text-xs">Cancel</button>
+        </div>
+      </div>
+    }
+
+    @if (expenses().length === 0 && !showExpenseForm()) {
+      <div class="shad-card p-10 text-center text-zinc-400">
+        <i class="fa-solid fa-receipt text-3xl mb-3 block"></i>
+        <p class="text-sm">No expenses recorded yet.</p>
+      </div>
     } @else {
-      <div class="overflow-x-auto">
+      <div class="shad-card overflow-hidden">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-zinc-100 text-xs text-zinc-500 text-left">
-              <th class="pb-2 pr-4 font-medium">#</th>
-              <th class="pb-2 pr-4 font-medium">Name</th>
-              <th class="pb-2 pr-4 font-medium">Email</th>
-              <th class="pb-2 pr-4 font-medium">Status</th>
-              <th class="pb-2 pr-4 font-medium">Registered at</th>
-              @if (viewingEvent()?.ticketPrice) {
-                <th class="pb-2 font-medium">Action</th>
-              }
+              <th class="px-4 pb-2 pt-3 font-medium">Title</th>
+              <th class="px-2 pb-2 pt-3 font-medium">Category</th>
+              <th class="px-2 pb-2 pt-3 font-medium">Date</th>
+              <th class="px-2 pb-2 pt-3 font-medium text-right">Amount</th>
+              <th class="px-2 pb-2 pt-3 font-medium"></th>
             </tr>
           </thead>
           <tbody>
-            @for (rsvp of rsvps(); track rsvp.id; let i = $index) {
-              <tr class="border-b border-zinc-50 text-zinc-700">
-                <td class="py-2.5 pr-4 text-zinc-400 text-xs">{{ i + 1 }}</td>
-                <td class="py-2.5 pr-4">{{ rsvp.user?.displayName || '—' }}</td>
-                <td class="py-2.5 pr-4 text-zinc-500 text-xs">{{ rsvp.user?.email }}</td>
-                <td class="py-2.5 pr-4">
-                  @if (rsvp.status === 'registered') {
-                    <span
-                      class="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-1.5 py-0.5 rounded-full"
-                      >Confirmed</span
-                    >
-                  } @else if (rsvp.status === 'pending_payment') {
-                    <span
-                      class="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded-full"
-                      >Pending payment</span
-                    >
-                  } @else {
-                    <span
-                      class="text-[10px] bg-zinc-100 text-zinc-500 font-semibold px-1.5 py-0.5 rounded-full"
-                      >{{ rsvp.status }}</span
-                    >
+            @for (exp of expenses(); track exp.id) {
+              <tr class="border-b border-zinc-50 hover:bg-zinc-50">
+                <td class="px-4 py-3">
+                  <p class="font-medium text-zinc-800">{{ exp.title }}</p>
+                  @if (exp.note) { <p class="text-[10px] text-zinc-400">{{ exp.note }}</p> }
+                </td>
+                <td class="px-2 py-3 text-xs text-zinc-500">{{ exp.category }}</td>
+                <td class="px-2 py-3 text-xs text-zinc-500 whitespace-nowrap">{{ formatDate(exp.expenseDate) }}</td>
+                <td class="px-2 py-3 text-right font-semibold text-zinc-800">{{ formatCurrency(exp.amount) }}</td>
+                <td class="px-2 py-3">
+                  @if (auth.hasPermission('events:write')) {
+                    <button (click)="deleteExpense(exp)" class="text-zinc-400 hover:text-red-500 transition-colors p-1">
+                      <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
                   }
                 </td>
-                <td class="py-2.5 pr-4 text-zinc-400 text-xs">
-                  {{ rsvp.createdAt | date: 'MMM d, y, h:mm a' }}
-                </td>
-                @if (viewingEvent()?.ticketPrice) {
-                  <td class="py-2.5">
-                    @if (rsvp.status === 'pending_payment') {
-                      <button
-                        (click)="confirmRsvp(rsvp)"
-                        [disabled]="confirmingRsvp().has(rsvp.id)"
-                        class="inline-flex items-center gap-1 rounded border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        @if (confirmingRsvp().has(rsvp.id)) {
-                          <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
-                          Confirming…
-                        } @else {
-                          <i class="fa-solid fa-circle-check text-[10px]"></i>
-                          Confirm RSVP
-                        }
-                      </button>
-                    } @else if (rsvp.invoiceId) {
-                      <a
-                        [href]="'/payment?invoiceId=' + rsvp.invoiceId"
-                        target="_blank"
-                        class="text-xs text-blue-600 hover:underline"
-                        >View invoice</a
-                      >
-                    }
-                  </td>
-                }
               </tr>
             }
           </tbody>
+          <tfoot>
+            <tr class="border-t-2 border-zinc-200 bg-zinc-50">
+              <td class="px-4 py-3 font-semibold text-zinc-700 text-sm" colspan="3">Total Expenses</td>
+              <td class="px-2 py-3 text-right font-bold text-zinc-900">{{ formatCurrency(expenseTotal) }}</td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     }
-  </div>
+  }
+
+  <!-- ── Tab: Income ── -->
+  @if (detailTab() === 'income') {
+    @if (income(); as inc) {
+      <!-- Summary cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+        <div class="shad-card p-4 text-center">
+          <p class="text-xs text-zinc-400 mb-1">Registration Income</p>
+          <p class="text-2xl font-bold text-emerald-600">{{ formatCurrency(inc.registrationTotal) }}</p>
+          <p class="text-[10px] text-zinc-400 mt-1">From confirmed registrations</p>
+        </div>
+        <div class="shad-card p-4 text-center">
+          <p class="text-xs text-zinc-400 mb-1">Other Income</p>
+          <p class="text-2xl font-bold text-blue-600">{{ formatCurrency(inc.supplementaryTotal) }}</p>
+          <p class="text-[10px] text-zinc-400 mt-1">Sponsorships, donations etc.</p>
+        </div>
+        <div class="shad-card p-4 text-center border-2 border-zinc-200">
+          <p class="text-xs text-zinc-400 mb-1">Grand Total</p>
+          <p class="text-2xl font-bold text-zinc-900">{{ formatCurrency(inc.grandTotal) }}</p>
+          <p class="text-[10px] text-zinc-400 mt-1">All income combined</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-sm font-semibold text-zinc-700">Supplementary Income Entries</p>
+        @if (auth.hasPermission('events:write') && !showIncomeForm()) {
+          <button (click)="showIncomeForm.set(true)" class="shad-btn-ghost border border-zinc-200 text-zinc-700 hover:bg-zinc-50 h-8 px-3 text-xs gap-1">
+            <i class="fa-solid fa-plus text-[10px]"></i> Add Income
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="text-center py-10 text-zinc-400"><i class="fa-solid fa-spinner animate-spin text-xl"></i></div>
+    }
+
+    @if (showIncomeForm()) {
+      <div class="shad-card p-5 mb-5 border-emerald-100 bg-emerald-50/20">
+        <h3 class="text-sm font-semibold text-zinc-800 mb-4">Add Income Entry</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Title *</label>
+            <input type="text" [ngModel]="incomeTitle()" (ngModelChange)="incomeTitle.set($event)" placeholder="e.g. Gold sponsor payment" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Amount (BDT) *</label>
+            <input type="number" [ngModel]="incomeAmount()" (ngModelChange)="incomeAmount.set($event || null)" placeholder="0" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Category</label>
+            <select [ngModel]="incomeCategory()" (ngModelChange)="incomeCategory.set($event)" class="shad-input w-full text-sm">
+              @for (c of incomeCategories; track c) { <option>{{ c }}</option> }
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Date *</label>
+            <input type="date" [ngModel]="incomeDate()" (ngModelChange)="incomeDate.set($event)" class="shad-input w-full text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-600 mb-1">Note</label>
+            <input type="text" [ngModel]="incomeNote()" (ngModelChange)="incomeNote.set($event)" placeholder="Optional note" class="shad-input w-full text-sm" />
+          </div>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <button (click)="saveIncome()" [disabled]="savingIncome()"
+            class="shad-btn-primary bg-zinc-900 text-white hover:bg-zinc-700 h-8 px-4 text-xs gap-1 disabled:opacity-50">
+            @if (savingIncome()) { <i class="fa-solid fa-spinner animate-spin text-[10px]"></i> } Save
+          </button>
+          <button (click)="showIncomeForm.set(false)" class="shad-btn-ghost text-zinc-600 hover:bg-zinc-100 h-8 px-3 text-xs">Cancel</button>
+        </div>
+      </div>
+    }
+
+    @if (income(); as inc) {
+      @if (inc.items.length === 0 && !showIncomeForm()) {
+        <div class="shad-card p-8 text-center text-zinc-400">
+          <i class="fa-solid fa-sack-dollar text-3xl mb-3 block"></i>
+          <p class="text-sm">No supplementary income entries yet.</p>
+        </div>
+      } @else if (inc.items.length > 0) {
+        <div class="shad-card overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-zinc-100 text-xs text-zinc-500 text-left">
+                <th class="px-4 pb-2 pt-3 font-medium">Title</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Category</th>
+                <th class="px-2 pb-2 pt-3 font-medium">Date</th>
+                <th class="px-2 pb-2 pt-3 font-medium text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of inc.items; track item.id) {
+                <tr class="border-b border-zinc-50 hover:bg-zinc-50">
+                  <td class="px-4 py-3">
+                    <p class="font-medium text-zinc-800">{{ item.title }}</p>
+                    @if (item.note) { <p class="text-[10px] text-zinc-400">{{ item.note }}</p> }
+                  </td>
+                  <td class="px-2 py-3 text-xs text-zinc-500">{{ item.category }}</td>
+                  <td class="px-2 py-3 text-xs text-zinc-500 whitespace-nowrap">{{ formatDate(item.incomeDate) }}</td>
+                  <td class="px-2 py-3 text-right font-semibold text-emerald-700">{{ formatCurrency(item.amount) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  }
 }
 
-<!-- List -->
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LIST VIEW
+════════════════════════════════════════════════════════════════════════════ -->
 @if (mode() === 'list') {
   @if (loading()) {
     <div class="space-y-3">
@@ -515,10 +704,7 @@
               <div class="h-4 bg-zinc-200 rounded w-1/3"></div>
               <div class="h-3 bg-zinc-100 rounded w-2/3"></div>
             </div>
-            <div class="flex gap-2">
-              <div class="w-16 h-8 bg-zinc-200 rounded"></div>
-              <div class="w-16 h-8 bg-zinc-200 rounded"></div>
-            </div>
+            <div class="flex gap-2"><div class="w-16 h-8 bg-zinc-200 rounded"></div></div>
           </div>
         </div>
       }
@@ -528,119 +714,77 @@
       <i class="fa-solid fa-calendar-xmark text-3xl mb-3 block"></i>
       <p class="font-medium">No events yet.</p>
       @if (auth.hasPermission('events:write')) {
-        <button (click)="openCreate()" class="mt-3 text-sm text-blue-600 hover:underline">
-          Create the first event
-        </button>
+        <button (click)="openCreate()" class="mt-3 text-sm text-blue-600 hover:underline">Create the first event</button>
       }
     </div>
   } @else {
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-zinc-100 text-xs text-zinc-500 text-left">
-            <th class="pb-2 pr-4 font-medium">Title</th>
-            <th class="pb-2 pr-4 font-medium">Date</th>
-            <th class="pb-2 pr-4 font-medium">Mode</th>
-            <th class="pb-2 pr-4 font-medium">Category</th>
-            <th class="pb-2 pr-4 font-medium">Status</th>
-            <th class="pb-2 pr-4 font-medium">RSVPs</th>
-            <th class="pb-2 font-medium">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (event of events(); track event.id) {
-            <tr class="border-b border-zinc-50 text-zinc-700 hover:bg-zinc-50 transition-colors">
-              <td class="py-3 pr-4">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-medium">{{ event.title }}</span>
-                  @if (event.featured) {
-                    <span
-                      class="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded"
-                      >Featured</span
-                    >
-                  }
-                  @if (event.ticketPrice) {
-                    <span
-                      class="text-[10px] bg-violet-100 text-violet-700 font-semibold px-1.5 py-0.5 rounded"
-                    >
-                      BDT {{ event.ticketPrice | number }}
-                    </span>
-                  }
-                </div>
-                <p class="text-xs text-zinc-400 mt-0.5 line-clamp-1">
-                  {{ event.location }}, {{ event.city }}
-                </p>
-              </td>
-              <td class="py-3 pr-4 text-zinc-500 text-xs whitespace-nowrap">
-                {{ formatDate(event.date) }}
-              </td>
-              <td class="py-3 pr-4">
-                <span class="text-xs bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded">{{
-                  event.mode
-                }}</span>
-              </td>
-              <td class="py-3 pr-4">
-                <span class="text-xs text-zinc-500">{{ event.category }}</span>
-              </td>
-              <td class="py-3 pr-4">
-                @if (event.status === 'upcoming') {
-                  <span
-                    class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full"
-                    >upcoming</span
-                  >
-                } @else if (event.status === 'ongoing') {
-                  <span
-                    class="text-xs bg-blue-100 text-blue-700 font-medium px-2 py-0.5 rounded-full"
-                    >ongoing</span
-                  >
+    <div class="space-y-3">
+      @for (event of events(); track event.id) {
+        <div class="shad-card p-4 hover:bg-zinc-50/50 transition-colors">
+          <div class="flex items-start gap-4">
+            @if (event.imageUrl) {
+              <img [src]="event.imageUrl" class="w-14 h-10 object-cover rounded-lg shrink-0 hidden sm:block" />
+            }
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-0.5">
+                <span class="font-semibold text-zinc-800 text-sm">{{ event.title }}</span>
+                @if (!event.published) {
+                  <span class="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded-full">DRAFT</span>
                 } @else {
-                  <span
-                    class="text-xs bg-zinc-100 text-zinc-500 font-medium px-2 py-0.5 rounded-full"
-                    >past</span
-                  >
+                  <span class="text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-1.5 py-0.5 rounded-full">LIVE</span>
                 }
-              </td>
-              <td class="py-3 pr-4">
-                <button
-                  (click)="viewRsvps(event)"
-                  class="text-xs text-blue-600 hover:underline whitespace-nowrap"
-                >
-                  {{ event.rsvpCount }}
-                  @if (event.seats !== null) {
-                    / {{ event.seats }}
-                  }
-                  RSVPs
+                @if (event.featured) {
+                  <span class="text-[10px] bg-violet-100 text-violet-700 font-semibold px-1.5 py-0.5 rounded">Featured</span>
+                }
+                @if (event.ticketPrice) {
+                  <span class="text-[10px] bg-blue-100 text-blue-700 font-semibold px-1.5 py-0.5 rounded">৳{{ event.ticketPrice }}</span>
+                }
+              </div>
+              <div class="flex flex-wrap gap-3 text-xs text-zinc-400">
+                <span><i class="fa-solid fa-calendar mr-1"></i>{{ formatDate(event.date) }}</span>
+                <span><i class="fa-solid fa-location-dot mr-1"></i>{{ event.location }}, {{ event.city }}</span>
+                <span><i class="fa-solid fa-tag mr-1"></i>{{ event.category }}</span>
+                <span><i class="fa-solid fa-users mr-1"></i>{{ event.rsvpCount }} registered</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+              <button (click)="openDetail(event)" class="shad-btn-ghost text-blue-600 hover:bg-blue-50 h-7 px-2.5 text-xs gap-1">
+                <i class="fa-solid fa-chart-simple text-[10px]"></i> Manage
+              </button>
+              @if (auth.hasPermission('events:write')) {
+                <button (click)="openEdit(event)" class="shad-btn-ghost text-zinc-500 hover:bg-zinc-100 h-7 px-2.5 text-xs gap-1">
+                  <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
                 </button>
-              </td>
-              <td class="py-3">
-                <div class="flex items-center gap-2">
-                  @if (auth.hasPermission('events:write')) {
-                    <button
-                      (click)="openEdit(event)"
-                      class="shad-btn-ghost text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100 h-7 px-2.5 text-xs gap-1"
-                    >
-                      <i class="fa-solid fa-pen-to-square text-[10px]"></i>
-                      Edit
-                    </button>
-                    <button
-                      (click)="deleteEvent(event)"
-                      [disabled]="deleting().has(event.id)"
-                      class="shad-btn-ghost text-red-500 hover:text-red-700 hover:bg-red-50 h-7 px-2.5 text-xs gap-1 disabled:opacity-50"
-                    >
-                      @if (deleting().has(event.id)) {
-                        <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
-                      } @else {
-                        <i class="fa-solid fa-trash text-[10px]"></i>
-                      }
-                      Delete
-                    </button>
+                @if (!event.published) {
+                  <button (click)="publish(event)" [disabled]="publishing().has(event.id)"
+                    class="shad-btn-primary bg-emerald-600 hover:bg-emerald-700 h-7 px-2.5 text-xs gap-1 disabled:opacity-50">
+                    @if (publishing().has(event.id)) {
+                      <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
+                    } @else {
+                      <i class="fa-solid fa-rocket text-[10px]"></i>
+                    }
+                    Publish
+                  </button>
+                } @else {
+                  <button (click)="unpublish(event)" [disabled]="publishing().has(event.id)"
+                    class="shad-btn-ghost text-amber-600 hover:bg-amber-50 border border-amber-200 h-7 px-2.5 text-xs disabled:opacity-50">
+                    <i class="fa-solid fa-eye-slash text-[10px]"></i>
+                  </button>
+                }
+                <button (click)="deleteEvent(event)" [disabled]="deleting().has(event.id)"
+                  class="shad-btn-ghost text-red-500 hover:bg-red-50 h-7 px-2.5 text-xs gap-1 disabled:opacity-50">
+                  @if (deleting().has(event.id)) {
+                    <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
+                  } @else {
+                    <i class="fa-solid fa-trash text-[10px]"></i>
                   }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
     </div>
   }
 }

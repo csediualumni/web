@@ -346,7 +346,16 @@ export const routes: Routes = [
     loadComponent: () => import('./events/events.component').then((m) => m.EventsComponent),
   },
   {
-    path: 'donations',
+    path: 'events/:id',
+    loadComponent: () =>
+      import('./events/detail/event-detail.component').then((m) => m.EventDetailComponent),
+  },
+  {
+    path: 'events/:id/booth',
+    loadComponent: () =>
+      import('./events/booth/event-booth.component').then((m) => m.EventBoothComponent),
+  },
+  {
     title: 'Donations',
     data: {
       description:

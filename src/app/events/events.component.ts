@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AdminService, ApiEvent, EventMode, EventStatus } from '../core/admin.service';
 import { AuthService } from '../core/auth.service';
 import { ContentRendererComponent } from '../shared/content-renderer/content-renderer.component';
@@ -12,7 +12,7 @@ export type { ApiEvent as CalendarEvent };
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, ContentRendererComponent],
+  imports: [CommonModule, ContentRendererComponent, RouterLink],
   templateUrl: './events.component.html',
 })
 export class EventsComponent implements OnInit {
