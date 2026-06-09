@@ -394,7 +394,7 @@
     @if (auth.hasPermission('committees:write')) {
       <div class="shad-card p-5">
         <h3 class="text-sm font-semibold text-zinc-900 mb-4">Add / Update Mapping</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label for="cmt-map-designation" class="block text-xs font-medium text-zinc-600 mb-1"
               >Designation (free-text)</label
@@ -423,6 +423,19 @@
                 <option [value]="r.id">{{ r.name }}</option>
               }
             </select>
+          </div>
+          <div>
+            <label for="cmt-map-priority" class="block text-xs font-medium text-zinc-600 mb-1"
+              >Priority <span class="text-zinc-400 font-normal">(0 = top)</span></label
+            >
+            <input
+              id="cmt-map-priority"
+              type="number"
+              min="0"
+              [ngModel]="newMapPriority()"
+              (ngModelChange)="newMapPriority.set(+$event)"
+              class="shad-input w-full text-sm"
+            />
           </div>
         </div>
         <button
@@ -459,6 +472,7 @@
                 class="border-b border-zinc-100 text-xs font-semibold text-zinc-500 uppercase tracking-wide"
               >
                 <th class="pb-2 text-left">Designation</th>
+                <th class="pb-2 text-left">Priority</th>
                 <th class="pb-2 text-left">Assigned Role</th>
                 @if (auth.hasPermission('committees:write')) {
                   <th class="pb-2 text-right">Actions</th>
@@ -470,6 +484,20 @@
                 <tr class="hover:bg-zinc-50 transition-colors">
                   <td class="py-2.5 pr-4 font-medium text-zinc-900 whitespace-nowrap">
                     {{ m.designation }}
+                  </td>
+                  <td class="py-2.5 pr-4 w-24">
+                    @if (auth.hasPermission('committees:write')) {
+                      <input
+                        type="number"
+                        min="0"
+                        [ngModel]="m.priority"
+                        (change)="updateMappingPriority(m, $any($event.target).value)"
+                        class="shad-input text-sm h-8 py-0 px-2 w-20"
+                        title="Sort order — lower number = higher rank"
+                      />
+                    } @else {
+                      <span class="text-zinc-700">{{ m.priority }}</span>
+                    }
                   </td>
                   <td class="py-2.5 pr-4">
                     @if (auth.hasPermission('committees:write')) {

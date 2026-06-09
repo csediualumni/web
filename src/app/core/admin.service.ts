@@ -48,6 +48,7 @@ export interface Committee {
 export interface DesignationMapping {
   id: string;
   designation: string;
+  priority: number;
   roleId: string | null;
   role: { id: string; name: string; description: string | null } | null;
   createdAt: string;
@@ -817,16 +818,18 @@ export class AdminService {
     return this.http.get<DesignationMapping[]>(`${this.adminBase}/designation-roles`);
   }
 
-  adminSetDesignationMapping(designation: string, roleId: string): Observable<DesignationMapping> {
+  adminSetDesignationMapping(designation: string, roleId: string, priority?: number): Observable<DesignationMapping> {
     return this.http.post<DesignationMapping>(`${this.adminBase}/designation-roles`, {
       designation,
       roleId,
+      ...(priority !== undefined && { priority }),
     });
   }
 
-  adminUpdateDesignationMapping(id: string, roleId: string): Observable<DesignationMapping> {
+  adminUpdateDesignationMapping(id: string, roleId?: string, priority?: number): Observable<DesignationMapping> {
     return this.http.patch<DesignationMapping>(`${this.adminBase}/designation-roles/${id}`, {
-      roleId,
+      ...(roleId !== undefined && { roleId }),
+      ...(priority !== undefined && { priority }),
     });
   }
 

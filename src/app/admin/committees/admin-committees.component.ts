@@ -69,6 +69,7 @@ export class AdminCommitteesComponent implements OnInit {
   loadingMappings = signal(false);
   newMapDesignation = signal('');
   newMapRoleId = signal('');
+  newMapPriority = signal(0);
   addingMapping = signal(false);
   deletingMappingIds = signal<Set<string>>(new Set());
 
@@ -360,14 +361,16 @@ export class AdminCommitteesComponent implements OnInit {
     }
     this.addingMapping.set(true);
     this.error.set('');
-    this.adminService.adminSetDesignationMapping(designation, roleId).subscribe({
+    this.adminService.adminSetDesignationMapping(designation, roleId, this.newMapPriority()).subscribe({
       next: (m) => {
         this.mappings.update((list) => {
           const idx = list.findIndex((x) => x.id === m.id);
-          return idx >= 0 ? list.map((x) => (x.id === m.id ? m : x)) : [...list, m];
+          const updated = idx >= 0 ? list.map((x) => (x.id === m.id ? m : x)) : [...list, m];
+          return updated.sort((a, b) => a.priority - b.priority || a.designation.localeCompare(b.designation));
         });
         this.newMapDesignation.set('');
         this.newMapRoleId.set('');
+        this.newMapPriority.set(0);
         this.success.set('Mapping saved.');
         this.addingMapping.set(false);
       },
@@ -379,12 +382,27 @@ export class AdminCommitteesComponent implements OnInit {
   }
 
   updateMappingRole(m: DesignationMapping, roleId: string): void {
-    this.adminService.adminUpdateDesignationMapping(m.id, roleId).subscribe({
+    this.adminService.adminUpdateDesignationMapping(m.id, roleId, undefined).subscribe({
       next: (updated) => {
         this.mappings.update((list) => list.map((x) => (x.id === updated.id ? updated : x)));
         this.success.set('Mapping updated.');
       },
       error: (err) => this.error.set(err?.error?.message ?? 'Failed to update mapping.'),
+    });
+  }
+
+  updateMappingPriority(m: DesignationMapping, priorityStr: string): void {
+    const priority = parseInt(priorityStr, 10);
+    if (isNaN(priority) || priority < 0) return;
+    this.adminService.adminUpdateDesignationMapping(m.id, undefined, priority).subscribe({
+      next: (updated) => {
+        this.mappings.update((list) => {
+          const next = list.map((x) => (x.id === updated.id ? updated : x));
+          return next.sort((a, b) => a.priority - b.priority || a.designation.localeCompare(b.designation));
+        });
+        this.success.set('Priority updated.');
+      },
+      error: (err) => this.error.set(err?.error?.message ?? 'Failed to update priority.'),
     });
   }
 
