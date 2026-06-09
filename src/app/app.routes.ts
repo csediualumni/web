@@ -356,6 +356,7 @@ export const routes: Routes = [
       import('./events/booth/event-booth.component').then((m) => m.EventBoothComponent),
   },
   {
+    path: 'donations',
     title: 'Donations',
     data: {
       description:
