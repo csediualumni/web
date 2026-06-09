@@ -116,6 +116,7 @@ export class MentorshipComponent implements OnInit {
 
   getInitials(mentor: Mentor): string {
     if (mentor.initials) return mentor.initials;
+    if (!mentor.name) return '?';
     return mentor.name
       .split(' ')
       .map((n) => n[0])

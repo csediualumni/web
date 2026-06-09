@@ -92,8 +92,9 @@ function colorFor(id: string): string {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
-function initialsFor(displayName: string | null, email: string): string {
-  const name = displayName?.trim() || email;
+function initialsFor(displayName: string | null | undefined, email: string | null | undefined): string {
+  const name = displayName?.trim() || email?.trim() || '';
+  if (!name) return '?';
   const parts = name.split(/\s+/).filter(Boolean);
   if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
   return name.substring(0, 2).toUpperCase();
