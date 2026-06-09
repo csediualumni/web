@@ -20,8 +20,9 @@ export function colorFor(id: string): string {
   return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
 }
 
-export function initialsFor(displayName: string | null, email: string): string {
-  const name = displayName?.trim() || email;
+export function initialsFor(displayName: string | null | undefined, email: string | null | undefined): string {
+  const name = displayName?.trim() || email?.trim() || '';
+  if (!name) return '?';
   const parts = name.split(/\s+/).filter(Boolean);
   return parts.length >= 2
     ? (parts[0][0] + parts[1][0]).toUpperCase()
