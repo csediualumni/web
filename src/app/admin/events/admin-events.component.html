@@ -253,6 +253,43 @@
         (contentChange)="formActivities.set($event)" (formatChange)="formActivitiesFormat.set($event)" />
     </div>
 
+    <!-- ── Contact Persons ── -->
+    <div class="shad-card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide">Contact Persons</h2>
+        <button type="button" (click)="addContactPerson()"
+          class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+          <i class="fa-solid fa-plus text-[10px]"></i> Add
+        </button>
+      </div>
+      @if (formContactPersons().length === 0) {
+        <p class="text-sm text-zinc-400 italic">No contact persons added yet. Add someone attendees can reach out to.</p>
+      } @else {
+        <div class="space-y-3">
+          @for (contact of formContactPersons(); track $index; let i = $index) {
+            <div class="p-4 bg-zinc-50 border border-zinc-100 rounded-xl space-y-2">
+              <div class="flex items-center justify-between mb-1">
+                <p class="text-xs font-medium text-zinc-400">Contact {{ i + 1 }}</p>
+                <button type="button" (click)="removeContactPerson(i)" class="text-zinc-400 hover:text-red-500 transition-colors">
+                  <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+              </div>
+              <input type="text" [value]="contact.name" (input)="updateContactPerson(i, 'name', $any($event.target).value)"
+                placeholder="Full name *" class="shad-input w-full text-sm" />
+              <input type="text" [value]="contact.phone" (input)="updateContactPerson(i, 'phone', $any($event.target).value)"
+                placeholder="Phone number" class="shad-input w-full text-sm" />
+              <input type="email" [value]="contact.email" (input)="updateContactPerson(i, 'email', $any($event.target).value)"
+                placeholder="Email address" class="shad-input w-full text-sm" />
+              <label class="block text-xs text-zinc-500 mb-1">Photo</label>
+              <app-image-input [value]="contact.image"
+                (valueChange)="updateContactPerson(i, 'image', $event)"
+                placeholder="https://photo-url…" />
+            </div>
+          }
+        </div>
+      }
+    </div>
+
     <!-- ── Media ── -->
     <div class="shad-card p-6">
       <h2 class="text-sm font-semibold text-zinc-700 uppercase tracking-wide mb-4">Media & Display</h2>

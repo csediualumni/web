@@ -13,6 +13,7 @@ import {
   EventMode,
   EventStatus,
   SponsorTier,
+  EventContactPerson,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
 import { RichTextEditorComponent } from '../../shared/rich-text-editor/rich-text-editor.component';
@@ -128,6 +129,7 @@ export class AdminEventsComponent implements OnInit {
   formAllowFamily = signal(false);
   formFamilyFee = signal<number | null>(null);
   formDonationEnabled = signal(false);
+  formContactPersons = signal<{ name: string; image: string; phone: string; email: string }[]>([]);
 
   readonly modes = MODES;
   readonly statuses = STATUSES;
@@ -200,6 +202,9 @@ export class AdminEventsComponent implements OnInit {
     this.formAllowFamily.set(e.allowFamilyMembers ?? false);
     this.formFamilyFee.set(e.familyMemberFee ?? null);
     this.formDonationEnabled.set(e.donationEnabled ?? false);
+    this.formContactPersons.set(e.contactPersons
+      ? e.contactPersons.map(c => ({ name: c.name, image: c.image ?? '', phone: c.phone ?? '', email: c.email ?? '' }))
+      : []);
     this.error.set('');
     this.success.set('');
     this.mode.set('edit');
@@ -313,6 +318,22 @@ export class AdminEventsComponent implements OnInit {
     }
   }
 
+  addContactPerson(): void {
+    this.formContactPersons.update(list => [...list, { name: '', image: '', phone: '', email: '' }]);
+  }
+
+  removeContactPerson(i: number): void {
+    this.formContactPersons.update(list => list.filter((_, idx) => idx !== i));
+  }
+
+  updateContactPerson(i: number, field: 'name' | 'image' | 'phone' | 'email', value: string): void {
+    this.formContactPersons.update(list => {
+      const updated = [...list];
+      updated[i] = { ...updated[i], [field]: value };
+      return updated;
+    });
+  }
+
   // ── Image upload ────────────────────────────────────────────────────────────
   triggerImageUpload(): void {
     this.imageFileInput.nativeElement.click();
@@ -373,6 +394,12 @@ export class AdminEventsComponent implements OnInit {
       allowFamilyMembers: this.formAllowFamily(),
       familyMemberFee: this.formAllowFamily() ? (this.formFamilyFee() ?? null) : null,
       donationEnabled: this.formDonationEnabled(),
+      contactPersons: this.formContactPersons().filter(c => c.name.trim()).map(c => ({
+        name: c.name.trim(),
+        image: c.image.trim() || undefined,
+        phone: c.phone.trim() || undefined,
+        email: c.email.trim() || undefined,
+      })),
     };
 
     const id = this.editingId();
@@ -601,5 +628,6 @@ export class AdminEventsComponent implements OnInit {
     this.formGuestSpecial.set([]); this.formActivities.set('');
     this.formActivitiesFormat.set('html'); this.formAllowFamily.set(false);
     this.formFamilyFee.set(null); this.formDonationEnabled.set(false);
+    this.formContactPersons.set([]);
   }
 }

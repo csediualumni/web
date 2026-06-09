@@ -192,9 +192,48 @@
           </div>
         }
 
-        <!-- Sponsors -->
-        @if (sponsorsByTier().length > 0) {
+        <!-- Contact Persons -->
+        @if (ev.contactPersons && ev.contactPersons.length > 0) {
           <div>
+            <h2 class="text-2xl font-bold text-zinc-800 mb-6 flex items-center gap-2">
+              <i class="fa-solid fa-address-card text-blue-500 text-lg"></i> Contact Persons
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @for (contact of ev.contactPersons; track $index) {
+                <div class="bg-white border border-zinc-100 rounded-xl p-5 flex items-start gap-4 shadow-sm">
+                  @if (contact.image) {
+                    <img [src]="contact.image" [alt]="contact.name"
+                      class="w-14 h-14 rounded-full object-cover border-2 border-zinc-200 shrink-0" />
+                  } @else {
+                    <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                      <i class="fa-solid fa-user text-blue-500 text-xl"></i>
+                    </div>
+                  }
+                  <div class="min-w-0">
+                    <p class="font-semibold text-zinc-800 truncate">{{ contact.name }}</p>
+                    @if (contact.phone) {
+                      <a [href]="'tel:' + contact.phone"
+                        class="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-blue-600 transition-colors mt-1">
+                        <i class="fa-solid fa-phone text-[11px]"></i>
+                        <span>{{ contact.phone }}</span>
+                      </a>
+                    }
+                    @if (contact.email) {
+                      <a [href]="'mailto:' + contact.email"
+                        class="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-blue-600 transition-colors mt-0.5">
+                        <i class="fa-solid fa-envelope text-[11px]"></i>
+                        <span class="truncate">{{ contact.email }}</span>
+                      </a>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Sponsors -->
+        @if (sponsorsByTier().length > 0) {          <div>
             <h2 class="text-2xl font-bold text-zinc-800 mb-6 flex items-center gap-2">
               <i class="fa-solid fa-handshake text-blue-500 text-lg"></i> Sponsors
             </h2>

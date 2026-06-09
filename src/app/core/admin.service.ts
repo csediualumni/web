@@ -191,6 +191,13 @@ export interface EventGuestList {
   specialGuests?: EventGuest[];
 }
 
+export interface EventContactPerson {
+  name: string;
+  image?: string;
+  phone?: string;
+  email?: string;
+}
+
 export interface ApiEvent {
   id: string;
   title: string;
@@ -220,6 +227,7 @@ export interface ApiEvent {
   allowFamilyMembers: boolean;
   familyMemberFee: number | null;
   donationEnabled: boolean;
+  contactPersons: EventContactPerson[] | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -889,6 +897,7 @@ export class AdminService {
     allowFamilyMembers?: boolean;
     familyMemberFee?: number | null;
     donationEnabled?: boolean;
+    contactPersons?: EventContactPerson[];
   }): Observable<ApiEvent> {
     return this.http.post<ApiEvent>(`${this.adminBase}/events`, data);
   }
@@ -918,6 +927,7 @@ export class AdminService {
       allowFamilyMembers: boolean;
       familyMemberFee: number | null;
       donationEnabled: boolean;
+      contactPersons: EventContactPerson[];
     }>,
   ): Observable<ApiEvent> {
     return this.http.patch<ApiEvent>(`${this.adminBase}/events/${id}`, data);
