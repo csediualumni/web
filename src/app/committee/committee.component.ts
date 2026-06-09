@@ -28,16 +28,6 @@ export function initialsFor(displayName: string | null, email: string): string {
     : name.substring(0, 2).toUpperCase();
 }
 
-const DESIGNATION_ORDER: Record<string, number> = {
-  President: 0,
-  'Vice President': 1,
-  'General Secretary': 2,
-  'Joint Secretary': 3,
-  Treasurer: 4,
-  'Assistant Treasurer': 5,
-  'Executive Member': 6,
-};
-
 @Component({
   selector: 'app-committee',
   standalone: true,
@@ -71,9 +61,8 @@ export class CommitteeComponent implements OnInit {
   initialsFor = initialsFor;
   readonly Boolean = Boolean;
 
+  /** Members arrive pre-sorted by designation priority then name from the API. */
   sortedMembers(members: CommitteeEntry[]): CommitteeEntry[] {
-    return [...members].sort(
-      (a, b) => (DESIGNATION_ORDER[a.designation] ?? 99) - (DESIGNATION_ORDER[b.designation] ?? 99),
-    );
+    return [...members];
   }
 }
