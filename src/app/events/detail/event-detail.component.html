@@ -41,10 +41,20 @@
             <i class="fa-solid fa-{{ ev.mode === 'Online' ? 'wifi' : ev.mode === 'Hybrid' ? 'layer-group' : 'location-dot' }} text-[10px]"></i>
             {{ ev.mode }}
           </span>
-          @if (ev.status === 'upcoming') {
-            <span class="inline-flex items-center gap-1 bg-emerald-500/80 text-white text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm">
-              <i class="fa-solid fa-circle-check text-[10px]"></i> Registration Open
-            </span>
+          @if (ev.status === 'upcoming' || ev.status === 'ongoing') {
+            @if ((!ev.registrationOpenAt || now() >= toDate(ev.registrationOpenAt)) && (!ev.registrationCloseAt || now() <= toDate(ev.registrationCloseAt))) {
+              <span class="inline-flex items-center gap-1 bg-emerald-500/80 text-white text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm">
+                <i class="fa-solid fa-circle-check text-[10px]"></i> Registration Open
+              </span>
+            } @else if (ev.registrationOpenAt && now() < toDate(ev.registrationOpenAt)) {
+              <span class="inline-flex items-center gap-1 bg-amber-500/80 text-white text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm">
+                <i class="fa-solid fa-clock text-[10px]"></i> Registration Not Open Yet
+              </span>
+            } @else {
+              <span class="inline-flex items-center gap-1 bg-zinc-500/60 text-white text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm">
+                <i class="fa-solid fa-calendar-xmark text-[10px]"></i> Registration Closed
+              </span>
+            }
           }
         </div>
         <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">{{ ev.title }}</h1>
