@@ -67,6 +67,10 @@ export class EventRegistrationFormComponent implements OnInit {
   loginLoading = signal(false);
   submitting = signal(false);
   submitError = signal<string | null>(null);
+  avatarUploadError = signal<string | null>(null);
+  avatarUploading = signal(false);
+  selectedAvatarFile = signal<File | null>(null);
+  selectedAvatarPreview = signal<string | null>(null);
 
   familyCount = signal(0);
   donationAmount = signal(0);
@@ -115,6 +119,7 @@ export class EventRegistrationFormComponent implements OnInit {
       religion: [profile?.religion ?? null],
       presentAddress: [profile?.presentAddress ?? ''],
       permanentAddress: [profile?.permanentAddress ?? ''],
+      photo: [profile?.avatar ?? ''],
       // Options
       tShirtSize: ['L'],
     });
@@ -139,6 +144,7 @@ export class EventRegistrationFormComponent implements OnInit {
             religion: data.religion ?? null,
             presentAddress: data.presentAddress ?? '',
             permanentAddress: data.permanentAddress ?? '',
+            photo: data.avatar ?? '',
           });
           if (data.experiences?.length) {
             this.experiences.set(data.experiences.map((e: LocalExp) => ({ ...e, id: e.id ?? Date.now().toString() })));
@@ -193,6 +199,7 @@ export class EventRegistrationFormComponent implements OnInit {
             phone: profile.phone ?? this.form.value.phone,
             gender: profile.gender ?? this.form.value.gender,
             birthday: profile.birthday ?? this.form.value.birthday,
+            photo: profile.avatar ?? this.form.value.photo,
           });
         }
       },
@@ -267,6 +274,20 @@ export class EventRegistrationFormComponent implements OnInit {
   }
   removeEdu(id: string) { this.educations.update(list => list.filter(e => e.id !== id)); }
 
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.avatarUploadError.set('Only image files are allowed.');
+      input.value = '';
+      return;
+    }
+    this.avatarUploadError.set(null);
+    this.selectedAvatarFile.set(file);
+    this.selectedAvatarPreview.set(URL.createObjectURL(file));
+  }
+
   submit(): void {
     if (this.submitting()) return;
     if (this.emailStatus() === 'exists' && !this.isLoggedIn()) {
@@ -292,7 +313,20 @@ export class EventRegistrationFormComponent implements OnInit {
         religion: v.religion || undefined,
         presentAddress: v.presentAddress || undefined,
         permanentAddress: v.permanentAddress || undefined,
+        avatar: v.photo?.trim() || undefined,
       }).subscribe();
+      const selectedAvatarFile = this.selectedAvatarFile();
+      if (selectedAvatarFile) {
+        this.avatarUploading.set(true);
+        this.avatarUploadError.set(null);
+        this.auth.uploadAvatar(selectedAvatarFile).subscribe({
+          next: () => this.avatarUploading.set(false),
+          error: (err) => {
+            this.avatarUploading.set(false);
+            this.avatarUploadError.set(err?.error?.message ?? 'Failed to upload profile image.');
+          },
+        });
+      }
 
       this.eventsService.registerLoggedIn(this.event.id, {
         tShirtSize: v.tShirtSize,
@@ -329,6 +363,7 @@ export class EventRegistrationFormComponent implements OnInit {
         religion: v.religion || undefined,
         presentAddress: v.presentAddress || undefined,
         permanentAddress: v.permanentAddress || undefined,
+        photo: v.photo?.trim() || undefined,
         experiences: this.experiences().map(e => ({ title: e.title, company: e.company, from: e.from, to: e.to })),
         educations: this.educations().map(e => ({ degree: e.degree, institution: e.institution, ...(e.year != null ? { year: e.year } : {}) })),
       },
@@ -343,11 +378,38 @@ export class EventRegistrationFormComponent implements OnInit {
         const autoLoggedIn = !this.isLoggedIn() && !!res.accessToken;
         if (res.accessToken && !this.isLoggedIn()) {
           this.auth.persistTokenAndLoadProfile(res.accessToken).subscribe(() => {
-            this.registered.emit({
-              registrationId: res.registration.id,
-              invoiceId: res.registration.invoiceId,
-              isNewUser: res.isNewUser,
-              autoLoggedIn,
+            const selectedAvatarFile = this.selectedAvatarFile();
+            if (!selectedAvatarFile) {
+              this.registered.emit({
+                registrationId: res.registration.id,
+                invoiceId: res.registration.invoiceId,
+                isNewUser: res.isNewUser,
+                autoLoggedIn,
+              });
+              return;
+            }
+            this.avatarUploading.set(true);
+            this.avatarUploadError.set(null);
+            this.auth.uploadAvatar(selectedAvatarFile).subscribe({
+              next: () => {
+                this.avatarUploading.set(false);
+                this.registered.emit({
+                  registrationId: res.registration.id,
+                  invoiceId: res.registration.invoiceId,
+                  isNewUser: res.isNewUser,
+                  autoLoggedIn,
+                });
+              },
+              error: (err) => {
+                this.avatarUploading.set(false);
+                this.avatarUploadError.set(err?.error?.message ?? 'Failed to upload profile image.');
+                this.registered.emit({
+                  registrationId: res.registration.id,
+                  invoiceId: res.registration.invoiceId,
+                  isNewUser: res.isNewUser,
+                  autoLoggedIn,
+                });
+              },
             });
           });
         } else {
