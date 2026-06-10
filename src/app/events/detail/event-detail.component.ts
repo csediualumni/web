@@ -230,6 +230,14 @@ export class EventDetailComponent implements OnInit, OnDestroy {
     return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(dt);
   }
 
+  now(): number {
+    return Date.now();
+  }
+
+  toDate(d: string): number {
+    return new Date(d).getTime();
+  }
+
   formatTime(t: string | null | undefined): string {
     if (!t || typeof t !== 'string') return '';
     const [h, m] = t.split(':');

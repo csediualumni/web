@@ -335,11 +335,26 @@
 
           <!-- Registration form (if not registered) -->
           @if (!myRegistration() || myRegistration()?.status === 'cancelled') {
-            @if (ev.status === 'upcoming') {
-              <app-event-registration-form
-                [event]="ev"
-                (registered)="onRegistered($event)"
-              />
+            @if (ev.status === 'upcoming' || ev.status === 'ongoing') {
+              @if (ev.registrationOpenAt && now() < toDate(ev.registrationOpenAt)) {
+                <!-- Registration not yet open -->
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+                  <i class="fa-solid fa-clock text-3xl text-amber-400 mb-3"></i>
+                  <p class="text-amber-800 font-medium text-sm">Registration is not open yet</p>
+                  <p class="text-amber-600 text-xs mt-1">Opens on {{ formatDate(ev.registrationOpenAt) }}</p>
+                </div>
+              } @else if (ev.registrationCloseAt && now() > toDate(ev.registrationCloseAt)) {
+                <!-- Registration closed -->
+                <div class="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 text-center">
+                  <i class="fa-solid fa-calendar-xmark text-3xl text-zinc-300 mb-3"></i>
+                  <p class="text-zinc-500 text-sm">Registration is closed for this event.</p>
+                </div>
+              } @else {
+                <app-event-registration-form
+                  [event]="ev"
+                  (registered)="onRegistered($event)"
+                />
+              }
             } @else {
               <div class="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 text-center">
                 <i class="fa-solid fa-calendar-xmark text-3xl text-zinc-300 mb-3"></i>
