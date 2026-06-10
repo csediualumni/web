@@ -28,6 +28,17 @@ export interface PublicUser {
   experiences: { id: string; title: string; company: string; from: string; to: string }[];
   educations: { id: string; degree: string; institution: string; year: number | null }[];
   achievements: { id: string; title: string }[];
+  // Extended profile fields
+  gender: string | null;
+  birthday: string | null;
+  bloodGroup: string | null;
+  nationality: string | null;
+  religion: string | null;
+  profession: string | null;
+  organization: string | null;
+  designation: string | null;
+  presentAddress: string | null;
+  permanentAddress: string | null;
 }
 
 // ── Rich model used by components ────────────────────────────────
@@ -69,6 +80,15 @@ export interface AlumnusMember {
   github?: string | null;
   twitter?: string | null;
   website?: string | null;
+  // Extended profile fields
+  gender: string | null;
+  birthday: string | null;
+  bloodGroup: string | null;
+  nationality: string | null;
+  religion: string | null;
+  profession: string | null;
+  organization: string | null;
+  designation: string | null;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -134,6 +154,14 @@ function toAlumnusMember(u: PublicUser): AlumnusMember {
     github: u.github,
     twitter: u.twitter,
     website: u.website,
+    gender: u.gender ?? null,
+    birthday: u.birthday ?? null,
+    bloodGroup: u.bloodGroup ?? null,
+    nationality: u.nationality ?? null,
+    religion: u.religion ?? null,
+    profession: u.profession ?? null,
+    organization: u.organization ?? null,
+    designation: u.designation ?? null,
   };
 }
 

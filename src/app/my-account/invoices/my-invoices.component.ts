@@ -4,8 +4,6 @@ import { RouterLink } from '@angular/router';
 import {
   InvoiceService,
   Invoice,
-  paidAmount,
-  dueAmount,
   formatBDT,
 } from '../../core/invoice.service';
 
@@ -22,9 +20,10 @@ export class MyInvoicesComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
 
-  readonly paidAmount = paidAmount;
-  readonly dueAmount = dueAmount;
   readonly formatBDT = formatBDT;
+
+  isPaid(inv: Invoice): boolean { return inv.status === 'paid'; }
+  amountDue(inv: Invoice): number { return inv.status === 'paid' ? 0 : inv.totalAmount; }
 
   typeLabel(type: string): string {
     const labels: Record<string, string> = {

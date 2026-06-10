@@ -345,9 +345,9 @@
                       class="shad-btn-primary flex-1 gap-2 text-sm h-9 flex items-center justify-center">
                       <i class="fa-solid fa-ticket text-xs"></i>
                       @if (event.ticketPrice) {
-                        Register · ৳{{ event.ticketPrice | number }}
+                        View &amp; Register
                       } @else {
-                        Register Free
+                        View &amp; Register Free
                       }
                     </a>
                   } @else {
@@ -478,23 +478,17 @@
                     Registration Closed
                   </button>
                 } @else {
-                  <button
-                    (click)="register(event)"
-                    [disabled]="isRsvping(event.id)"
-                    class="shad-btn-primary w-full gap-2 text-sm h-9 disabled:opacity-60 disabled:cursor-not-allowed"
+                  <a
+                    [routerLink]="['/events', event.id]"
+                    class="shad-btn-primary w-full gap-2 text-sm h-9 flex items-center justify-center"
                   >
-                    @if (isRsvping(event.id)) {
-                      <i class="fa-solid fa-spinner animate-spin text-xs"></i>
-                      Registering…
+                    <i class="fa-solid fa-ticket text-xs"></i>
+                    @if (event.ticketPrice) {
+                      View &amp; Register &middot; BDT {{ event.ticketPrice | number }}
                     } @else {
-                      <i class="fa-solid fa-ticket text-xs"></i>
-                      @if (event.ticketPrice) {
-                        Register &middot; BDT {{ event.ticketPrice | number }}
-                      } @else {
-                        Register
-                      }
+                      View &amp; Register Free
                     }
-                  </button>
+                  </a>
                 }
               </div>
             </div>

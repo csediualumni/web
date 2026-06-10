@@ -5,22 +5,8 @@ import { environment } from '../../environments/environment';
 
 // ── Shared models ─────────────────────────────────────────────────
 
-export type InvoiceStatus = 'pending' | 'partial' | 'paid' | 'cancelled' | 'refunded';
+export type InvoiceStatus = 'pending' | 'paid' | 'cancelled' | 'refunded';
 export type InvoiceType = 'donation' | 'event' | 'membership' | 'other';
-export type PaymentStatus = 'pending' | 'verified' | 'rejected' | 'refunded';
-
-export interface InvoicePayment {
-  id: string;
-  invoiceId: string;
-  amount: number;
-  transactionId: string;
-  gateway: string;
-  valId: string | null;
-  status: PaymentStatus;
-  adminNote: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export interface Invoice {
   id: string;
@@ -34,7 +20,11 @@ export interface Invoice {
   donorMessage: string | null;
   isAnonymous: boolean;
   metadata: Record<string, unknown> | null;
-  payments: InvoicePayment[];
+  transactionId: string | null;
+  valId: string | null;
+  gateway: string | null;
+  paidAt: string | null;
+  adminNote: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -63,16 +53,8 @@ export interface RecentDonor {
 
 // ── Helpers ───────────────────────────────────────────────────────
 
-export function paidAmount(invoice: Invoice): number {
-  return invoice.payments.filter((p) => p.status === 'verified').reduce((s, p) => s + p.amount, 0);
-}
-
-export function pendingAmount(invoice: Invoice): number {
-  return invoice.payments.filter((p) => p.status === 'pending').reduce((s, p) => s + p.amount, 0);
-}
-
-export function dueAmount(invoice: Invoice): number {
-  return Math.max(0, invoice.totalAmount - paidAmount(invoice));
+export function isPaid(invoice: Invoice): boolean {
+  return invoice.status === 'paid';
 }
 
 export function formatBDT(amount: number): string {
@@ -111,10 +93,8 @@ export class InvoiceService {
     return this.http.patch<Invoice>(`${this.base}/${id}/status`, { status });
   }
 
-  refundPayment(invoiceId: string, paymentId: string, adminNote?: string): Observable<Invoice> {
-    return this.http.post<Invoice>(`${this.base}/${invoiceId}/payments/${paymentId}/refund`, {
-      adminNote,
-    });
+  updateAdminNote(id: string, adminNote: string): Observable<Invoice> {
+    return this.http.patch<Invoice>(`${this.base}/${id}/note`, { adminNote });
   }
 
   initSslPayment(invoiceId: string): Observable<{ gatewayUrl: string }> {

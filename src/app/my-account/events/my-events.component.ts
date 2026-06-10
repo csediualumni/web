@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { AdminService } from '../../core/admin.service';
 import type { EventRsvp, ApiEvent, EventRegistration } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { EventsService, DistributionItem, DistributionRecord } from '../../core/events.service';
 import { formatBDT } from '../../core/invoice.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -11,6 +12,11 @@ import QRCode from 'qrcode';
 
 type RsvpWithEvent = EventRsvp & { event: ApiEvent };
 type RegistrationWithEvent = EventRegistration & { event: ApiEvent };
+
+interface RegDistributionData {
+  items: DistributionItem[];
+  distributions: DistributionRecord[];
+}
 
 const PAID_CUTOFF_DAYS = 7;
 
@@ -23,6 +29,7 @@ const PAID_CUTOFF_DAYS = 7;
 export class MyEventsComponent implements OnInit {
   private readonly admin = inject(AdminService);
   private readonly auth = inject(AuthService);
+  private readonly eventsService = inject(EventsService);
 
   rsvps = signal<RsvpWithEvent[]>([]);
   registrations = signal<RegistrationWithEvent[]>([]);
@@ -32,6 +39,8 @@ export class MyEventsComponent implements OnInit {
   cancelError = signal<string | null>(null);
   /** Map from registrationId → base64 QR data URL */
   qrMap = signal<Map<string, string>>(new Map());
+  /** Map from eventId → distribution data */
+  distMap = signal<Map<string, RegDistributionData>>(new Map());
 
   readonly formatBDT = formatBDT;
 
@@ -106,20 +115,27 @@ export class MyEventsComponent implements OnInit {
   }
 
   private async generateQrCodes(registrations: RegistrationWithEvent[]): Promise<void> {
-    const phone = this.auth.currentUser()?.profile?.phone;
-    if (!phone) return;
     const map = new Map<string, string>();
     for (const reg of registrations) {
       if (reg.status === 'confirmed') {
         try {
-          const url = await QRCode.toDataURL(phone, {
+          // Fetch signed booth URL from API
+          const { boothUrl } = await this.eventsService.getMyRegistrationQrUrl(reg.eventId).toPromise() as { boothUrl: string };
+          const url = await QRCode.toDataURL(boothUrl, {
             width: 256,
             margin: 2,
             color: { dark: '#18181b', light: '#ffffff' },
           });
           map.set(reg.id, url);
         } catch {
-          // skip if generation fails
+          // Fall back to phone-based QR if API fails
+          const phone = this.auth.currentUser()?.profile?.phone;
+          if (phone) {
+            try {
+              const url = await QRCode.toDataURL(phone, { width: 256, margin: 2 });
+              map.set(reg.id, url);
+            } catch { /* skip */ }
+          }
         }
       }
     }
@@ -135,6 +151,40 @@ export class MyEventsComponent implements OnInit {
     a.click();
   }
 
+  /** Get distribution status for an event's registration */
+  getDistData(eventId: string): RegDistributionData | null {
+    return this.distMap().get(eventId) ?? null;
+  }
+
+  /** Check if a distribution item was received (main or family) */
+  itemReceived(eventId: string, itemId: string): boolean {
+    const data = this.getDistData(eventId);
+    if (!data) return false;
+    return data.distributions.some((d) => d.distributionItemId === itemId);
+  }
+
+  /** Get item label */
+  itemLabel(item: DistributionItem): string {
+    const labels: Record<string, string> = {
+      kit: 'Kit', breakfast: 'Breakfast', lunch: 'Lunch',
+      snacks: 'Snacks', dinner: 'Dinner', gift: 'Gift',
+    };
+    return item.customLabel ?? labels[item.itemType] ?? item.itemType;
+  }
+
+  private async loadDistributions(registrations: RegistrationWithEvent[]): Promise<void> {
+    const map = new Map<string, RegDistributionData>();
+    for (const reg of registrations) {
+      if (reg.status === 'confirmed' || reg.status === 'pending_payment') {
+        try {
+          const data = await this.eventsService.getRegistrationDistributions(reg.eventId).toPromise() as RegDistributionData;
+          map.set(reg.eventId, data);
+        } catch { /* skip */ }
+      }
+    }
+    this.distMap.set(map);
+  }
+
   ngOnInit(): void {
     forkJoin({
       rsvps: this.admin.getMyRsvps().pipe(catchError(() => of([]))),
@@ -145,6 +195,7 @@ export class MyEventsComponent implements OnInit {
         this.registrations.set(registrations);
         this.loading.set(false);
         void this.generateQrCodes(registrations);
+        void this.loadDistributions(registrations);
       },
       error: () => {
         this.error.set('Could not load your registrations. Please try again.');

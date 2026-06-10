@@ -126,8 +126,7 @@ export class AdminMembershipComponent implements OnInit {
     this.membership.reject(id, reason).subscribe({
       next: (result) => {
         const refundMsg =
-          result.status === 'rejected' &&
-          result.invoice?.payments?.some((p) => p.status === 'refunded')
+          result.status === 'rejected' && result.invoice?.status === 'refunded'
             ? ' Payment has been marked for refund.'
             : '';
         this.success.set(`Application rejected.${refundMsg}`);

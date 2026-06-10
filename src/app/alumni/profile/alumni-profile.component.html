@@ -286,6 +286,41 @@
                 <i class="fa-solid fa-building text-zinc-400 w-4 text-center"></i>
                 <span>{{ m.company }}</span>
               </div>
+              @if (m.gender) {
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-venus-mars text-zinc-400 w-4 text-center"></i>
+                  <span class="capitalize">{{ m.gender }}</span>
+                </div>
+              }
+              @if (m.bloodGroup) {
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-droplet text-red-400 w-4 text-center"></i>
+                  <span>Blood Group: <strong class="text-zinc-800">{{ m.bloodGroup }}</strong></span>
+                </div>
+              }
+              @if (m.nationality) {
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-flag text-zinc-400 w-4 text-center"></i>
+                  <span>{{ m.nationality }}</span>
+                </div>
+              }
+              @if (m.religion) {
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-place-of-worship text-zinc-400 w-4 text-center"></i>
+                  <span>{{ m.religion }}</span>
+                </div>
+              }
+              @if (m.designation && m.organization) {
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-id-badge text-zinc-400 w-4 text-center"></i>
+                  <span>{{ m.designation }} at {{ m.organization }}</span>
+                </div>
+              } @else if (m.designation) {
+                <div class="flex items-center gap-3">
+                  <i class="fa-solid fa-id-badge text-zinc-400 w-4 text-center"></i>
+                  <span>{{ m.designation }}</span>
+                </div>
+              }
               @if (m.openToMentoring) {
                 <div class="flex items-center gap-3">
                   <i class="fa-solid fa-handshake text-emerald-500 w-4 text-center"></i>

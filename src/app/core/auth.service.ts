@@ -1,7 +1,7 @@
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -60,6 +60,18 @@ export interface UserProfile {
   experiences: ExperienceEntry[];
   educations: EducationEntry[];
   achievements: AchievementEntry[];
+  // Extended alumni profile fields
+  gender: 'male' | 'female' | null;
+  birthday: string | null;
+  bloodGroup: string | null;
+  nationality: string | null;
+  religion: string | null;
+  presentAddress: string | null;
+  permanentAddress: string | null;
+  profession: string | null;
+  organization: string | null;
+  designation: string | null;
+  isGuest: boolean;
 }
 
 export interface AuthUser {
@@ -112,6 +124,24 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.base}/reset-password`, { token, password });
   }
 
+  checkEmail(email: string): Observable<{ exists: boolean; isGuest: boolean }> {
+    return this.http.post<{ exists: boolean; isGuest: boolean }>(`${this.base}/check-email`, { email });
+  }
+
+  /** Persist a session received from a registration response (accessToken returned inline) */
+  persistTokenAndLoadProfile(token: string): Observable<void> {
+    const payload = this.decodeJwt(token) ?? {};
+    const user: AuthUser = {
+      id: String(payload['sub'] ?? ''),
+      email: String(payload['email'] ?? ''),
+      permissions: (payload['permissions'] as string[]) ?? [],
+      roles: (payload['roles'] as { id: string; name: string }[]) ?? [],
+      memberId: (payload['memberId'] as string | null) ?? null,
+    };
+    this.persistSession({ accessToken: token, user });
+    return this.loadProfile().pipe(map(() => undefined));
+  }
+
   // ──────────────────────────────────────────────
   // Google OAuth
   // ──────────────────────────────────────────────
@@ -125,15 +155,15 @@ export class AuthService {
   /** Called by the callback component after Google redirects back */
   handleGoogleCallback(token: string, userId: string, email: string): void {
     // Decode JWT to extract permissions + roles
-    const payload = this.decodeJwt(token);
+    const payload = this.decodeJwt(token) ?? {};
     const res: AuthResponse = {
       accessToken: token,
       user: {
         id: userId,
         email,
-        permissions: payload?.permissions ?? [],
-        roles: payload?.roles ?? [],
-        memberId: payload?.memberId ?? null,
+        permissions: (payload['permissions'] as string[]) ?? [],
+        roles: (payload['roles'] as { id: string; name: string }[]) ?? [],
+        memberId: (payload['memberId'] as string | null) ?? null,
       },
     };
     this.persistSession(res);
@@ -295,11 +325,7 @@ export class AuthService {
     );
   }
 
-  private decodeJwt(token: string): {
-    permissions?: string[];
-    roles?: { id: string; name: string }[];
-    memberId?: string | null;
-  } | null {
+  private decodeJwt(token: string): Record<string, unknown> | null {
     try {
       const payload = token.split('.')[1];
       // JWT uses base64url encoding (uses - and _ instead of + and /)

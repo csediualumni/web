@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 import {
   InvoiceService,
   Invoice,
-  InvoicePayment,
-  paidAmount,
-  dueAmount,
   formatBDT,
 } from '../../core/invoice.service';
 import { AuthService } from '../../core/auth.service';
@@ -20,7 +17,6 @@ export class AdminInvoicesComponent implements OnInit {
   loading = signal(true);
   error = signal('');
   invoices = signal<Invoice[]>([]);
-  expandedInvoiceId = signal<string | null>(null);
   updatingInvoiceId = signal<string | null>(null);
 
   readonly auth = inject(AuthService);
@@ -49,10 +45,6 @@ export class AdminInvoicesComponent implements OnInit {
     });
   }
 
-  toggleInvoice(id: string): void {
-    this.expandedInvoiceId.set(this.expandedInvoiceId() === id ? null : id);
-  }
-
   setInvoiceStatus(invoice: Invoice, status: string): void {
     if (!this.auth.hasPermission('invoices:write')) return;
     this.updatingInvoiceId.set(invoice.id);
@@ -72,12 +64,6 @@ export class AdminInvoicesComponent implements OnInit {
     });
   }
 
-  invoicePaid(invoice: Invoice): number {
-    return paidAmount(invoice);
-  }
-  invoiceDue(invoice: Invoice): number {
-    return dueAmount(invoice);
-  }
   fmt(amount: number): string {
     return formatBDT(amount);
   }
@@ -85,40 +71,10 @@ export class AdminInvoicesComponent implements OnInit {
   invoiceStatusClass(status: string): string {
     const map: Record<string, string> = {
       pending: 'bg-amber-50 text-amber-700 border-amber-200',
-      partial: 'bg-blue-50 text-blue-700 border-blue-200',
       paid: 'bg-emerald-50 text-emerald-700 border-emerald-200',
       cancelled: 'bg-zinc-100 text-zinc-500 border-zinc-200',
       refunded: 'bg-purple-50 text-purple-700 border-purple-200',
     };
     return map[status] ?? 'bg-zinc-100 text-zinc-500 border-zinc-200';
-  }
-
-  paymentStatusClass(status: string): string {
-    const map: Record<string, string> = {
-      pending: 'bg-amber-50 text-amber-700',
-      verified: 'bg-emerald-50 text-emerald-700',
-      rejected: 'bg-red-50 text-red-600',
-      refunded: 'bg-purple-50 text-purple-700',
-    };
-    return map[status] ?? 'bg-zinc-100 text-zinc-500';
-  }
-
-  refundPayment(invoice: Invoice, payment: InvoicePayment): void {
-    if (!this.auth.hasPermission('invoices:write')) return;
-    this.updatingInvoiceId.set(invoice.id);
-    this.invoiceService.refundPayment(invoice.id, payment.id).subscribe({
-      next: (updated) => {
-        this.invoices.update((list) => list.map((i) => (i.id === updated.id ? updated : i)));
-        this.updatingInvoiceId.set(null);
-      },
-      error: (err) => {
-        this.error.set(
-          err?.status === 403
-            ? "You don't have sufficient permissions."
-            : (err.error?.message ?? 'Failed to refund payment.'),
-        );
-        this.updatingInvoiceId.set(null);
-      },
-    });
   }
 }

@@ -216,27 +216,18 @@
               <span class="text-zinc-600">Invoice Status</span>
               <span class="capitalize">{{ selectedApp()!.invoice!.status }}</span>
             </div>
-            @if (selectedApp()!.invoice!.payments.length) {
+            @if (selectedApp()!.invoice!.paidAt) {
               <div class="pt-2 border-t border-zinc-100 space-y-1.5">
                 <p class="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
-                  Submissions
+                  Payment
                 </p>
-                @for (p of selectedApp()!.invoice!.payments; track p.id) {
-                  <div class="flex justify-between text-xs">
-                    <span class="font-mono text-zinc-600">{{ p.transactionId }}</span>
-                    <span
-                      class="px-1.5 py-0.5 rounded font-medium capitalize"
-                      [class.bg-amber-100]="p.status === 'pending'"
-                      [class.text-amber-700]="p.status === 'pending'"
-                      [class.bg-emerald-100]="p.status === 'verified'"
-                      [class.text-emerald-700]="p.status === 'verified'"
-                      [class.bg-zinc-100]="p.status === 'refunded'"
-                      [class.text-zinc-600]="p.status === 'refunded'"
-                    >
-                      {{ p.status }}
-                    </span>
-                  </div>
-                }
+                <div class="flex justify-between text-xs">
+                  <span class="font-mono text-zinc-600">{{ selectedApp()!.invoice!.transactionId ?? '—' }}</span>
+                  <span class="px-1.5 py-0.5 rounded font-medium capitalize bg-emerald-100 text-emerald-700">paid</span>
+                </div>
+                <div class="text-[10px] text-zinc-400">
+                  {{ selectedApp()!.invoice!.paidAt | date: 'medium' }}
+                </div>
               </div>
             }
           </div>

@@ -222,82 +222,81 @@
         </div>
       </div>
 
-      <!-- ── 2. Professional Details ────────────────────────────── -->
+
+      <!-- ── 3. Personal Information ───────────────────────────── -->
       <div class="shad-card rounded-2xl p-6">
         <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
-          <i class="fa-solid fa-briefcase text-zinc-400"></i> Professional Details
+          <i class="fa-solid fa-id-card text-zinc-400"></i> Personal Information
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <!-- Job title -->
+          <!-- Gender -->
           <div>
-            <label for="pe-job-title" class="block text-sm font-medium text-zinc-700 mb-1.5"
-              >Job Title / Role</label
-            >
-            <input
-              id="pe-job-title"
-              formControlName="jobTitle"
-              type="text"
-              placeholder="e.g. Senior Software Engineer"
-              class="shad-input w-full"
-            />
+            <label class="block text-sm font-medium text-zinc-700 mb-2">Gender</label>
+            <div class="flex gap-4">
+              @for (g of GENDERS; track g.value) {
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    [value]="g.value"
+                    formControlName="gender"
+                    class="accent-blue-600"
+                  />
+                  <span class="text-sm text-zinc-700">{{ g.label }}</span>
+                </label>
+              }
+            </div>
           </div>
 
-          <!-- Company -->
+          <!-- Birthday -->
           <div>
-            <label for="pe-company" class="block text-sm font-medium text-zinc-700 mb-1.5"
-              >Company / Organisation</label
-            >
-            <input
-              id="pe-company"
-              formControlName="company"
-              type="text"
-              placeholder="e.g. Google"
-              class="shad-input w-full"
-            />
+            <label for="pe-birthday" class="block text-sm font-medium text-zinc-700 mb-1.5">Birthday</label>
+            <input id="pe-birthday" formControlName="birthday" type="date" class="shad-input w-full" />
           </div>
 
-          <!-- Industry -->
+          <!-- Blood Group -->
           <div>
-            <label for="pe-industry" class="block text-sm font-medium text-zinc-700 mb-1.5"
-              >Industry</label
-            >
-            <select id="pe-industry" formControlName="industry" class="shad-input w-full">
-              <option value="">Select industry…</option>
-              @for (ind of industries; track ind) {
-                <option [value]="ind">{{ ind }}</option>
+            <label for="pe-blood-group" class="block text-sm font-medium text-zinc-700 mb-1.5">Blood Group</label>
+            <select id="pe-blood-group" formControlName="bloodGroup" class="shad-input w-full">
+              <option value="">Select…</option>
+              @for (bg of BLOOD_GROUPS; track bg) {
+                <option [value]="bg">{{ bg }}</option>
               }
             </select>
           </div>
 
-          <!-- City -->
+          <!-- Religion -->
           <div>
-            <label for="pe-city" class="block text-sm font-medium text-zinc-700 mb-1.5">City</label>
-            <input
-              id="pe-city"
-              formControlName="city"
-              type="text"
-              placeholder="e.g. Dhaka"
-              class="shad-input w-full"
-            />
-          </div>
-
-          <!-- Country -->
-          <div>
-            <label for="pe-country" class="block text-sm font-medium text-zinc-700 mb-1.5"
-              >Country</label
-            >
-            <select id="pe-country" formControlName="country" class="shad-input w-full">
-              <option value="">Select country…</option>
-              @for (c of countries; track c) {
-                <option [value]="c">{{ c }}</option>
+            <label for="pe-religion" class="block text-sm font-medium text-zinc-700 mb-1.5">Religion</label>
+            <select id="pe-religion" formControlName="religion" class="shad-input w-full">
+              <option value="">Select…</option>
+              @for (r of RELIGIONS; track r) {
+                <option [value]="r">{{ r }}</option>
               }
             </select>
+          </div>
+
+          <!-- Nationality -->
+          <div>
+            <label for="pe-nationality" class="block text-sm font-medium text-zinc-700 mb-1.5">Nationality</label>
+            <input id="pe-nationality" formControlName="nationality" type="text" placeholder="e.g. Bangladeshi" class="shad-input w-full" />
+          </div>
+
+          <!-- Present Address -->
+          <div class="sm:col-span-2">
+            <label for="pe-present-addr" class="block text-sm font-medium text-zinc-700 mb-1.5">Present Address <span class="text-zinc-400 text-xs font-normal">(optional)</span></label>
+            <textarea id="pe-present-addr" formControlName="presentAddress" rows="2" placeholder="House, Road, Area, City…" class="shad-input w-full resize-none"></textarea>
+          </div>
+
+          <!-- Permanent Address -->
+          <div class="sm:col-span-2">
+            <label for="pe-perm-addr" class="block text-sm font-medium text-zinc-700 mb-1.5">Permanent Address <span class="text-zinc-400 text-xs font-normal">(optional)</span></label>
+            <textarea id="pe-perm-addr" formControlName="permanentAddress" rows="2" placeholder="House, Road, Area, City…" class="shad-input w-full resize-none"></textarea>
           </div>
         </div>
       </div>
 
-      <!-- ── 3. Bio ─────────────────────────────────────────────── -->
+      <!-- ── 4. Bio ─────────────────────────────────────────────── -->
       <div class="shad-card rounded-2xl p-6">
         <h2 class="text-base font-bold text-zinc-900 mb-5 flex items-center gap-2">
           <i class="fa-solid fa-align-left text-zinc-400"></i> About / Bio

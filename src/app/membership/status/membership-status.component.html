@@ -124,27 +124,13 @@
               <span class="text-zinc-500">Invoice Status</span>
               <span class="capitalize">{{ application()!.invoice!.status }}</span>
             </div>
-            @if (application()!.invoice!.payments.length) {
+          @if (application()!.invoice!.paidAt) {
               <div class="pt-2 border-t border-zinc-100">
-                <p class="text-xs text-zinc-500 font-medium mb-2">Payment Submissions</p>
-                @for (payment of application()!.invoice!.payments; track payment.id) {
-                  <div class="flex items-center justify-between py-1.5 text-xs">
-                    <span class="font-mono text-zinc-600">{{ payment.transactionId }}</span>
-                    <span
-                      class="px-2 py-0.5 rounded-full font-medium capitalize"
-                      [class.bg-amber-100]="payment.status === 'pending'"
-                      [class.text-amber-700]="payment.status === 'pending'"
-                      [class.bg-emerald-100]="payment.status === 'verified'"
-                      [class.text-emerald-700]="payment.status === 'verified'"
-                      [class.bg-red-100]="payment.status === 'rejected'"
-                      [class.text-red-700]="payment.status === 'rejected'"
-                      [class.bg-zinc-100]="payment.status === 'refunded'"
-                      [class.text-zinc-600]="payment.status === 'refunded'"
-                    >
-                      {{ payment.status }}
-                    </span>
-                  </div>
-                }
+                <p class="text-xs text-zinc-500 font-medium mb-2">Payment</p>
+                <div class="flex items-center justify-between py-1.5 text-xs">
+                  <span class="font-mono text-zinc-600">{{ application()!.invoice!.transactionId ?? '—' }}</span>
+                  <span class="px-2 py-0.5 rounded-full font-medium capitalize bg-emerald-100 text-emerald-700">paid</span>
+                </div>
               </div>
             }
           </div>

@@ -66,6 +66,13 @@ export class ProfileEditComponent implements OnInit {
 
   form!: FormGroup;
 
+  readonly BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+  readonly RELIGIONS = ['Islam', 'Christianity', 'Hinduism', 'Buddhism', 'Other'];
+  readonly GENDERS: { value: 'male' | 'female'; label: string }[] = [
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+  ];
+
   // Skills managed as a separate tag list for UX
   skillInput = signal('');
   skills = signal<string[]>([]);
@@ -109,17 +116,20 @@ export class ProfileEditComponent implements OnInit {
       phone: [''],
       batch: [null as number | null],
       bio: [''],
-      jobTitle: [''],
-      company: [''],
-      industry: [''],
-      city: [''],
-      country: [''],
       linkedin: [''],
       github: [''],
       twitter: [''],
       website: [''],
       openToMentoring: [false],
       profileVisibility: [false],
+      // Extended alumni profile fields
+      gender: [null as string | null],
+      birthday: [null as string | null],
+      bloodGroup: [null as string | null],
+      nationality: ['Bangladesh'],
+      religion: [null as string | null],
+      presentAddress: [''],
+      permanentAddress: [''],
     });
 
     // Load latest profile from API
@@ -130,17 +140,19 @@ export class ProfileEditComponent implements OnInit {
           phone: data.phone ?? '',
           batch: data.batch ?? null,
           bio: data.bio ?? '',
-          jobTitle: data.jobTitle ?? '',
-          company: data.company ?? '',
-          industry: data.industry ?? '',
-          city: data.city ?? '',
-          country: data.country ?? '',
           linkedin: data.linkedin ?? '',
           github: data.github ?? '',
           twitter: data.twitter ?? '',
           website: data.website ?? '',
           openToMentoring: data.openToMentoring ?? false,
           profileVisibility: data.profileVisibility ?? false,
+          gender: data.gender ?? null,
+          birthday: data.birthday ?? null,
+          bloodGroup: data.bloodGroup ?? null,
+          nationality: data.nationality ?? 'Bangladesh',
+          religion: data.religion ?? null,
+          presentAddress: data.presentAddress ?? '',
+          permanentAddress: data.permanentAddress ?? '',
         });
         this.skills.set(data.skills ?? []);
         this.experiences.set(data.experiences ?? []);
@@ -455,11 +467,6 @@ export class ProfileEditComponent implements OnInit {
       v.displayName,
       v.batch,
       v.bio,
-      v.jobTitle,
-      v.company,
-      v.city,
-      v.country,
-      v.industry,
       v.linkedin || v.github,
       this.skills().length > 0,
     ];

@@ -1,0 +1,266 @@
+<!-- Header -->
+<div class="mb-6">
+  <div class="flex items-center gap-3 mb-2">
+    <a [routerLink]="['/manage/events']" class="text-zinc-400 hover:text-zinc-700 transition-colors">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="text-2xl font-bold text-zinc-900">Distribution Dashboard</h1>
+  </div>
+  @if (event()) {
+    <p class="text-zinc-500 text-sm ml-7">{{ event()!.title }}</p>
+  }
+</div>
+
+@if (loading()) {
+  <div class="flex items-center gap-2 text-zinc-400 text-sm py-12 justify-center">
+    <i class="fa-solid fa-spinner animate-spin text-xl"></i>
+    <span>Loading distribution data…</span>
+  </div>
+} @else if (error()) {
+  <div class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-5 py-4 text-sm">
+    <i class="fa-solid fa-circle-exclamation mr-2"></i>{{ error() }}
+  </div>
+} @else {
+
+  <!-- Stats overview -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-2xl border border-zinc-200 p-5 text-center">
+      <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-1">Items Configured</p>
+      <p class="text-3xl font-bold text-zinc-900">{{ summary().length }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-zinc-200 p-5 text-center">
+      <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-1">Total Distributed</p>
+      <p class="text-3xl font-bold text-emerald-600">{{ totalDistributed() }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-zinc-200 p-5 text-center">
+      <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-1">Remaining</p>
+      <p class="text-3xl font-bold text-amber-600">{{ totalRemaining() }}</p>
+    </div>
+    <div class="bg-white rounded-2xl border border-zinc-200 p-5 text-center">
+      <p class="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-1">Log Entries</p>
+      <p class="text-3xl font-bold text-zinc-700">{{ logData().total }}</p>
+    </div>
+  </div>
+
+  <!-- Per-item summary table -->
+  <div class="bg-white rounded-2xl border border-zinc-200 mb-8">
+    <div class="px-5 py-4 border-b border-zinc-100 flex items-center justify-between gap-3">
+      <h2 class="text-base font-bold text-zinc-900 flex items-center gap-2">
+        <i class="fa-solid fa-box text-zinc-400"></i> Distribution Items
+      </h2>
+      <button (click)="showAddItem.set(!showAddItem())"
+        class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 transition-colors">
+        <i class="fa-solid fa-plus"></i> Add Item
+      </button>
+    </div>
+
+    <!-- Add item form -->
+    @if (showAddItem()) {
+      <div class="px-5 py-4 bg-blue-50 border-b border-blue-100">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+          <div>
+            <label class="text-xs font-medium text-zinc-600 mb-1 block">Item Type</label>
+            <select [(ngModel)]="newItem().itemType" (change)="newItem.update(v => ({...v, itemType: $any($event.target).value}))"
+              class="w-full text-sm border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              @for (t of itemTypes; track t) {
+                <option [value]="t">{{ itemTypeLabels[t] }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-zinc-600 mb-1 block">Custom Label (opt)</label>
+            <input type="text" [ngModel]="newItem().customLabel ?? ''"
+              (ngModelChange)="newItem.update(v => ({...v, customLabel: $event || null}))"
+              class="w-full text-sm border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Event T-Shirt" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-zinc-600 mb-1 block">Qty per Main</label>
+            <input type="number" min="0" [ngModel]="newItem().quantityPerMain"
+              (ngModelChange)="newItem.update(v => ({...v, quantityPerMain: +$event}))"
+              class="w-full text-sm border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-zinc-600 mb-1 block">Qty per Family</label>
+            <input type="number" min="0" [ngModel]="newItem().quantityPerFamily"
+              (ngModelChange)="newItem.update(v => ({...v, quantityPerFamily: +$event}))"
+              class="w-full text-sm border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+        <div class="flex items-center gap-4 mb-3">
+          <label class="flex items-center gap-2 text-sm text-zinc-700 cursor-pointer">
+            <input type="checkbox" [ngModel]="newItem().appliesToMain"
+              (ngModelChange)="newItem.update(v => ({...v, appliesToMain: $event}))"
+              class="rounded" />
+            Applies to Main Attendee
+          </label>
+          <label class="flex items-center gap-2 text-sm text-zinc-700 cursor-pointer">
+            <input type="checkbox" [ngModel]="newItem().appliesToFamily"
+              (ngModelChange)="newItem.update(v => ({...v, appliesToFamily: $event}))"
+              class="rounded" />
+            Applies to Family Members
+          </label>
+        </div>
+        <div class="flex items-center gap-2">
+          <button (click)="addItem()" [disabled]="addingItem()"
+            class="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-60 transition-colors">
+            @if (addingItem()) { <i class="fa-solid fa-spinner animate-spin mr-1"></i> }
+            Add Item
+          </button>
+          <button (click)="showAddItem.set(false)" class="text-sm text-zinc-500 hover:text-zinc-700 px-3 py-2">Cancel</button>
+        </div>
+      </div>
+    }
+
+    @if (summary().length === 0) {
+      <div class="px-5 py-10 text-center text-zinc-400 text-sm">
+        <i class="fa-solid fa-box-open text-3xl mb-3 block"></i>
+        No distribution items configured for this event yet.
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-xs font-semibold text-zinc-400 uppercase tracking-wide text-left border-b border-zinc-100">
+              <th class="px-5 py-3">Item</th>
+              <th class="px-5 py-3 text-right">Entitled (Main)</th>
+              <th class="px-5 py-3 text-right">Entitled (Family)</th>
+              <th class="px-5 py-3 text-right">Distributed (Main)</th>
+              <th class="px-5 py-3 text-right">Distributed (Family)</th>
+              <th class="px-5 py-3 text-right">Remaining</th>
+              <th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of summary(); track row.item.id) {
+              <tr class="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
+                <td class="px-5 py-4 font-medium text-zinc-800">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full"
+                      [class]="row.remainingMain + row.remainingFamily === 0
+                        ? 'bg-emerald-400' : 'bg-amber-400'"></span>
+                    {{ row.item.customLabel || itemTypeLabels[row.item.itemType] }}
+                    <div class="flex gap-1">
+                      @if (row.item.appliesToMain) {
+                        <span class="text-[10px] bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Main</span>
+                      }
+                      @if (row.item.appliesToFamily) {
+                        <span class="text-[10px] bg-purple-100 text-purple-700 rounded px-1.5 py-0.5">Family</span>
+                      }
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-4 text-right text-zinc-600">{{ row.entitledMain }}</td>
+                <td class="px-5 py-4 text-right text-zinc-600">{{ row.entitledFamily }}</td>
+                <td class="px-5 py-4 text-right">
+                  <span [class]="row.distributedMain > 0 ? 'text-emerald-700 font-semibold' : 'text-zinc-400'">
+                    {{ row.distributedMain }}
+                  </span>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <span [class]="row.distributedFamily > 0 ? 'text-emerald-700 font-semibold' : 'text-zinc-400'">
+                    {{ row.distributedFamily }}
+                  </span>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <span [class]="(row.remainingMain + row.remainingFamily) === 0
+                    ? 'text-emerald-600 font-semibold' : 'text-amber-600 font-semibold'">
+                    {{ row.remainingMain + row.remainingFamily }}
+                  </span>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button (click)="deleteItem(row.item.id)"
+                    class="text-red-400 hover:text-red-600 text-xs transition-colors">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Distribution Log -->
+  <div class="bg-white rounded-2xl border border-zinc-200">
+    <div class="px-5 py-4 border-b border-zinc-100 flex items-center justify-between">
+      <h2 class="text-base font-bold text-zinc-900 flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-zinc-400"></i>
+        Distribution Log
+        <span class="text-xs font-normal text-zinc-400">({{ logData().total }} total)</span>
+      </h2>
+      @if (logLoading()) {
+        <i class="fa-solid fa-spinner animate-spin text-zinc-400"></i>
+      }
+    </div>
+
+    @if (logData().data.length === 0) {
+      <div class="px-5 py-10 text-center text-zinc-400 text-sm">
+        <i class="fa-solid fa-inbox text-3xl mb-3 block"></i>
+        No distributions recorded yet.
+      </div>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-xs font-semibold text-zinc-400 uppercase tracking-wide text-left border-b border-zinc-100">
+              <th class="px-5 py-3">Item</th>
+              <th class="px-5 py-3">Recipient</th>
+              <th class="px-5 py-3 text-right">Qty</th>
+              <th class="px-5 py-3">Time</th>
+              <th class="px-5 py-3">Device</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rec of logData().data; track rec.id) {
+              <tr class="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
+                <td class="px-5 py-3 font-medium text-zinc-800">
+                  @if (rec.item) {
+                    {{ rec.item.customLabel || itemTypeLabels[rec.item.itemType] }}
+                  } @else {
+                    <span class="text-zinc-400 font-mono text-xs">{{ rec.distributionItemId | slice:0:8 }}…</span>
+                  }
+                </td>
+                <td class="px-5 py-3">
+                  <span [class]="'text-xs font-medium px-2 py-0.5 rounded-full ' +
+                    (rec.recipientType === 'main'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-purple-100 text-purple-700')">
+                    {{ rec.recipientType === 'main' ? 'Main' : 'Family' }}
+                  </span>
+                </td>
+                <td class="px-5 py-3 text-right font-semibold text-zinc-700">{{ rec.quantity }}</td>
+                <td class="px-5 py-3 text-zinc-500 text-xs whitespace-nowrap">{{ formatTime(rec.distributedAt) }}</td>
+                <td class="px-5 py-3 text-zinc-400 text-xs max-w-[150px] truncate">
+                  @if (rec.deviceInfo) {
+                    {{ rec.deviceInfo['userAgent'] ?? 'Unknown' }}
+                  } @else {
+                    —
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      @if (logPages > 1) {
+        <div class="px-5 py-4 border-t border-zinc-100 flex items-center justify-between text-sm text-zinc-500">
+          <span>Page {{ logPage() + 1 }} of {{ logPages }}</span>
+          <div class="flex items-center gap-2">
+            <button (click)="prevPage()" [disabled]="logPage() === 0"
+              class="px-3 py-1.5 rounded-lg border border-zinc-200 hover:bg-zinc-50 disabled:opacity-40 transition-colors text-xs font-medium">
+              <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+            </button>
+            <button (click)="nextPage()" [disabled]="logPage() >= logPages - 1"
+              class="px-3 py-1.5 rounded-lg border border-zinc-200 hover:bg-zinc-50 disabled:opacity-40 transition-colors text-xs font-medium">
+              Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+}

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +11,10 @@ import {
   TShirtSize,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import {
+  EventRegistrationFormComponent,
+  RegistrationSuccess,
+} from '../registration-form/event-registration-form.component';
 
 const TIER_ORDER: SponsorTier[] = ['title', 'platinum', 'gold', 'silver', 'bronze', 'supporter'];
 const TIER_LABELS: Record<SponsorTier, string> = {
@@ -25,10 +29,10 @@ const TIER_LABELS: Record<SponsorTier, string> = {
 @Component({
   selector: 'app-event-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, EventRegistrationFormComponent],
   templateUrl: './event-detail.component.html',
 })
-export class EventDetailComponent implements OnInit {
+export class EventDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly adminService = inject(AdminService);
@@ -47,6 +51,11 @@ export class EventDetailComponent implements OnInit {
   showSizeChart = signal(false);
   familyCount = signal(0);
   donationAmount = signal(0);
+
+  // Countdown
+  countdownDisplay = signal<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
+  countdownLabel = signal('');
+  private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   readonly sizeChartRows: { size: TShirtSize; chest: string; length: string }[] = [
     { size: 'XS', chest: '34"', length: '27"' },
@@ -89,6 +98,7 @@ export class EventDetailComponent implements OnInit {
         this.event.set(ev);
         this.sponsors.set((ev as any).sponsors ?? []);
         this.loading.set(false);
+        this.startCountdown(ev);
         if (this.auth.isLoggedIn()) {
           this.adminService.getMyRegistration(id).subscribe({
             next: (reg) => this.myRegistration.set(reg),
@@ -103,10 +113,74 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.countdownInterval) clearInterval(this.countdownInterval);
+  }
+
+  private startCountdown(ev: ApiEvent): void {
+    const tick = () => {
+      const now = Date.now();
+      const openAt = ev.registrationOpenAt ? new Date(ev.registrationOpenAt).getTime() : null;
+      const closeAt = ev.registrationCloseAt ? new Date(ev.registrationCloseAt).getTime() : null;
+
+      let target: number | null = null;
+      let label = '';
+
+      if (openAt && now < openAt) {
+        // Registration not yet open — count down to opening
+        target = openAt;
+        label = 'Registration opens in';
+      } else if (closeAt && now < closeAt) {
+        // Registration open — count down to deadline
+        target = closeAt;
+        label = 'Registration closes in';
+      } else if (!openAt && !closeAt) {
+        // No explicit dates — fallback: count down to 7 days before event
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const eventTime = new Date(ev.date).getTime();
+        const fallbackClose = eventTime - 7 * msPerDay;
+        if (now < fallbackClose) {
+          target = fallbackClose;
+          label = 'Registration closes in';
+        }
+      }
+
+      if (!target) {
+        this.countdownDisplay.set(null);
+        return;
+      }
+
+      const diff = target - now;
+      if (diff <= 0) {
+        this.countdownDisplay.set({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        this.countdownLabel.set(label);
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      this.countdownDisplay.set({ days, hours, minutes, seconds });
+      this.countdownLabel.set(label);
+    };
+
+    tick();
+    this.countdownInterval = setInterval(tick, 1000);
+  }
+
   setFamilyCount(n: number): void {
     const ev = this.event();
     if (!ev?.allowFamilyMembers) return;
     this.familyCount.set(Math.max(0, n));
+  }
+
+  /** Called when the new registration form emits a successful registration */
+  onRegistered(result: RegistrationSuccess): void {
+    if (result.invoiceId) {
+      this.router.navigate(['/payment'], { queryParams: { invoiceId: result.invoiceId } });
+    } else {
+      this.router.navigate(['/my-account/events']);
+    }
   }
 
   register(): void {

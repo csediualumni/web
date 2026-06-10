@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { InvoiceService, Invoice, paidAmount, formatBDT } from '../../core/invoice.service';
+import { InvoiceService, Invoice, formatBDT } from '../../core/invoice.service';
 
 @Component({
   selector: 'app-payment-success',
@@ -37,6 +37,6 @@ export class PaymentSuccessComponent implements OnInit {
 
   paid(): number {
     const inv = this.invoice();
-    return inv ? paidAmount(inv) : 0;
+    return inv?.status === 'paid' ? inv.totalAmount : 0;
   }
 }

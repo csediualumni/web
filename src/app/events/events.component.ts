@@ -33,11 +33,19 @@ export class EventsComponent implements OnInit {
 
   private static readonly PAID_CUTOFF_DAYS = 7;
 
-  /** Returns true if a paid event is still open for registration (> 7 days away). */
+  /** Returns true if registration window is currently open. */
   isPaidRegistrationOpen(event: ApiEvent): boolean {
-    if (!event.ticketPrice) return true; // free event — no cutoff
+    const now = Date.now();
+    // If explicit window is set, use it
+    if (event.registrationOpenAt || event.registrationCloseAt) {
+      const openOk = !event.registrationOpenAt || new Date(event.registrationOpenAt).getTime() <= now;
+      const closeOk = !event.registrationCloseAt || new Date(event.registrationCloseAt).getTime() > now;
+      return openOk && closeOk;
+    }
+    // Fallback: free events always open; paid events close 7 days before
+    if (!event.ticketPrice) return true;
     const msPerDay = 1000 * 60 * 60 * 24;
-    const days = Math.floor((new Date(event.date).getTime() - Date.now()) / msPerDay);
+    const days = Math.floor((new Date(event.date).getTime() - now) / msPerDay);
     return days >= EventsComponent.PAID_CUTOFF_DAYS;
   }
 

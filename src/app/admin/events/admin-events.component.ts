@@ -1,6 +1,7 @@
 import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import {
   AdminService,
@@ -38,7 +39,7 @@ type RegistrationRow = EventRegistration & {
 @Component({
   selector: 'app-admin-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent, ImageInputComponent],
+  imports: [CommonModule, FormsModule, RouterLink, RichTextEditorComponent, ImageInputComponent],
   templateUrl: './admin-events.component.html',
 })
 export class AdminEventsComponent implements OnInit {
@@ -65,6 +66,7 @@ export class AdminEventsComponent implements OnInit {
   registrationsLoaded = signal(false);
   registrationsLoading = signal(false);
   confirmingReg = signal<Set<string>>(new Set());
+  flushing = signal(false);
 
   // ── Detail: sponsors ───────────────────────────────────────────────────────
   sponsors = signal<EventSponsor[]>([]);
@@ -130,6 +132,8 @@ export class AdminEventsComponent implements OnInit {
   formFamilyFee = signal<number | null>(null);
   formDonationEnabled = signal(false);
   formContactPersons = signal<{ name: string; image: string; phone: string; email: string }[]>([]);
+  formRegistrationOpenAt = signal('');
+  formRegistrationCloseAt = signal('');
 
   readonly modes = MODES;
   readonly statuses = STATUSES;
@@ -205,6 +209,8 @@ export class AdminEventsComponent implements OnInit {
     this.formContactPersons.set(e.contactPersons
       ? e.contactPersons.map(c => ({ name: c.name, image: c.image ?? '', phone: c.phone ?? '', email: c.email ?? '' }))
       : []);
+    this.formRegistrationOpenAt.set(e.registrationOpenAt ? e.registrationOpenAt.slice(0, 16) : '');
+    this.formRegistrationCloseAt.set(e.registrationCloseAt ? e.registrationCloseAt.slice(0, 16) : '');
     this.error.set('');
     this.success.set('');
     this.mode.set('edit');
@@ -400,6 +406,8 @@ export class AdminEventsComponent implements OnInit {
         phone: c.phone.trim() || undefined,
         email: c.email.trim() || undefined,
       })),
+      registrationOpenAt: this.formRegistrationOpenAt() || null,
+      registrationCloseAt: this.formRegistrationCloseAt() || null,
     };
 
     const id = this.editingId();
@@ -439,6 +447,23 @@ export class AdminEventsComponent implements OnInit {
       error: () => {
         this.error.set('Failed to delete event.');
         this.deleting.update(s => { const n = new Set(s); n.delete(e.id); return n; });
+      },
+    });
+  }
+
+  flushRegistrations(e: ApiEvent): void {
+    if (!confirm(`⚠️ Flush ALL registrations for "${e.title}"?\n\nThis will permanently delete every registration, payment record, and distribution entry for this event. Use only for testing.`)) return;
+    this.flushing.set(true);
+    this.adminService.adminFlushRegistrations(e.id).subscribe({
+      next: ({ deleted }) => {
+        this.registrations.set([]);
+        this.registrationsLoaded.set(false);
+        this.success.set(`Flushed ${deleted} registration${deleted !== 1 ? 's' : ''}.`);
+        this.flushing.set(false);
+      },
+      error: () => {
+        this.error.set('Failed to flush registrations.');
+        this.flushing.set(false);
       },
     });
   }
@@ -629,5 +654,6 @@ export class AdminEventsComponent implements OnInit {
     this.formActivitiesFormat.set('html'); this.formAllowFamily.set(false);
     this.formFamilyFee.set(null); this.formDonationEnabled.set(false);
     this.formContactPersons.set([]);
+    this.formRegistrationOpenAt.set(''); this.formRegistrationCloseAt.set('');
   }
 }

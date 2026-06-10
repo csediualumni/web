@@ -229,6 +229,8 @@ export interface ApiEvent {
   familyMemberFee: number | null;
   donationEnabled: boolean;
   contactPersons: EventContactPerson[] | null;
+  registrationOpenAt: string | null;
+  registrationCloseAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -938,6 +940,10 @@ export class AdminService {
 
   adminDeleteEvent(id: string): Observable<void> {
     return this.http.delete<void>(`${this.adminBase}/events/${id}`);
+  }
+
+  adminFlushRegistrations(id: string): Observable<{ deleted: number }> {
+    return this.http.delete<{ deleted: number }>(`${this.adminBase}/events/${id}/registrations`);
   }
 
   adminPublishEvent(id: string): Observable<ApiEvent> {

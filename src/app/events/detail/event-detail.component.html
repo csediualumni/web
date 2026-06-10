@@ -72,6 +72,31 @@
     </div>
   </section>
 
+  <!-- ── Countdown Banner ── -->
+  @if (countdownDisplay(); as cd) {
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-sm font-medium opacity-90 flex items-center gap-2">
+          <i class="fa-solid fa-clock animate-pulse"></i> {{ countdownLabel() }}
+        </p>
+        <div class="flex items-center gap-4">
+          @for (unit of [
+            { value: cd.days, label: 'Days' },
+            { value: cd.hours, label: 'Hours' },
+            { value: cd.minutes, label: 'Min' },
+            { value: cd.seconds, label: 'Sec' }
+          ]; track unit.label) {
+            <div class="text-center min-w-[52px]">
+              <div class="text-2xl font-bold tabular-nums leading-tight">{{ unit.value | number:'2.0' }}</div>
+              <div class="text-[10px] font-medium opacity-70 uppercase tracking-widest">{{ unit.label }}</div>
+            </div>
+            @if (!$last) { <span class="text-xl font-bold opacity-50">:</span> }
+          }
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- ── Main content + Sidebar ── -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -311,108 +336,10 @@
           <!-- Registration form (if not registered) -->
           @if (!myRegistration() || myRegistration()?.status === 'cancelled') {
             @if (ev.status === 'upcoming') {
-              <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-                <h3 class="font-semibold text-zinc-800 mb-1">Register Now</h3>
-                <p class="text-xs text-zinc-400 mb-5">Secure your spot for this event</p>
-
-                <!-- Fee summary -->
-                <div class="bg-zinc-50 rounded-xl p-4 mb-5 space-y-2 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-zinc-500">Ticket</span>
-                    <span class="font-medium text-zinc-700">{{ ev.ticketPrice ? '৳' + ev.ticketPrice : 'Free' }}</span>
-                  </div>
-                  @if (ev.allowFamilyMembers && familyCount() > 0) {
-                    <div class="flex justify-between">
-                      <span class="text-zinc-500">Family (×{{ familyCount() }})</span>
-                      <span class="font-medium text-zinc-700">৳{{ familyCount() * (ev.familyMemberFee ?? ev.ticketPrice ?? 0) }}</span>
-                    </div>
-                  }
-                  @if (ev.donationEnabled && donationAmount() > 0) {
-                    <div class="flex justify-between">
-                      <span class="text-zinc-500">Donation</span>
-                      <span class="font-medium text-zinc-700">৳{{ donationAmount() }}</span>
-                    </div>
-                  }
-                  <div class="border-t border-zinc-200 pt-2 flex justify-between font-semibold">
-                    <span>Total</span>
-                    <span class="text-blue-600">{{ totalFee() ? '৳' + totalFee() : 'Free' }}</span>
-                  </div>
-                </div>
-
-                <!-- T-shirt size -->
-                <div class="mb-4">
-                  <div class="flex items-center gap-2 mb-1.5">
-                    <label class="text-xs font-medium text-zinc-600">T-Shirt Size</label>
-                    <button type="button" (click)="showSizeChart.set(true)"
-                      class="w-5 h-5 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center transition-colors"
-                      title="View size chart">
-                      <i class="fa-solid fa-question text-[9px] text-zinc-500"></i>
-                    </button>
-                  </div>
-                  <div class="flex flex-wrap gap-2">
-                    @for (size of tShirtSizes; track size) {
-                      <button (click)="tShirtSize.set(size)"
-                        class="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
-                        [class]="tShirtSize() === size ? 'bg-blue-600 text-white border-blue-600' : 'border-zinc-200 text-zinc-600 hover:border-blue-400'">
-                        {{ size }}
-                      </button>
-                    }
-                  </div>
-                </div>
-
-                <!-- Family members -->
-                @if (ev.allowFamilyMembers) {
-                  <div class="mb-4">
-                    <label class="block text-xs font-medium text-zinc-600 mb-1.5">Additional Family Members</label>
-                    <div class="flex items-center gap-3">
-                      <button (click)="setFamilyCount(familyCount() - 1)" [disabled]="familyCount() === 0"
-                        class="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 disabled:opacity-40">
-                        <i class="fa-solid fa-minus text-xs"></i>
-                      </button>
-                      <span class="font-semibold text-zinc-800 w-6 text-center">{{ familyCount() }}</span>
-                      <button (click)="setFamilyCount(familyCount() + 1)"
-                        class="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                      </button>
-                    </div>
-                    @if (familyCount() > 0) {
-                      <p class="text-[11px] text-zinc-400 mt-2 flex items-center gap-1">
-                        <i class="fa-solid fa-circle-info text-[9px]"></i>
-                        Family members receive entry + meals only. Kit &amp; t-shirt are for the main registrant only.
-                      </p>
-                    }
-                  </div>
-                }
-
-                <!-- Donation -->
-                @if (ev.donationEnabled) {
-                  <div class="mb-5">
-                    <label class="block text-xs font-medium text-zinc-600 mb-1.5">Donation (optional, BDT)</label>
-                    <input type="number" [value]="donationAmount()" (input)="donationAmount.set(+$any($event.target).value || 0)"
-                      placeholder="0" min="0"
-                      class="w-full text-sm border border-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400" />
-                  </div>
-                }
-
-                @if (regError()) {
-                  <p class="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-4">{{ regError() }}</p>
-                }
-
-                @if (auth.isLoggedIn()) {
-                  <button (click)="register()" [disabled]="registering()"
-                    class="w-full bg-blue-600 text-white px-4 py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
-                    @if (registering()) {
-                      <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    }
-                    {{ registering() ? 'Registering...' : (totalFee() ? 'Register & Pay ৳' + totalFee() : 'Register for Free') }}
-                  </button>
-                } @else {
-                  <a routerLink="/auth/login"
-                    class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
-                    <i class="fa-solid fa-right-to-bracket"></i> Login to Register
-                  </a>
-                }
-              </div>
+              <app-event-registration-form
+                [event]="ev"
+                (registered)="onRegistered($event)"
+              />
             } @else {
               <div class="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 text-center">
                 <i class="fa-solid fa-calendar-xmark text-3xl text-zinc-300 mb-3"></i>

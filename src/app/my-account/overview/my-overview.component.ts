@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MembershipService, MembershipApplication } from '../../core/membership.service';
-import { InvoiceService, Invoice, dueAmount, formatBDT } from '../../core/invoice.service';
+import { InvoiceService, Invoice, formatBDT } from '../../core/invoice.service';
 import { AdminService, ApplicationStatus } from '../../core/admin.service';
 import type { EventRsvp, ApiEvent } from '../../core/admin.service';
 
@@ -29,7 +29,7 @@ export class MyOverviewComponent implements OnInit {
   readonly formatBDT = formatBDT;
 
   get pendingInvoices(): Invoice[] {
-    return this.invoiceList().filter((i) => i.status === 'pending' || i.status === 'partial');
+    return this.invoiceList().filter((i) => i.status === 'pending');
   }
 
   get upcomingRsvps(): RsvpWithEvent[] {

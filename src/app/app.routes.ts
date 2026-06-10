@@ -189,6 +189,14 @@ export const routes: Routes = [
           import('./admin/events/admin-events.component').then((m) => m.AdminEventsComponent),
       },
       {
+        path: 'events/:id/distribution',
+        title: 'Event Distribution',
+        loadComponent: () =>
+          import('./admin/events/distribution/event-distribution.component').then(
+            (m) => m.EventDistributionComponent,
+          ),
+      },
+      {
         path: 'campaigns',
         title: 'Manage Campaigns',
         loadComponent: () =>
@@ -352,6 +360,7 @@ export const routes: Routes = [
   },
   {
     path: 'events/:id/booth',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./events/booth/event-booth.component').then((m) => m.EventBoothComponent),
   },

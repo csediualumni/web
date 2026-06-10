@@ -141,6 +141,24 @@
             <p class="text-xs text-zinc-400">Registrants can add a donation amount during registration</p>
           </div>
         </label>
+
+        <!-- Registration window -->
+        <div class="pt-2 border-t border-zinc-100">
+          <p class="text-sm font-medium text-zinc-700 mb-3">Registration Window <span class="text-xs text-zinc-400 font-normal">(optional)</span></p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-zinc-600 mb-1">Opens at</label>
+              <input type="datetime-local" [ngModel]="formRegistrationOpenAt()" (ngModelChange)="formRegistrationOpenAt.set($event)"
+                class="shad-input w-full text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-600 mb-1">Closes at (deadline)</label>
+              <input type="datetime-local" [ngModel]="formRegistrationCloseAt()" (ngModelChange)="formRegistrationCloseAt.set($event)"
+                class="shad-input w-full text-sm" />
+            </div>
+          </div>
+          <p class="text-xs text-zinc-400 mt-2">Leave blank to use default logic (opens immediately, closes 7 days before event).</p>
+        </div>
       </div>
     </div>
 
@@ -397,7 +415,20 @@
       <div class="shad-card overflow-hidden">
         <div class="px-4 py-3 border-b border-zinc-100 flex items-center justify-between">
           <p class="text-sm font-medium text-zinc-700">{{ registrations().length }} registrations</p>
-          <p class="text-xs text-zinc-400">{{ registrations().length - registrations().filter(r => r.status === 'cancelled').length }} active</p>
+          <div class="flex items-center gap-3">
+            <p class="text-xs text-zinc-400">{{ registrations().length - registrations().filter(r => r.status === 'cancelled').length }} active</p>
+            @if (auth.hasPermission('events:write')) {
+              <button (click)="flushRegistrations(viewingEvent()!)" [disabled]="flushing()"
+                class="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 transition-colors disabled:opacity-50">
+                @if (flushing()) {
+                  <i class="fa-solid fa-spinner animate-spin text-[10px]"></i>
+                } @else {
+                  <i class="fa-solid fa-trash-can text-[10px]"></i>
+                }
+                Flush All
+              </button>
+            }
+          </div>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
@@ -809,6 +840,10 @@
                 <button (click)="openEdit(event)" class="shad-btn-ghost text-zinc-500 hover:bg-zinc-100 h-7 px-2.5 text-xs gap-1">
                   <i class="fa-solid fa-pen-to-square text-[10px]"></i> Edit
                 </button>
+                <a [routerLink]="['/manage/events', event.id, 'distribution']"
+                  class="shad-btn-ghost text-blue-600 hover:bg-blue-50 border border-blue-200 h-7 px-2.5 text-xs gap-1 inline-flex items-center">
+                  <i class="fa-solid fa-box-open text-[10px]"></i> Distribution
+                </a>
                 @if (!event.published) {
                   <button (click)="publish(event)" [disabled]="publishing().has(event.id)"
                     class="shad-btn-primary bg-emerald-600 hover:bg-emerald-700 h-7 px-2.5 text-xs gap-1 disabled:opacity-50">

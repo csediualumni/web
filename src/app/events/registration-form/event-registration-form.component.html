@@ -1,0 +1,462 @@
+<div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+
+  <!-- Step indicator -->
+  <div class="flex border-b border-zinc-100">
+    @for (s of [['profile','Profile Info'],['options','Event Options'],['confirm','Confirm']] ; track s[0]) {
+      <div class="flex-1 text-center py-3 text-xs font-medium transition-colors"
+        [class]="step() === s[0] ? 'text-blue-600 border-b-2 border-blue-600 -mb-px' : 'text-zinc-400'">
+        {{ s[1] }}
+      </div>
+    }
+  </div>
+
+  <div class="p-5">
+
+    <!-- ── STEP 1: Profile Info ──────────────────────────────────── -->
+    @if (step() === 'profile') {
+      <div class="space-y-4">
+        <h3 class="text-base font-bold text-zinc-900">Your Information</h3>
+
+        <!-- Full Name -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+          <input type="text" [formControl]="$any(form.get('fullName'))" placeholder="e.g. Ariful Islam"
+            class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Email <span class="text-red-500">*</span></label>
+          <div class="flex gap-2">
+            <input type="email" [formControl]="$any(form.get('email'))"
+              [readOnly]="isLoggedIn()"
+              placeholder="your@email.com"
+              (blur)="checkEmail()"
+              class="flex-1 border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              [class.bg-zinc-50]="isLoggedIn()" [class.cursor-not-allowed]="isLoggedIn()" />
+            @if (emailStatus() === 'checking') {
+              <div class="flex items-center px-2">
+                <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            }
+          </div>
+
+          <!-- Email status messages -->
+          @if (emailStatusMessage()) {
+            <p class="text-xs mt-1.5"
+              [class]="emailStatus() === 'exists' ? 'text-amber-600' : 'text-emerald-600'">
+              {{ emailStatusMessage() }}
+            </p>
+          }
+
+          <!-- Inline login panel -->
+          @if (showInlineLogin() && !isLoggedIn()) {
+            <div class="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <p class="text-sm font-medium text-amber-800 mb-3">
+                <i class="fa-solid fa-lock text-xs mr-1"></i> Log in to continue with this email
+              </p>
+              <input type="password" [formControl]="$any(loginForm.get('loginPassword'))"
+                placeholder="Your password"
+                (keydown.enter)="doInlineLogin()"
+                class="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 bg-white mb-2" />
+              @if (loginError()) {
+                <p class="text-xs text-red-600 mb-2">{{ loginError() }}</p>
+              }
+              <button type="button" (click)="doInlineLogin()" [disabled]="loginLoading()"
+                class="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-lg py-2 text-sm font-medium transition-colors disabled:opacity-60">
+                @if (loginLoading()) { <i class="fa-solid fa-spinner fa-spin mr-1"></i> } Log In
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Mobile Number <span class="text-red-500">*</span></label>
+          <input type="tel" [formControl]="$any(form.get('phone'))" placeholder="+880 1XXX XXXXXX"
+            class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+        </div>
+
+        <!-- Gender -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Gender <span class="text-red-500">*</span></label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" [formControl]="$any(form.get('gender'))" value="male" class="accent-blue-600" />
+              <span class="text-sm text-zinc-700">Male</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" [formControl]="$any(form.get('gender'))" value="female" class="accent-blue-600" />
+              <span class="text-sm text-zinc-700">Female</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Birthday & Blood Group row -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1">Birthday</label>
+            <input type="date" [formControl]="$any(form.get('birthday'))"
+              class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1">Blood Group</label>
+            <select [formControl]="$any(form.get('bloodGroup'))"
+              class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+              <option value="">Select…</option>
+              @for (bg of bloodGroups; track bg) { <option [value]="bg">{{ bg }}</option> }
+            </select>
+          </div>
+        </div>
+
+        <!-- Religion & Nationality row -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1">Religion</label>
+            <select [formControl]="$any(form.get('religion'))"
+              class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+              <option value="">Select…</option>
+              @for (r of religions; track r) { <option [value]="r">{{ r }}</option> }
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1">Nationality</label>
+            <input type="text" [formControl]="$any(form.get('nationality'))" placeholder="Bangladeshi"
+              class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+          </div>
+        </div>
+
+        <!-- Present Address -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Present Address <span class="text-xs text-zinc-400">(optional)</span></label>
+          <textarea [formControl]="$any(form.get('presentAddress'))" rows="2" placeholder="House, Road, Area, City…"
+            class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 resize-none"></textarea>
+        </div>
+
+        <!-- Permanent Address -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-700 mb-1">Permanent Address <span class="text-xs text-zinc-400">(optional)</span></label>
+          <textarea [formControl]="$any(form.get('permanentAddress'))" rows="2" placeholder="House, Road, Area, City…"
+            class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 resize-none"></textarea>
+        </div>
+
+        <!-- Experience -->
+        <div class="rounded-xl border border-zinc-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-semibold text-zinc-700 uppercase tracking-wide flex items-center gap-1.5">
+              <i class="fa-solid fa-briefcase"></i> Experience <span class="font-normal normal-case text-zinc-400">(optional)</span>
+            </p>
+            @if (!expDraft()) {
+              <button type="button" (click)="openAddExp()"
+                class="text-xs px-2.5 h-7 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-600 flex items-center gap-1">
+                <i class="fa-solid fa-plus text-[10px]"></i> Add
+              </button>
+            }
+          </div>
+
+          @if (experiences().length > 0) {
+            <div class="space-y-2">
+              @for (exp of experiences(); track exp.id) {
+                <div class="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-zinc-900 leading-tight">{{ exp.title }}</p>
+                    <p class="text-xs text-zinc-600 mt-0.5">{{ exp.company }}</p>
+                    <p class="text-xs text-zinc-400 mt-0.5">{{ exp.from }} – {{ exp.to }}</p>
+                  </div>
+                  <div class="flex gap-1.5 flex-shrink-0">
+                    <button type="button" (click)="openEditExp(exp)"
+                      class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors">
+                      <i class="fa-solid fa-pen text-[10px]"></i>
+                    </button>
+                    <button type="button" (click)="removeExp(exp.id)"
+                      class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors">
+                      <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (expDraft(); as d) {
+            <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-3 space-y-2.5">
+              <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide">
+                {{ editingExpId() ? 'Edit Entry' : 'New Entry' }}
+              </p>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="col-span-2">
+                  <input type="text" [value]="d.title" (input)="setExpField('title', $any($event.target).value)"
+                    placeholder="Job Title / Role *"
+                    class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+                </div>
+                <div class="col-span-2">
+                  <input type="text" [value]="d.company" (input)="setExpField('company', $any($event.target).value)"
+                    placeholder="Company *"
+                    class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+                </div>
+                <input type="text" [value]="d.from" (input)="setExpField('from', $any($event.target).value)"
+                  placeholder="From (e.g. 2021) *"
+                  class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+                <input type="text" [value]="d.to" (input)="setExpField('to', $any($event.target).value)"
+                  placeholder="To (e.g. Present)"
+                  class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+              </div>
+              <div class="flex gap-2">
+                <button type="button" (click)="saveExp()"
+                  [disabled]="!expDraft()?.title || !expDraft()?.company || !expDraft()?.from"
+                  class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 h-8 rounded-lg flex items-center gap-1.5 disabled:opacity-50">
+                  <i class="fa-solid fa-check"></i> Save
+                </button>
+                <button type="button" (click)="cancelExp()"
+                  class="border border-zinc-300 bg-white text-xs px-4 h-8 rounded-lg hover:bg-zinc-50">Cancel</button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Education -->
+        <div class="rounded-xl border border-zinc-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <p class="text-xs font-semibold text-zinc-700 uppercase tracking-wide flex items-center gap-1.5">
+              <i class="fa-solid fa-graduation-cap"></i> Education <span class="font-normal normal-case text-zinc-400">(optional)</span>
+            </p>
+            @if (!eduDraft()) {
+              <button type="button" (click)="openAddEdu()"
+                class="text-xs px-2.5 h-7 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 text-zinc-600 flex items-center gap-1">
+                <i class="fa-solid fa-plus text-[10px]"></i> Add
+              </button>
+            }
+          </div>
+
+          @if (educations().length > 0) {
+            <div class="space-y-2">
+              @for (edu of educations(); track edu.id) {
+                <div class="flex items-start gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-zinc-900 leading-tight">{{ edu.degree }}</p>
+                    <p class="text-xs text-zinc-600 mt-0.5">{{ edu.institution }}</p>
+                    @if (edu.year) { <p class="text-xs text-zinc-400 mt-0.5">{{ edu.year }}</p> }
+                  </div>
+                  <div class="flex gap-1.5 flex-shrink-0">
+                    <button type="button" (click)="openEditEdu(edu)"
+                      class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-800 hover:border-zinc-400 transition-colors">
+                      <i class="fa-solid fa-pen text-[10px]"></i>
+                    </button>
+                    <button type="button" (click)="removeEdu(edu.id)"
+                      class="w-7 h-7 rounded-md border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-red-600 hover:border-red-300 transition-colors">
+                      <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (eduDraft(); as d) {
+            <div class="rounded-xl border border-blue-200 bg-blue-50/50 p-3 space-y-2.5">
+              <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide">
+                {{ editingEduId() ? 'Edit Entry' : 'New Entry' }}
+              </p>
+              <input type="text" [value]="d.degree" (input)="setEduField('degree', $any($event.target).value)"
+                placeholder="Degree / Qualification *"
+                class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" [value]="d.institution" (input)="setEduField('institution', $any($event.target).value)"
+                  placeholder="Institution *"
+                  class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+                <input type="number" [value]="d.year ?? ''" (input)="setEduField('year', +$any($event.target).value || null)"
+                  placeholder="Year (e.g. 2022)" min="1990" max="2099"
+                  class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+              </div>
+              <div class="flex gap-2">
+                <button type="button" (click)="saveEdu()"
+                  [disabled]="!eduDraft()?.degree || !eduDraft()?.institution"
+                  class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 h-8 rounded-lg flex items-center gap-1.5 disabled:opacity-50">
+                  <i class="fa-solid fa-check"></i> Save
+                </button>
+                <button type="button" (click)="cancelEdu()"
+                  class="border border-zinc-300 bg-white text-xs px-4 h-8 rounded-lg hover:bg-zinc-50">Cancel</button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="pt-2">
+          <button type="button" (click)="nextStep()"
+            [disabled]="!form.get('fullName')?.value || !form.get('email')?.value || !form.get('phone')?.value || !form.get('gender')?.value || emailStatus() === 'exists'"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors disabled:opacity-50">
+            Continue to Event Options →
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 2: Event Options ──────────────────────────────────── -->
+    @if (step() === 'options') {
+      <div class="space-y-5">
+        <h3 class="text-base font-bold text-zinc-900">Event Options</h3>
+
+        <!-- T-Shirt Size -->
+        @if (event.ticketPrice != null) {
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-2">T-Shirt Size</label>
+            <div class="border border-zinc-200 rounded-xl overflow-hidden divide-y divide-zinc-100">
+              <!-- Header -->
+              <div class="grid grid-cols-4 bg-zinc-50 px-4 py-2 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+                <span>Size</span>
+                <span>Chest (in)</span>
+                <span>Fit</span>
+                <span class="text-right">Select</span>
+              </div>
+              @for (sz of tShirtSizeOptions; track sz.size) {
+                <button type="button" (click)="form.get('tShirtSize')?.setValue(sz.size)"
+                  [class]="form.get('tShirtSize')?.value === sz.size
+                    ? 'bg-blue-50 border-l-4 border-l-blue-600'
+                    : 'bg-white border-l-4 border-l-transparent hover:bg-zinc-50'"
+                  class="grid grid-cols-4 w-full px-4 py-3 text-left transition-all items-center cursor-pointer">
+                  <span class="text-sm font-bold text-zinc-900">{{ sz.size }}</span>
+                  <span class="text-sm text-zinc-600">{{ sz.chest }}"</span>
+                  <span class="text-sm text-zinc-500">{{ sz.fit }}</span>
+                  <span class="flex justify-end">
+                    @if (form.get('tShirtSize')?.value === sz.size) {
+                      <span class="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center">
+                        <i class="fa-solid fa-check text-white text-[10px]"></i>
+                      </span>
+                    } @else {
+                      <span class="w-5 h-5 rounded-full border-2 border-zinc-300"></span>
+                    }
+                  </span>
+                </button>
+              }
+            </div>
+            <p class="text-[11px] text-zinc-400 mt-2 flex items-center gap-1">
+              <i class="fa-solid fa-circle-info text-blue-400"></i>
+              When in doubt, size up. Chest measurements are in inches (circumference).
+            </p>
+          </div>
+        }
+
+        <!-- Family Members -->
+        @if (event.allowFamilyMembers) {
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-2">Family Members</label>
+            <div class="flex items-center gap-3">
+              <button type="button" (click)="setFamilyCount(familyCount() - 1)"
+                class="w-9 h-9 rounded-full border border-zinc-300 flex items-center justify-center hover:bg-zinc-50 text-zinc-600 font-bold text-lg transition-colors">−</button>
+              <span class="w-8 text-center font-bold text-zinc-900">{{ familyCount() }}</span>
+              <button type="button" (click)="setFamilyCount(familyCount() + 1)"
+                class="w-9 h-9 rounded-full border border-zinc-300 flex items-center justify-center hover:bg-zinc-50 text-zinc-600 font-bold text-lg transition-colors">+</button>
+              @if (event.familyMemberFee) {
+                <span class="text-xs text-zinc-400">৳{{ event.familyMemberFee }} each</span>
+              }
+            </div>
+            <p class="text-xs text-zinc-400 mt-1">Family members receive food only (not kit/t-shirt)</p>
+          </div>
+        }
+
+        <!-- Donation -->
+        @if (event.donationEnabled) {
+          <div>
+            <label class="block text-sm font-medium text-zinc-700 mb-1">Donation Amount (৳)</label>
+            <input type="number" min="0" [ngModel]="donationAmount()" (ngModelChange)="donationAmount.set(+$event || 0)" [ngModelOptions]="{standalone: true}"
+              class="w-full border border-zinc-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500" />
+          </div>
+        }
+
+        <!-- Fee Summary -->
+        <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-200">
+          <div class="space-y-1.5 text-sm">
+            <div class="flex justify-between text-zinc-600">
+              <span>Event ticket</span>
+              <span>৳{{ event.ticketPrice ?? 0 }}</span>
+            </div>
+            @if (familyCount() > 0) {
+              <div class="flex justify-between text-zinc-600">
+                <span>Family (× {{ familyCount() }})</span>
+                <span>৳{{ familyCount() * (event.familyMemberFee ?? event.ticketPrice ?? 0) }}</span>
+              </div>
+            }
+            @if (donationAmount() > 0) {
+              <div class="flex justify-between text-zinc-600">
+                <span>Donation</span>
+                <span>৳{{ donationAmount() }}</span>
+              </div>
+            }
+            <div class="flex justify-between font-bold text-zinc-900 pt-2 border-t border-zinc-200">
+              <span>Total</span>
+              <span>৳{{ totalFee() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" (click)="prevStep()"
+            class="flex-1 bg-white border border-zinc-300 hover:bg-zinc-50 text-zinc-700 rounded-xl py-3 text-sm font-medium transition-colors">
+            ← Back
+          </button>
+          <button type="button" (click)="nextStep()"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors">
+            Review →
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ── STEP 3: Confirm ──────────────────────────────────────── -->
+    @if (step() === 'confirm') {
+      <div class="space-y-4">
+        <h3 class="text-base font-bold text-zinc-900">Review & Confirm</h3>
+
+        <div class="bg-zinc-50 rounded-xl p-4 border border-zinc-200 space-y-2 text-sm text-zinc-700">
+          <div class="font-semibold text-zinc-900 text-base">{{ form.get('fullName')?.value }}</div>
+          <div>{{ form.get('email')?.value }}</div>
+          <div>{{ form.get('phone')?.value }}</div>
+          @if (form.get('gender')?.value) {
+            <div class="capitalize">{{ form.get('gender')?.value }}</div>
+          }
+          @if (event.ticketPrice != null) {
+            <div>T-Shirt: <strong>{{ form.get('tShirtSize')?.value }}</strong></div>
+          }
+          @if (familyCount() > 0) {
+            <div>Family members: <strong>{{ familyCount() }}</strong></div>
+          }
+        </div>
+
+        @if (emailStatus() === 'new') {
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-blue-800">
+            <i class="fa-solid fa-circle-info mr-1"></i>
+            A new guest account will be created with your email. Your login password will be your phone number — please change it after logging in. We'll email you the details.
+          </div>
+        }
+
+        <!-- Total -->
+        <div class="flex justify-between items-center font-bold text-zinc-900 bg-zinc-100 rounded-xl px-4 py-3">
+          <span>Total Amount</span>
+          <span class="text-xl">৳{{ totalFee() }}</span>
+        </div>
+
+        @if (submitError()) {
+          <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+            {{ submitError() }}
+          </div>
+        }
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" (click)="prevStep()"
+            class="flex-1 bg-white border border-zinc-300 hover:bg-zinc-50 text-zinc-700 rounded-xl py-3 text-sm font-medium transition-colors">
+            ← Back
+          </button>
+          <button type="button" (click)="submit()" [disabled]="submitting()"
+            class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors disabled:opacity-60">
+            @if (submitting()) {
+              <i class="fa-solid fa-spinner fa-spin mr-1"></i> Processing…
+            } @else {
+              @if (totalFee() > 0) { Pay ৳{{ totalFee() }} } @else { Confirm Registration }
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

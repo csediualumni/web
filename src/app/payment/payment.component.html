@@ -87,18 +87,10 @@
             </div>
             <div class="flex justify-between items-center text-sm">
               <span class="text-zinc-500 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Verified Paid
+                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Paid
               </span>
               <span class="font-semibold text-emerald-600">{{ fmt(paid()) }}</span>
             </div>
-            @if (pending() > 0) {
-              <div class="flex justify-between items-center text-sm">
-                <span class="text-zinc-500 flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> Under Review
-                </span>
-                <span class="font-semibold text-amber-600">{{ fmt(pending()) }}</span>
-              </div>
-            }
             <div class="flex justify-between items-center text-sm pt-1 border-t border-zinc-100">
               <span class="font-bold text-zinc-800">Due</span>
               <span
@@ -155,44 +147,30 @@
           </div>
         </div>
 
-        <!-- Payment History -->
-        @if (inv.payments.length > 0) {
+        <!-- Payment Record -->
+        @if (inv.paidAt) {
           <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
             <div class="px-5 py-3.5 border-b border-zinc-100 flex items-center gap-2">
-              <i class="fa-solid fa-clock-rotate-left text-zinc-400 text-sm"></i>
-              <h3 class="text-sm font-semibold text-zinc-800">Payment History</h3>
-              <span class="ml-auto text-xs text-zinc-400"
-                >{{ inv.payments.length }} transaction{{
-                  inv.payments.length !== 1 ? 's' : ''
-                }}</span
-              >
+              <i class="fa-solid fa-check-circle text-emerald-500 text-sm"></i>
+              <h3 class="text-sm font-semibold text-zinc-800">Payment Recorded</h3>
             </div>
-            <div class="divide-y divide-zinc-50">
-              @for (p of inv.payments; track p.id) {
-                <div class="px-5 py-3.5">
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="min-w-0">
-                      <p class="text-sm font-bold text-zinc-900">{{ fmt(p.amount) }}</p>
-                      <p class="text-xs text-zinc-500 font-mono mt-0.5 truncate">
-                        Txn: {{ p.transactionId }}
-                      </p>
-                      <p class="text-[10px] text-zinc-400 mt-1">
-                        {{ p.createdAt | date: 'medium' }}
-                      </p>
-                      @if (p.adminNote) {
-                        <p class="text-xs text-zinc-500 mt-1 italic">Note: {{ p.adminNote }}</p>
-                      }
-                    </div>
-                    <span
-                      class="flex-shrink-0 text-[11px] font-semibold border rounded-full px-2 py-0.5 {{
-                        paymentStatusColor(p.status)
-                      }}"
-                    >
-                      {{ paymentStatusLabel(p.status) }}
-                    </span>
-                  </div>
+            <div class="px-5 py-4 text-xs text-zinc-700 space-y-2">
+              @if (inv.transactionId) {
+                <div class="flex justify-between">
+                  <span class="text-zinc-400">Transaction ID</span>
+                  <span class="font-mono">{{ inv.transactionId }}</span>
                 </div>
               }
+              @if (inv.gateway) {
+                <div class="flex justify-between">
+                  <span class="text-zinc-400">Gateway</span>
+                  <span>{{ inv.gateway }}</span>
+                </div>
+              }
+              <div class="flex justify-between">
+                <span class="text-zinc-400">Paid At</span>
+                <span>{{ inv.paidAt | date: 'medium' }}</span>
+              </div>
             </div>
           </div>
         }

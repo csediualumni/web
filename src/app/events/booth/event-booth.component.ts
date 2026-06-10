@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   AdminService,
@@ -10,6 +10,12 @@ import {
   EventCheckIn,
   CheckInType,
 } from '../../core/admin.service';
+import {
+  EventsService,
+  DistributionItem,
+  DistributionRecord,
+} from '../../core/events.service';
+import { AuthService } from '../../core/auth.service';
 
 type RegistrationResult = EventRegistration & {
   user: {
@@ -25,40 +31,149 @@ type RegistrationResult = EventRegistration & {
   checkIns: EventCheckIn[];
 };
 
-const CHECK_IN_TYPES: { type: CheckInType; label: string; icon: string }[] = [
-  { type: 'kit', label: 'Kit', icon: 'fa-bag-shopping' },
-  { type: 'breakfast', label: 'Breakfast', icon: 'fa-mug-hot' },
-  { type: 'lunch', label: 'Lunch', icon: 'fa-bowl-rice' },
-  { type: 'snacks', label: 'Snacks', icon: 'fa-cookie-bite' },
-  { type: 'dinner', label: 'Dinner', icon: 'fa-utensils' },
-  { type: 'gift', label: 'Gift', icon: 'fa-gift' },
-];
+const ITEM_ICONS: Record<string, string> = {
+  kit: 'fa-bag-shopping',
+  breakfast: 'fa-mug-hot',
+  lunch: 'fa-bowl-rice',
+  snacks: 'fa-cookie-bite',
+  dinner: 'fa-utensils',
+  gift: 'fa-gift',
+  custom: 'fa-star',
+};
 
 @Component({
   selector: 'app-event-booth',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './event-booth.component.html',
 })
 export class EventBoothComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly adminService = inject(AdminService);
+  private readonly eventsService = inject(EventsService);
+  readonly auth = inject(AuthService);
+
+  readonly hasAccess = computed(() => this.auth.hasPermission('events:distribute'));
 
   eventId = signal('');
   phoneInput = signal('');
   loading = signal(false);
   error = signal('');
   registration = signal<RegistrationResult | null>(null);
-  checkingIn = signal<Set<string>>(new Set());
-  customLabel = signal('');
-  showCustomInput = signal(false);
   notesEditing = signal(false);
   notesValue = signal('');
 
-  readonly checkInTypes = CHECK_IN_TYPES;
+  // Distribution system
+  distributionItems = signal<DistributionItem[]>([]);
+  distributions = signal<DistributionRecord[]>([]);
+  distributing = signal<Set<string>>(new Set());
+  distributeError = signal<string | null>(null);
+
+  /** Device info captured once on init */
+  private deviceInfo: Record<string, string> = {};
+
+  itemIcon(type: string): string {
+    return ITEM_ICONS[type] ?? 'fa-box';
+  }
+
+  itemLabel(item: DistributionItem): string {
+    if (item.itemType === 'custom' && item.customLabel) return item.customLabel;
+    const labels: Record<string, string> = {
+      kit: 'Kit',
+      breakfast: 'Breakfast',
+      lunch: 'Lunch',
+      snacks: 'Snacks',
+      dinner: 'Dinner',
+      gift: 'Gift',
+    };
+    return labels[item.itemType] ?? item.itemType;
+  }
+
+  distributedQty(itemId: string, recipientType: 'main' | 'family'): number {
+    return this.distributions()
+      .filter((d) => d.distributionItemId === itemId && d.recipientType === recipientType)
+      .reduce((sum, d) => sum + d.quantity, 0);
+  }
+
+  maxQty(item: DistributionItem, recipientType: 'main' | 'family'): number {
+    if (recipientType === 'main') return item.appliesToMain ? item.quantityPerMain : 0;
+    const reg = this.registration();
+    const famCount = (reg as any)?.familyMembersCount ?? 0;
+    return item.appliesToFamily ? item.quantityPerFamily * famCount : 0;
+  }
+
+  totalGiven(item: DistributionItem): number {
+    return this.distributedQty(item.id, 'main') + this.distributedQty(item.id, 'family');
+  }
+
+  totalMax(item: DistributionItem): number {
+    return this.maxQty(item, 'main') + this.maxQty(item, 'family');
+  }
+
+  isFullyGiven(item: DistributionItem): boolean {
+    return this.totalMax(item) > 0 && this.totalGiven(item) >= this.totalMax(item);
+  }
+
+  isDistributing(item: DistributionItem): boolean {
+    return this.distributing().has(item.id + '-main') || this.distributing().has(item.id + '-family');
+  }
+
+  canDistribute(item: DistributionItem, recipientType: 'main' | 'family'): boolean {
+    if (recipientType === 'family') {
+      const reg = this.registration();
+      const famCount = (reg as any)?.familyMembersCount ?? 0;
+      if (famCount === 0) return false;
+    }
+    const given = this.distributedQty(item.id, recipientType);
+    const max = this.maxQty(item, recipientType);
+    return max > 0 && given < max;
+  }
+
+  /** Single-tap: distribute to main and/or family in one action */
+  distributeAll(item: DistributionItem): void {
+    const reg = this.registration();
+    if (!reg || this.isDistributing(item)) return;
+    if (this.canDistribute(item, 'main')) this.distribute(item, 'main');
+    if (this.canDistribute(item, 'family')) this.distribute(item, 'family');
+  }
 
   ngOnInit(): void {
     this.eventId.set(this.route.snapshot.paramMap.get('id') ?? '');
+    this.deviceInfo = { userAgent: navigator.userAgent };
+
+    // Load distribution items for this event
+    this.eventsService.getDistributionItems(this.eventId()).subscribe({
+      next: (items) => this.distributionItems.set(items),
+      error: () => {},
+    });
+
+    // Auto-load if QR params present
+    const params = this.route.snapshot.queryParamMap;
+    const reg = params.get('reg');
+    const sig = params.get('sig');
+    if (reg && sig) {
+      this.loadByToken(reg, sig);
+    }
+  }
+
+  loadByToken(reg: string, sig: string): void {
+    this.loading.set(true);
+    this.error.set('');
+    this.registration.set(null);
+    this.eventsService.boothLookupByToken(this.eventId(), reg, sig).subscribe({
+      next: (result: any) => {
+        this.registration.set(result);
+        this.distributions.set(result.distributions ?? []);
+        this.distributionItems.set(result.distributionItems ?? []);
+        this.notesValue.set(result.notes ?? '');
+        this.phoneInput.set(result.user?.phone ?? '');
+        this.loading.set(false);
+      },
+      error: (err: any) => {
+        this.error.set(err?.error?.message ?? 'Invalid or expired QR code.');
+        this.loading.set(false);
+      },
+    });
   }
 
   lookup(): void {
@@ -71,6 +186,8 @@ export class EventBoothComponent implements OnInit {
       next: (reg) => {
         this.registration.set(reg);
         this.notesValue.set(reg.notes ?? '');
+        // Load distributions for this registration
+        this.loadDistributions(reg.id);
         this.loading.set(false);
       },
       error: (err) => {
@@ -80,50 +197,53 @@ export class EventBoothComponent implements OnInit {
     });
   }
 
+  private loadDistributions(registrationId: string): void {
+    // Reload distribution state for this registration
+    this.eventsService.getDistributionItems(this.eventId()).subscribe({ next: (items) => this.distributionItems.set(items) });
+  }
+
   clear(): void {
     this.registration.set(null);
+    this.distributions.set([]);
     this.phoneInput.set('');
     this.error.set('');
+    this.distributeError.set(null);
   }
 
-  getCheckIn(type: CheckInType): EventCheckIn | undefined {
-    return this.registration()?.checkIns?.find((c) => c.type === type);
-  }
-
-  checkIn(type: CheckInType, customLabel?: string): void {
+  distribute(item: DistributionItem, recipientType: 'main' | 'family'): void {
     const reg = this.registration();
-    if (!reg) return;
-    const key = customLabel ? `${type}-${customLabel}` : type;
-    if (this.checkingIn().has(key)) return;
+    if (!reg || !this.canDistribute(item, recipientType)) return;
 
-    this.checkingIn.update((s) => new Set([...s, key]));
-    this.adminService
-      .boothCheckIn(reg.id, { type, customLabel })
-      .subscribe({
-        next: (checkIn) => {
-          this.registration.update((r) => r ? { ...r, checkIns: [...(r.checkIns ?? []), checkIn] } : r);
-          this.showCustomInput.set(false);
-          this.customLabel.set('');
-          this.checkingIn.update((s) => {
-            const next = new Set(s);
-            next.delete(key);
-            return next;
-          });
-        },
-        error: () => {
-          this.checkingIn.update((s) => {
-            const next = new Set(s);
-            next.delete(key);
-            return next;
-          });
-        },
-      });
-  }
+    const key = `${item.id}-${recipientType}`;
+    if (this.distributing().has(key)) return;
 
-  submitCustom(): void {
-    const label = this.customLabel().trim();
-    if (!label) return;
-    this.checkIn('custom', label);
+    const qty = 1;
+    this.distributing.update((s) => new Set([...s, key]));
+    this.distributeError.set(null);
+
+    this.eventsService.distribute(this.eventId(), {
+      registrationId: reg.id,
+      distributionItemId: item.id,
+      recipientType,
+      quantity: qty,
+    }).subscribe({
+      next: (record) => {
+        this.distributions.update((d) => [...d, record]);
+        this.distributing.update((s) => {
+          const next = new Set(s);
+          next.delete(key);
+          return next;
+        });
+      },
+      error: (err) => {
+        this.distributeError.set(err?.error?.message ?? 'Failed to record distribution.');
+        this.distributing.update((s) => {
+          const next = new Set(s);
+          next.delete(key);
+          return next;
+        });
+      },
+    });
   }
 
   saveNotes(): void {

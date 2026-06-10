@@ -10,13 +10,11 @@ export interface MembershipInvoice {
   totalAmount: number;
   status: string;
   createdAt: string;
-  payments: {
-    id: string;
-    amount: number;
-    transactionId: string;
-    status: string;
-    createdAt: string;
-  }[];
+  transactionId: string | null;
+  valId: string | null;
+  gateway: string | null;
+  paidAt: string | null;
+  adminNote: string | null;
 }
 
 export interface MembershipApplication {
