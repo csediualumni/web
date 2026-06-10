@@ -2,6 +2,7 @@ import { Component, inject, OnInit, OnDestroy, signal, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import {
   AdminService,
   ApiEvent,
@@ -11,6 +12,7 @@ import {
   TShirtSize,
 } from '../../core/admin.service';
 import { AuthService } from '../../core/auth.service';
+import { SeoService } from '../../core/seo.service';
 import {
   EventRegistrationFormComponent,
   RegistrationSuccess,
@@ -37,6 +39,8 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly adminService = inject(AdminService);
   readonly auth = inject(AuthService);
+  private readonly titleService = inject(Title);
+  private readonly seo = inject(SeoService);
 
   event = signal<ApiEvent | null>(null);
   sponsors = signal<EventSponsor[]>([]);
@@ -99,6 +103,20 @@ export class EventDetailComponent implements OnInit, OnDestroy {
         this.sponsors.set((ev as any).sponsors ?? []);
         this.loading.set(false);
         this.startCountdown(ev);
+
+        // SEO: title + link-preview meta tags
+        const SITE = 'CSE DIU Alumni';
+        this.titleService.setTitle(`${ev.title} | ${SITE}`);
+        const plainDesc = ev.description
+          ? ev.description.replace(/<[^>]*>/g, '').slice(0, 160).trim()
+          : `${ev.title} — ${ev.location}`;
+        this.seo.update({
+          title: ev.title,
+          description: plainDesc,
+          keywords: `${ev.category}, ${ev.city}, CSE DIU alumni event, ${ev.title}`,
+          ogImage: ev.imageUrl ?? undefined,
+          ogUrl: `/events/${ev.id}`,
+        });
         if (this.auth.isLoggedIn()) {
           this.adminService.getMyRegistration(id).subscribe({
             next: (reg) => this.myRegistration.set(reg),
