@@ -120,7 +120,7 @@
             <h2 class="text-2xl font-bold text-zinc-800 mb-4 flex items-center gap-2">
               <i class="fa-solid fa-circle-info text-blue-500 text-lg"></i> About
             </h2>
-            <p class="text-zinc-600 leading-relaxed text-base">{{ ev.description }}</p>
+            <div class="prose prose-zinc max-w-none text-zinc-600 leading-relaxed" [innerHTML]="ev.description"></div>
           </div>
         }
 
