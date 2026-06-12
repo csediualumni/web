@@ -53,11 +53,9 @@ export interface RegisterWithProfileDto {
     organization?: string;
     designation?: string;
     photo?: string;
-    education?: {
-      departmentId?: string;
-      shiftId?: string;
-      session?: string;
-    };
+    batch?: number;
+    experiences?: { title: string; company: string; from: string; to: string }[];
+    educations?: { degree: string; institution: string; year?: number }[];
   };
   tShirtSize?: string;
   familyMembersCount?: number;
